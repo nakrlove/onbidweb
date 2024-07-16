@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    // 기존 옵션들
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "jsx": "react", // 또는 "preserve" 등의 옵션을 선택
+    "target": "es5", // 원하는 타겟 버전
+    // 추가 옵션들
+    "baseUrl": "./src",
+    "paths": {
+      "*": ["types/*"]
+    }
+  },
+  "include": ["src"]
+}
