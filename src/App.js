@@ -1,29 +1,9 @@
-import logo from './logo.svg';
+// import logo from './logo.svg';
 // import './App.css';
-import ViewRegst from '../src/components/ViewRegst.tsx'
-import Header from '../src/components/widget/Header.tsx'
+import ViewRegst from '../src/components/ViewRegst.tsx';
+import Header from '../src/components/widget/Header.tsx';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
+import CustomNavBar from '../src/components/CustomNavBar.tsx';
 
 
 function App() {
@@ -33,9 +13,9 @@ function App() {
       <div >
         {/* <header className="App-header">
         </header> */}
-        <Header>파산공매</Header>
+        {/* <Header>파산공매</Header> */}
         {/* <main><ViewRegst /></main> */}
-
+        <CustomNavBar/>
         <Routes>
           <Route path="/" element={<ViewRegst />}/>
           {/* <Route path="/day/:day" element={<Day />} />
