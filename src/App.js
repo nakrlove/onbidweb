@@ -4,11 +4,12 @@ import ViewRegst from '../src/components/ViewRegst.tsx';
 import Header from '../src/components/widget/Header.tsx';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CustomNavBar from '../src/components/CustomNavBar.tsx';
-
+import ThemeProvider from 'react-bootstrap/ThemeProvider';
 
 function App() {
   return (
     // <div className="App">
+    <ThemeProvider dir="rtl" breakpoints={['sm', 'xs', 'xxs']}  minBreakpoint="xs">
     <Router>
       <div >
         {/* <header className="App-header">
@@ -29,6 +30,7 @@ function App() {
         <footer>SCC</footer>
       </div >
     </Router>
+    </ThemeProvider>
   );
 }
 

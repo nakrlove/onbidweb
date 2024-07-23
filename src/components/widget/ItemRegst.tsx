@@ -10,7 +10,7 @@ const ItemRegst: React.FC<IItemRegst> = (props) =>{
 
     return<>
         <Row className="mb-3">
-                <Form.Group as={Col} controlId="formGridEmail">
+             <Form.Group as={Col} controlId="formGridEmail">
                 <Form.Label>{props.viewInfo.textName1}</Form.Label>
                 <Form.Control type="text" placeholder={props.viewInfo.placeholder1} 
                                 value={props.value1}
