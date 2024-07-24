@@ -14,6 +14,7 @@ export interface IAddressRegst {
   value2?: string;
   onChange1?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChange2?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  showModal?: () => void;
 }
 
 interface ViewInfo {

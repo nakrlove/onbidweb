@@ -1,13 +1,13 @@
 import React from "react";
 
-import { IAddressRegst } from '../../components/model/regst'
+import { IAddressRegst } from '../model/regst'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
-const AddressInput: React.FC<IAddressRegst> = (props) =>{
+const InputAddr: React.FC<IAddressRegst> = (props) =>{
 
         return <>
             <InputGroup className="mb-1">
@@ -17,7 +17,7 @@ const AddressInput: React.FC<IAddressRegst> = (props) =>{
                             onChange={props.onChange1}
                             aria-label="Recipient's username"
                             aria-describedby="basic-addon2"  />
-                <Button variant="outline-secondary" id="button-addon2">조회</Button>
+                <Button variant="outline-secondary" id="button-addon2" onClick={ () => { props.showModal() } } >조회</Button>
             </InputGroup>
             <InputGroup className="mb-3">
                 <Form.Control
@@ -33,4 +33,4 @@ const AddressInput: React.FC<IAddressRegst> = (props) =>{
  
 }
 
-export default AddressInput;
+export default InputAddr;

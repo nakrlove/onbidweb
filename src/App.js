@@ -18,7 +18,7 @@ function App() {
         {/* <main><ViewRegst /></main> */}
         <CustomNavBar/>
         <Routes>
-          <Route path="/" element={<ViewRegst />}/>
+          <Route path="/index.html" element={<ViewRegst />}/>
           {/* <Route path="/day/:day" element={<Day />} />
           <Route path="/create_word" element={<CreateWord />} />
           <Route path="/create_day" element={<CreateDay />} />

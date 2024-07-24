@@ -1,5 +1,5 @@
 import ItemRegst from '../../src/components/widget/ItemRegst';
-import AddressInput from '../../src/components/widget/AddressInput';
+import AddressInput from './widget/InputAddr';
 
 import React, {useEffect, useState} from 'react';
 import styled, { css } from "styled-components";
@@ -13,7 +13,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Form, Button } from 'react-bootstrap';
 import axios from 'axios';
-
+import FindAddr from './modals/FindAddr';
+import InputAddr from './widget/InputAddr';
 
 const ViewRegst = () => {
 
@@ -27,6 +28,7 @@ const ViewRegst = () => {
     // const [additionalFiles, setAdditionalFiles] = useState<File[]>([]);
 
     const [additionalFiles, setAdditionalFiles] = useState([{ id: 0, file: null }]);
+    const [modalShow, setModalShow] = useState(false);
 
     useEffect(() => {
         console.log(address1);
@@ -94,9 +96,9 @@ const ViewRegst = () => {
         //     console.log(`${key}: ${value}`);
         // }
        
-     
+        const URL = 'http://localhost:8080/api/onbid/onbidL'
         try {
-            const response = await axios.post('http://127.0.0.1:8080/api/onbid/onbidL', formData, {
+            const response = await axios.post(URL, formData, {
                 headers: {
                     
                     'Content-Type': 'multipart/form-data',
@@ -130,18 +132,25 @@ const ViewRegst = () => {
         setAdditionalFiles([...additionalFiles,{ id: additionalFiles.length, file: null }]);
     };
 
-
+    
+    
     return (<>
         {/* <div className='bd-item-regst'> */}
        
         <BodyLine>
             <header>정보등록</header>
             <Form onSubmit={doSubmit}>
-                <AddressInput placeholder={"주소"} 
+                <FindAddr
+                    show={modalShow}
+                    onHide={() => setModalShow(false)}
+                />
+                <InputAddr placeholder={"주소"} 
                               value1={address1}
                               value2={address2}
                               onChange1={(e) => setAddress1(e.target.value)}
-                              onChange2={(e) => setAddress2(e.target.value)}/>
+                              onChange2={(e) => setAddress2(e.target.value)}
+                              showModal={() => { setModalShow(true)  } }
+                              />
 
                 <ItemRegst
                            viewInfo={{
