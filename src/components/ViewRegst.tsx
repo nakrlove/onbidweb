@@ -174,7 +174,7 @@ const ViewRegst = () => {
                     <Button variant="secondary"  onClick={addAdditionalFileInput}>추가</Button>
                     
                     {additionalFiles.map((fileWrapper, index) => (
-                        <Row className="mb-3">
+                        <Row className="mb-3" key={index}>
                             <Form.Group as={Col} xs={3} controlId="fileType">
                                 <Dropdown>
                                     <Dropdown.Toggle variant="success" id="dropdown-basic">
