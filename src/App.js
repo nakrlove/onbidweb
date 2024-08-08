@@ -2,6 +2,7 @@
 // import './App.css';
 import ViewRegst from '../src/components/ViewRegst.tsx';
 import Header from '../src/components/widget/Header.tsx';
+import FileCodeManager from '../src/components/widget/FileCodeManager.tsx';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CustomNavBar from '../src/components/CustomNavBar.tsx';
 import ThemeProvider from 'react-bootstrap/ThemeProvider';
@@ -18,12 +19,13 @@ function App() {
         {/* <main><ViewRegst /></main> */}
         <CustomNavBar/>
         <Routes>
-          <Route path="/index.html" element={<ViewRegst />}/>
+          <Route path="/home" element={<ViewRegst />}/>
+          <Route path="/file-code" element={<FileCodeManager />}/>
           {/* <Route path="/day/:day" element={<Day />} />
           <Route path="/create_word" element={<CreateWord />} />
           <Route path="/create_day" element={<CreateDay />} />
-          <Route path="*" element={<EmptyPage />} /> */}
-   
+          <Route path="*" element={<EmptyPage />} />
+    */}
         </Routes>
 
 

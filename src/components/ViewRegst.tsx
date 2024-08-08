@@ -2,7 +2,7 @@ import ItemRegst from '../../src/components/widget/ItemRegst';
 import AddressInput from './widget/InputAddr';
 
 import React, {useEffect, useState} from 'react';
-import styled, { css } from "styled-components";
+
 // import Header from './widget/Header';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import Form from 'react-bootstrap/Form';
@@ -15,6 +15,7 @@ import { Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 import FindAddr from './modals/FindAddr';
 import InputAddr from './widget/InputAddr';
+import {CommonBody} from './common/CommonBody';
 
 const ViewRegst = () => {
 
@@ -24,25 +25,22 @@ const ViewRegst = () => {
     const [bankruptcyName, setBankruptcyName] = useState('');
     const [bankruptcyPhone, setBankruptcyPhone] = useState('');
     const [file, setFile] = useState<File | null>(null);
-    // const [additionalFile, setAdditionalFile] = useState<File | null>(null);
-    // const [additionalFiles, setAdditionalFiles] = useState<File[]>([]);
-
     const [additionalFiles, setAdditionalFiles] = useState([{ id: 0, file: null }]);
     const [modalShow, setModalShow] = useState(false);
 
-    useEffect(() => {
-        console.log(address1);
-        console.log(address2);
-        console.log(bankruptcyName);
-        console.log(bankruptcyPhone);
+    // useEffect(() => {
+    //     console.log(address1);
+    //     console.log(address2);
+    //     console.log(bankruptcyName);
+    //     console.log(bankruptcyPhone);
 
-    },[])
+    // },[])
 
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
     const doSubmit = async (e: React.FormEvent)=> {
         e.preventDefault();
 
-        if (file.size > MAX_FILE_SIZE) {
+        if (file?.size > MAX_FILE_SIZE) {
             alert("File size exceeds 10MB limit");
             return;
         }
@@ -55,12 +53,7 @@ const ViewRegst = () => {
         });
 
         const formData = new FormData();
-        /*
-        formData.append("address1", address1);
-        formData.append("address2", address2);
-        formData.append("bankruptcyName", bankruptcyName);
-        formData.append("bankruptcyPhone", bankruptcyPhone);
-        */
+       
         formData.append('onbidDTO', new Blob([JSON.stringify({
             "addr1": address1,
             "addr2": address2,
@@ -83,24 +76,11 @@ const ViewRegst = () => {
             console.log(`${key}: ${value}`);
         });
 
-
-        // additionalFiles.forEach((value,key) => {
-        //     formData.append('file'+key, value);
-        // });
-        // formData.forEach((value, key) => {
-        //     console.log(`${key}: ${value}`);
-        // });
-
-        // Log FormData content
-        // for (let [key, value] of formData.entries()) {
-        //     console.log(`${key}: ${value}`);
-        // }
-       
+     
         const URL = 'http://localhost:8080/api/onbid/onbidL'
         try {
             const response = await axios.post(URL, formData, {
                 headers: {
-                    
                     'Content-Type': 'multipart/form-data',
                 },
             });
@@ -132,17 +112,25 @@ const ViewRegst = () => {
         setAdditionalFiles([...additionalFiles,{ id: additionalFiles.length, file: null }]);
     };
 
-    
+    /** 검색한 주소선택 */
+    const selectAddress = (addr1: string | null | undefined,addr2:string) => {
+     
+        if(typeof addr1 === 'string' && addr1.trim() !== ''){
+            setAddress1(addr1);
+            //setAddress2(addr2);
+        }
+    }
     
     return (<>
         {/* <div className='bd-item-regst'> */}
        
-        <BodyLine>
+        <CommonBody>
             <header>정보등록</header>
             <Form onSubmit={doSubmit}>
                 <FindAddr
                     show={modalShow}
                     onHide={() => setModalShow(false)}
+                    onSelect={ selectAddress }
                 />
                 <InputAddr placeholder={"주소"} 
                               value1={address1}
@@ -205,7 +193,7 @@ const ViewRegst = () => {
                     Submit
                 </Button>
             </Form>
-         </BodyLine>
+         </CommonBody>
         </>
     );
 }
@@ -213,12 +201,3 @@ const ViewRegst = () => {
 export default ViewRegst;
 
 
-const BodyLine = styled.div`
-    padding: 1.5rem;
-    position: relative;
-    margin-right: 50;
-    margin-left: 50;
-    border-width: 1rem;
-    margin: 1.5rem 250px 0;
-    border: solid #cddc39;
-`;

@@ -40,13 +40,18 @@ const fetchData = async (
   }
 };
 
-export const findaddr = async (
+export const RequestApi = async (
   params: { [key: string]: any },
+  URL: string,
   abortController: AbortSignal
 ) => {
-  const url = "/api/post/find";
+  // const url = "/api/post/find";
 
-  const data = await fetchData(url, params, abortController);
+  if (URL === null || URL === "") {
+    alert("요청주소를 알수 없습니다.");
+    return;
+  }
+  const data = await fetchData(URL, params, abortController);
   return data;
 };
 

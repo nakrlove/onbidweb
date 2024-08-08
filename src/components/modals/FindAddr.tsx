@@ -8,8 +8,11 @@ import Form       from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Pagination from 'react-bootstrap/Pagination';
 
-import {findaddr ,findCount} from '../../components/fetchapi/FetchApi';
+import {RequestApi ,findCount} from '../../components/fetchapi/FetchApi';
 import { Address } from '../../components/model/regst';
+
+import '../../components/css/common.css';
+
 import previousImg from '../../assets/previous.png'; // 이미지 파일을 import
 import rightNextImg from '../../assets/right-chevron-.png'; // 이미지 파일을 import
 // import buttonNextImg from '../../assets/pngwing.png'; // 이미지 파일을 import
@@ -38,8 +41,6 @@ export default function FindAddr(props) {
     const abortControllerRef = useRef<AbortController | null>(null);
     console.log(`================= init1 ${JSON.stringify(query)}=================`);
 
-  
-   
     const init = () =>{
         if (abortControllerRef.current) {
             console.log("abortControllerRef  close called=====")
@@ -49,7 +50,8 @@ export default function FindAddr(props) {
         setAddress([]);
         setQuery({});
         setTotalpage(1);
-        setPageGroup(1)
+        setTotalCount(1);
+        setPageGroup(1);
         setCurrentPage(1);
         setError(null);
        
@@ -72,14 +74,10 @@ export default function FindAddr(props) {
 
     // 팝업을 닫을 때 요청을 취소하고 상태를 초기화
     const handleCloseModal = () => {
-        init()
-       //if( props.onHide)
-       console.log(`props.onHide=${props.onHide}`);
+       init()
        if (props.onHide) {
-        props.onHide(); // props.onHide 호출
-      }
-     
-     
+          props.onHide(); // props.onHide 호출
+       }
     };
 
    /**
@@ -142,7 +140,7 @@ export default function FindAddr(props) {
                                     setQuery(newQuery);
                                     try{
                                         console.log(` ############ request param ${JSON.stringify(newQuery)}`)
-                                        const data = await findaddr(newQuery,signal);
+                                        const data = await RequestApi(newQuery,"/api/post/find",signal);
                                         console.log(JSON.stringify(data))
 
                                         if (data) {
@@ -156,7 +154,6 @@ export default function FindAddr(props) {
                                             return;
                                         } 
 
-                                     
                                         setAddress([]);
                                         setError('No addresses found or an error occurred.');
                                         
@@ -191,6 +188,28 @@ export default function FindAddr(props) {
         }
     };
 
+   
+    // 이전페이지
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(prevPage => prevPage - 1);
+        }
+    };
+
+   const pageGroupChange = (pageGroup) => {
+        setPageGroup(pageGroup);
+        setCurrentPage(((pageGroup - 1) * 10) + 1); // 첫 페이지로 이동
+   }
+    // '다음 10개 페이지' 클릭 핸들러
+    const handlePrevPageGroup = () => {
+       
+        if (pageGroup > 1) {
+       
+            pageGroupChange(pageGroup - 1);
+            console.log(`2 handlePrevPageGroup ${pageGroup},${pageGroup-1} ,${((pageGroup - 1) * 10) + 1} ,currentPage=${currentPage}`)
+        }
+    };
+
     // '다음 10개 페이지' 클릭 핸들러
     const handleNextPageGroup = () => {
         if (pageGroup * 10 < totalPage) {
@@ -209,21 +228,21 @@ export default function FindAddr(props) {
     };
 
     const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        //setReload(prevReload => prevReload + 1); // reload 값을 1씩 증가시키는 예시
             
         setTotalpage(1);
         setPageGroup(1);
         let newQuery = {}
         newQuery[`addr1`] = searchInputRef.current.value || "";
-        // setQuery(newQuery);
-        // console.log(`   param init ${JSON.stringify(query)}`)
        
         setCurrentPage(1);
         handleSearch(e,newQuery, -100); // 현재 searchValue를 검색
     };
 
-
-    const pageHtml = (): JSX.Element[] =>{
+    const select = (addr1,addr2) => {
+        props.onSelect(addr1,addr2)
+        handleCloseModal()
+    }
+    const pageing = (): JSX.Element[] =>{
         // 현재 페이지 그룹의 첫 페이지 번호를 계산합니다.
         const [startPage,endPage] = getCurrentPageRange(currentPage,totalPage)
         let items = [];
@@ -240,6 +259,8 @@ export default function FindAddr(props) {
 
     return (
         <Modal {...props}
+                backdrop="static" // 모달 외부 클릭 방지
+                keyboard={false} // Esc 키로 모달 닫기 방지
                 size="lg"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered>
@@ -292,7 +313,7 @@ export default function FindAddr(props) {
                                         key={index}
                                         as="li"
                                         className="d-flex align-items-start">
-                                        <div>
+                                        <div onClick={ () => select(addr.addr2,addr.addr1) }>
                                             {/* 각 주소 항목의 필요한 속성만 렌더링 */}
                                             <div><strong>지 번:</strong> {addr.addr2 || '정보 없음'}</div>
                                             <div><strong>도로명:</strong> {addr.addr1 || '정보 없음'}</div>
@@ -307,14 +328,29 @@ export default function FindAddr(props) {
                         )}
                        
                         {totalPage > 1 ? (
-                                    <div className="d-flex justify-content-between" style={{ padding: 10, border: 'none', background: 'none' ,width: '2.375rem', height: '2.375rem'} }>
-                                       <Pagination size="sm"> {pageHtml()}</Pagination>
-                                        <Button onClick={handleNextPage} disabled={currentPage >= totalPage}>
-                                            <img src={rightNextImg} alt="다음 페이지" style={{ width: '2.375rem', height: '2.275rem'} }/>
+                                    // <div className="d-flex justify-content-between" style={{ padding: 10, border: 'none', background: 'none' ,width: '2.375rem', height: '2.375rem'} }>
+                                    <div className="d-flex justify-content-between align-items-center">
+                                     <Pagination size="sm">
+                                        <Button onClick={handlePrevPageGroup}    disabled={pageGroup <= 1} className='pagi'>
+                                            {/* <img src={previousImg} alt="이전 페이지" style={{ width: '2.375rem', height: '2.275rem'} }/> 다음 10개 페이지 */}
+                                            {"<<"}
                                         </Button>
-                                        <Button onClick={handleNextPageGroup} disabled={pageGroup * 10 >= totalPage}>
-                                        <img src={rightNextImg} alt="다음 페이지" style={{ width: '2.375rem', height: '2.275rem'} }/> 다음 10개 페이지
+                                        <Button onClick={handlePrevPage}  disabled={currentPage <= 1} className='pagi'>
+                                            {/* <img src={previousImg} alt="이전 페이지" style={{ width: '2.375rem', height: '2.275rem'} }/> */}
+                                            {"<"}
                                         </Button>
+
+                                         {pageing()}
+                                        
+                                        <Button onClick={handleNextPage} disabled={currentPage >= totalPage} className='pagi'>
+                                            {/* <img src={rightNextImg} alt="다음 페이지" style={{ width: '2.375rem', height: '2.275rem'} }/> */}
+                                            {">"}
+                                        </Button>
+                                        <Button onClick={handleNextPageGroup} disabled={pageGroup * 10 >= totalPage} className='pagi'>
+                                        {/* <img src={rightNextImg} alt="다음 페이지" style={{ width: '2.375rem', height: '2.275rem'} }/> 다음 10개 페이지 */}
+                                            {">>"}
+                                        </Button>
+                                        </Pagination>
                                     </div>
                                     ) : (<Pagination size="sm"></Pagination>)
                         }
