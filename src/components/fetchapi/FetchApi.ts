@@ -1,15 +1,22 @@
+interface FetchDataParams {
+  url: string;
+  method?: string; // 선택적
+  params?: { [key: string]: any }; // 선택적
+  abortController: AbortSignal;
+}
 // import { IAddres } from '../model/regst'
 // 공통 API 요청 함수
-const fetchData = async (
+const fetchData = async ({
   url,
-  params: { [key: string]: any },
-  abortController: AbortSignal
-) => {
+  method = "POST",
+  params = {},
+  abortController,
+}: FetchDataParams) => {
   try {
     const host = "http://localhost:8080";
 
     const response = await fetch(`${host}${url}`, {
-      method: "POST",
+      method: method,
       headers: {
         "Content-Type": "application/json",
       },
@@ -41,8 +48,9 @@ const fetchData = async (
 };
 
 export const RequestApi = async (
-  params: { [key: string]: any },
   URL: string,
+  method: string,
+  params: { [key: string]: any },
   abortController: AbortSignal
 ) => {
   // const url = "/api/post/find";
@@ -51,16 +59,22 @@ export const RequestApi = async (
     alert("요청주소를 알수 없습니다.");
     return;
   }
-  const data = await fetchData(URL, params, abortController);
+  const data = await fetchData({
+    url: URL,
+    method: method,
+    params: params,
+    abortController: abortController,
+  });
   return data;
 };
 
 export const findCount = async (
   params: { [key: string]: any },
+  method: string = "POST",
   abortController
 ) => {
   const url = "/api/post/findCount";
 
-  const fcount = await fetchData(url, params, abortController);
+  const fcount = await fetchData({ url, method, params, abortController });
   return fcount;
 };

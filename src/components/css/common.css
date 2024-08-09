@@ -1,3 +1,88 @@
 
 
   .pagi{ font-size: '1rem'; width: '2.0rem'; height: '2.0rem'; text-align: 'center' }
+
+  .code-list {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between; /* 왼쪽 정렬 */
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .register-button {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+  
+  .search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  input[type="text"] {
+    padding: 12px; /* 사이즈를 2배로 키움 */
+    font-size: 16px;
+    width: 300px; /* 사이즈 조정 */
+  }
+  
+  button {
+    padding: 8px 16px;
+    font-size: 16px;
+    margin-left: 10px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+  }
+  
+  table, th, td {
+    border: 1px solid #ddd;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: center;
+  }
+  
+  th {
+    background-color: #f4f4f4;
+  }
+  
+  td {
+    font-size: 16px; /* 버튼과 맞춤 */
+  }
+  
+  .actions {
+    text-align: center;
+  }
+  
+  .action-button {
+    padding: 6px 12px; /* 수정/삭제 버튼 크기 맞춤 */
+    font-size: 14px;
+    margin: 0 5px;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .pagination button {
+    padding: 8px 16px; /* 버튼 사이즈 */
+    margin: 0 5px;
+  }
+  
+  .pagination .active {
+    font-weight: bold;
+    background-color: #ddd;
+  }  

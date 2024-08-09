@@ -140,7 +140,7 @@ export default function FindAddr(props) {
                                     setQuery(newQuery);
                                     try{
                                         console.log(` ############ request param ${JSON.stringify(newQuery)}`)
-                                        const data = await RequestApi(newQuery,"/api/post/find",signal);
+                                        const data = await RequestApi("/api/post/find","POST",newQuery,signal);
                                         console.log(JSON.stringify(data))
 
                                         if (data) {
