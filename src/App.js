@@ -1,6 +1,7 @@
 // import logo from './logo.svg';
 // import './App.css';
-import ViewRegst from '../src/components/ViewRegst.tsx';
+import OnBidRegst from '../src/components/OnBidRegst.tsx';
+import OnBidList from '../src/components/widget/OnBidList.tsx';
 import Header from '../src/components/widget/Header.tsx';
 import CodeList from '../src/components/widget/CodeList.tsx';
 import CodeRegist from '../src/components/widget/CodeRegist.tsx';
@@ -18,10 +19,11 @@ function App() {
         {/* <header className="App-header">
         </header> */}
         {/* <Header>파산공매</Header> */}
-        {/* <main><ViewRegst /></main> */}
+        {/* <main><OnBidRegst /></main> */}
         <CustomNavBar/>
         <Routes>
-          <Route path="/home" element={<ViewRegst />}/>
+          <Route path="/onbid-list" element={<OnBidList />}/>
+          <Route path="/onbid-regst" element={<OnBidRegst />}/>
           <Route path="/file-code" element={<CodeList />}/>
           <Route path="/code-regist" element={<CodeRegist />} />
           {/* <Route path="/day/:day" element={<Day />} />

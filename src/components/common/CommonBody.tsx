@@ -11,3 +11,11 @@ export const CommonBody = styled.div`
 `;
 
 
+export const TableTd = styled.div`
+    border-bottom: 1px solid #ddd;
+    padding: 3px 5px 2px 5px;
+    font-weight: normal;
+    height: 23px;
+    text-align: left;
+`
+

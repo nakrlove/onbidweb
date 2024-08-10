@@ -21,7 +21,10 @@ const fetchData = async ({
         "Content-Type": "application/json",
       },
       signal: abortController,
-      body: JSON.stringify(params),
+      body:
+        method === "POST" || method === "DELETE"
+          ? JSON.stringify(params)
+          : null,
     });
 
     console.log("============== param ===========");
@@ -47,20 +50,27 @@ const fetchData = async ({
   }
 };
 
+// export const RequestApi = async (
+//   URL: string,
+//   method?: string,
+//   params?: { [key: string]: any },
+//   abortController?: AbortSignal
+// ) => {
+
 export const RequestApi = async (
-  URL: string,
-  method: string,
-  params: { [key: string]: any },
-  abortController: AbortSignal
+  url,
+  method = "POST",
+  params = {},
+  abortController
 ) => {
   // const url = "/api/post/find";
 
-  if (URL === null || URL === "") {
+  if (url === null || url === "") {
     alert("요청주소를 알수 없습니다.");
     return;
   }
   const data = await fetchData({
-    url: URL,
+    url: url,
     method: method,
     params: params,
     abortController: abortController,

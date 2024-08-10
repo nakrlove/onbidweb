@@ -4,15 +4,15 @@ import { RequestApi } from '../fetchapi/FetchApi';
 import '../css/common.css';
 
 // 데이터 타입 정의
-interface CodeItem {
+interface OnbidItem {
     idx: number;
     code: string;
     subcode: string;
     codename: string;
 }
 
-const CodeList: React.FC = () => {
-    const [data, setData] = useState<CodeItem[]>([]); // 초기 데이터는 빈 배열
+const OnBidList: React.FC = () => {
+    const [data, setData] = useState<OnbidItem[]>([]); // 초기 데이터는 빈 배열
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [itemsPerPage] = useState<number>(10);
 
@@ -27,7 +27,7 @@ const CodeList: React.FC = () => {
     };
     // 등록 버튼 클릭 핸들러
     const handleRegisterClick = () => {
-        navigate('/code-regist'); // 등록 화면으로 이동
+        navigate('/onbid-regst'); // 등록 화면으로 이동
     };
 
 
@@ -39,11 +39,12 @@ const CodeList: React.FC = () => {
     }
 
     //삭제 클릭 핸들러
-    const handleDeleteClick = (data:CodeItem) => {
+    const handleDeleteClick = (data:OnbidItem) => {
         const userConfirmed = window.confirm('삭제하시겠습니까?');
         if (userConfirmed) {
             fetchData(data,"DELETE")
         }
+      
     }
     // 페이지 계산
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -70,18 +71,10 @@ const CodeList: React.FC = () => {
     };
 
     // 페이지 번호 생성
-    let totalPages = Math.ceil(data.length / itemsPerPage);
-    let pageNumbers = Array.from({ length: Math.min(totalPages, 10) }, (_, i) => i + 1);
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+    const pageNumbers = Array.from({ length: Math.min(totalPages, 10) }, (_, i) => i + 1);
 
-    useEffect(() => {
-        totalPages = Math.ceil(data.length / itemsPerPage);
-        pageNumbers = Array.from({ length: Math.min(totalPages, 10) }, (_, i) => i + 1);
-        console.log(`======== totalPages = ${totalPages} ,pageNumbers ${pageNumbers}`)
-    }, [data]); // 의존성 배열에 fetchData를 추가
-
-
-
-    const fetchData = useCallback(async (data:CodeItem,method:string) => {
+    const fetchData = useCallback(async (data:OnbidItem,method:string) => {
         if (!searchCode.current) return;
 
         const formData = new FormData();
@@ -95,8 +88,8 @@ const CodeList: React.FC = () => {
         const abortController = new AbortController();
         const signal = abortController.signal;
         abortControllerRef.current = abortController;
-      
-        let newQuery = {
+
+        let newQuery = { 
             'codename': searchCode.current?.value ,
             'page': indexOfFirstItem ,
         };
@@ -117,21 +110,19 @@ const CodeList: React.FC = () => {
      
         let url = method === 'POST' ? "/api/onbid/codelist" : "/api/onbid/deletecode";
         try {
+            const resultData = await RequestApi(url,method,newQuery, signal);
 
-            console.log("==================================")
-            console.log(JSON.stringify(newQuery))
-            console.log("==================================")
-            const resultData = await RequestApi(url,method,newQuery,signal);
-
-            if( method === 'DELETE') {             
+            if( method === 'DELETE') {
+                
                 fetchData(null,"POST"); // 컴포넌트가 처음 마운트될 때 데이터 조회
                 return;
             }
 
+            console.log("응답결과 ===")
+            console.log(resultData)
             // 응답 데이터가 배열인지 확인
             if (Array.isArray(resultData.content)) {
                 setData(resultData.content);
-                console.log("==========setData called========")
             } else {
                 setData([]); // 응답 데이터가 배열이 아닌 경우 빈 배열로 설정
                 console.log('Received data is not an array.');
@@ -145,7 +136,6 @@ const CodeList: React.FC = () => {
     useEffect(() => {
         fetchData(null,"POST"); // 컴포넌트가 처음 마운트될 때 데이터 조회
     }, [fetchData]); // 의존성 배열에 fetchData를 추가
-
 
 
   // 현재 페이지의 아이템만 필터링
@@ -167,21 +157,39 @@ const CodeList: React.FC = () => {
             <table>
                 <thead>
                     <tr>
-                        <th style={{ width: '10%' }}>코드그룹</th>
-                        <th style={{ width: '10%' }}>코드값</th>
-                        <th style={{ width: '30%' }}>코드명</th>
-                        <th style={{ width: '10%' }}>작업</th>
+                        <th style={{ width: '50%' }}>소재지</th>
+                        <th style={{ width: '15%' }}>감정가</th>
+                        <th style={{ width: '10%' }}>입찰일자<br/>마감일자</th>
+                        <th style={{ width: '15%' }}>파산관제인정보</th>
+                        {/* <th style={{ width: '30%' }}>감정가\n최저가</th> */}
+                        {/* <th style={{ width: '10%' }}>작업</th> */}
                     </tr>
                 </thead>
                 <tbody>
                     {currentItems.map(item => (
                         <tr key={item.idx}>
-                            <td>{item.subcode}</td>
-                            <td>{item.code}</td>
-                            <td>{item.codename}</td>
-                            <td className="actions">
-                                <button className="action-button" onClick={() => handleEditClick({'idx':item.idx,'code':item.code,'subcode':item.subcode,'codename':item.codename})}>수정</button>
-                                <button className="action-button" onClick={() => handleDeleteClick({'idx':item.idx,'code':item.code,'subcode':item.subcode,'codename':item.codename})}>삭제</button>
+                            <td className='table-td'>
+                                <div style={{paddingRight:'20px'}} >다세대주택</div>
+                                <div style={{ 
+                                            wordBreak: 'break-word', // 단어가 너무 길면 줄 바꿈
+                                            overflowWrap: 'break-word', // 텍스트가 넘치는 경우 줄 바꿈
+                                            lineHeight: '1.5', // 줄 높이 조정
+                                            color: '#555', // 텍스트 색상 조정
+                                            fontSize: '14px' // 텍스트 크기 조정
+                                        }}>서울특별시 은평구 응암동 120-7 더어베인 703호 다세대주택</div>
+                                <div className="fontSize13">처분방식 : 매각&nbsp;&nbsp;<span className="orange f12">지상권/지역권,대항력 여지 있는 임차인</span></div>
+                                <div className="fontSize13 colorBlue" >토지 723.9㎡(218.98평) 건물 592.44㎡(179.213평)</div>
+                            </td>
+                            <td>
+                                <span className="fontSize13">28,470,000,000</span>
+                            </td>
+                            <td>
+                                <span className="fontSize13">05.10 10:00</span><br/>
+                                <span className="fontSize13">05.10 17:00</span>
+                            </td>
+                            <td>
+                                <span className="fontSize13">홍길동</span><br/>
+                                <span className="fontSize13">02-1234-1234</span>
                             </td>
                         </tr>
                     ))}
@@ -216,4 +224,4 @@ const CodeList: React.FC = () => {
     );
 };
 
-export default CodeList;
+export default OnBidList;

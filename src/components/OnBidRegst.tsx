@@ -17,7 +17,7 @@ import FindAddr from './modals/FindAddr';
 import InputAddr from './widget/InputAddr';
 import {CommonBody} from './common/CommonBody';
 
-const ViewRegst = () => {
+const OnBidRegst = () => {
 
  
     const [address1, setAddress1] = useState('');
@@ -198,6 +198,6 @@ const ViewRegst = () => {
     );
 }
 
-export default ViewRegst;
+export default OnBidRegst;
 
 
