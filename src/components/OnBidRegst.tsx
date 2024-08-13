@@ -1,83 +1,78 @@
-import ItemRegst from '../../src/components/widget/ItemRegst';
-import AddressInput from './widget/InputAddr';
-
-import React, {useEffect, useState} from 'react';
-
-// import Header from './widget/Header';
-import 'bootstrap/dist/css/bootstrap.min.css';
-// import Form from 'react-bootstrap/Form';
-import FileInput from './widget/FileInput';
-// import Button from 'react-bootstrap/Button';
-import Dropdown from 'react-bootstrap/Dropdown';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import { Form, Button } from 'react-bootstrap';
+import React, { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import './css/OnBidRegst.css'; // CSS 파일 import
 import FindAddr from './modals/FindAddr';
-import InputAddr from './widget/InputAddr';
-import {CommonBody} from './common/CommonBody';
+import {handlePhoneNumberChange,handleNumberInputChange,handleKeyPress} from './utils/validationUtils'
+
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const OnBidRegst = () => {
-
- 
     const [address1, setAddress1] = useState('');
     const [address2, setAddress2] = useState('');
+    const [detailAddress, setDetailAddress] = useState('');
+    const [roadNameAddress, setRoadNameAddress] = useState('');
     const [bankruptcyName, setBankruptcyName] = useState('');
     const [bankruptcyPhone, setBankruptcyPhone] = useState('');
-    const [file, setFile] = useState<File | null>(null);
-    const [additionalFiles, setAdditionalFiles] = useState([{ id: 0, file: null }]);
-    const [modalShow, setModalShow] = useState(false);
+    const [additionalFiles, setAdditionalFiles] = useState<{ id: number, file: File | null, selectedOption: string }[]>([{ id: 0, file: null, selectedOption: '' }]);
 
-    // useEffect(() => {
-    //     console.log(address1);
-    //     console.log(address2);
-    //     console.log(bankruptcyName);
-    //     console.log(bankruptcyPhone);
+    /* 감정가/보증금 */
+    const [connoisseur , setConnoisseur]= useState('');
+    const [selectsOptions, setSelectsOptions] = useState<{ idx: number, code: string, name: string }[]>([]);
+    const [caution, setCaution] = useState('');
+    const [memo, setMemo] = useState('');
 
-    // },[])
+    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태
 
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-    const doSubmit = async (e: React.FormEvent)=> {
+
+    /* 주소검색 요청 팝업 */
+    const toggleModal = () => {
+        setIsModalOpen(!isModalOpen);
+    };
+
+    const doSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (file?.size > MAX_FILE_SIZE) {
-            alert("File size exceeds 10MB limit");
-            return;
-        }
-    
-        additionalFiles.forEach((fileWrapper, index) => {
+        // 파일 크기 확인
+        for (const fileWrapper of additionalFiles) {
             if (fileWrapper.file && fileWrapper.file.size > MAX_FILE_SIZE) {
                 alert(`File ${fileWrapper.file.name} exceeds 10MB limit`);
                 return;
             }
-        });
-
-        const formData = new FormData();
-       
-        formData.append('onbidDTO', new Blob([JSON.stringify({
-            "addr1": address1,
-            "addr2": address2,
-            "bankruptcyName":bankruptcyName,
-            "bankruptcyPhone": bankruptcyPhone
-        })], { type: "application/json" }));
-
-
-        if (file) {
-            formData.append('file', file);
         }
 
-        additionalFiles.forEach((fileWrapper,index) => {
+        // FormData 생성
+        const formData = new FormData();
+        formData.append('onbidDTO', new Blob([JSON.stringify({
+            addr1: address1,
+            addr2: address2,
+            detailAddress: detailAddress,
+            roadNameAddress: roadNameAddress,
+            bankruptcyName: bankruptcyName,
+            bankruptcyPhone: bankruptcyPhone,
+            caution: caution,
+            memo: memo,
+        })], { type: "application/json" }));
+
+        // 파일과 옵션을 FormData에 추가
+        additionalFiles.forEach((fileWrapper, index) => {
             if (fileWrapper.file) {
-                formData.append('additionalFiles', fileWrapper.file);
+                // formData.append(`additionalFiles[${index}]`, fileWrapper.file);
+                // formData.append(`additionalFileOptions[${index}]`, fileWrapper.selectedOption);
+                formData.append(`additionalFiles`, fileWrapper.file);
+                formData.append(`additionalFileOptions`, fileWrapper.selectedOption);
             }
         });
 
+        // FormData 내용 확인
         formData.forEach((value, key) => {
             console.log(`${key}: ${value}`);
         });
 
-     
-        const URL = 'http://localhost:8080/api/onbid/onbidL'
+        // 서버에 요청 보내기
+        const URL = 'http://localhost:8080/api/onbid/onbidL';
         try {
             const response = await axios.post(URL, formData, {
                 headers: {
@@ -88,20 +83,22 @@ const OnBidRegst = () => {
         } catch (error) {
             console.error('Error submitting the form:', error);
         }
-        
-    }
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            setFile(e.target.files[0]);
-        }
     };
-
 
     const handleAdditionalFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const newFiles = additionalFiles.map((fileWrapper, idx) => {
             if (index === idx) {
-                return { ...fileWrapper, file: e.target.files[0] };
+                return { ...fileWrapper, file: e.target.files ? e.target.files[0] : null };
+            }
+            return fileWrapper;
+        });
+        setAdditionalFiles(newFiles);
+    };
+
+    const handleSelectChange = (index: number) => (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const newFiles = additionalFiles.map((fileWrapper, idx) => {
+            if (index === idx) {
+                return { ...fileWrapper, selectedOption: event.target.value };
             }
             return fileWrapper;
         });
@@ -109,95 +106,241 @@ const OnBidRegst = () => {
     };
 
     const addAdditionalFileInput = () => {
-        setAdditionalFiles([...additionalFiles,{ id: additionalFiles.length, file: null }]);
+        setAdditionalFiles([...additionalFiles, { id: additionalFiles.length, file: null, selectedOption: '' }]);
     };
 
-    /** 검색한 주소선택 */
-    const selectAddress = (addr1: string | null | undefined,addr2:string) => {
-     
-        if(typeof addr1 === 'string' && addr1.trim() !== ''){
+    const fetchSelectOptions = useCallback(async () => {
+        try {
+            const response = await axios.post('/api/onbid/file-code');
+            setSelectsOptions(response.data);
+        } catch (error) {
+            console.error('Error fetching select options:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchSelectOptions();
+    }, [fetchSelectOptions]);
+
+    const selectAddress = (addr1: string | null | undefined, addr2: string) => {
+        if (typeof addr1 === 'string' && addr1.trim() !== '') {
             setAddress1(addr1);
-            //setAddress2(addr2);
+            setRoadNameAddress(addr2);
         }
     }
-    
-    return (<>
-        {/* <div className='bd-item-regst'> */}
-       
-        <CommonBody>
-            <header>정보등록</header>
-            <Form onSubmit={doSubmit}>
-                <FindAddr
-                    show={modalShow}
-                    onHide={() => setModalShow(false)}
-                    onSelect={ selectAddress }
-                />
-                <InputAddr placeholder={"주소"} 
-                              value1={address1}
-                              value2={address2}
-                              onChange1={(e) => setAddress1(e.target.value)}
-                              onChange2={(e) => setAddress2(e.target.value)}
-                              showModal={() => { setModalShow(true)  } }
-                              />
 
-                <ItemRegst
-                           viewInfo={{
-                                "textName1": "파산관제인명",
-                                "textName2": "파산관제인 전화번호",
-                                "placeholder1": "파산관제인명",
-                                "placeholder2": "파산관제인 전화번호",
-                           }}     
-                           value1={ bankruptcyName }    
-                           value2={ bankruptcyPhone }   
-                           onChange1={(e) => setBankruptcyName(e.target.value)}
-                           onChange2={(e) => setBankruptcyPhone(e.target.value)} 
-                           label={"파산관제인명"}
-                           placeholder={"파산관제인명"} />
+    return (
+        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', textAlign: 'left' }}>
+            <h2>정보 등록</h2>
+            <form onSubmit={doSubmit}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                    <input
+                        type="text"
+                        value={address1}
+                        onChange={(e) => setAddress1(e.target.value)}
+                        placeholder="주소 입력"
+                        style={{ flex: 1, marginRight: '10px', height: '30px' }} // Adjust height
+                    />
+                    <button type="button" onClick={toggleModal} className="btn-css">주소 검색</button> {/* Adjust button height */}
+                </div>
 
-              
-                <FileInput label="매각공고" file={file} handleFileChange={handleFileChange}/>
-               
-                <Form.Group controlId="additionalFiles" className="mb-3">
-                    <Form.Label>추가 파일 첨부</Form.Label> 
-                    <Button variant="secondary"  onClick={addAdditionalFileInput}>추가</Button>
-                    
+                <div style={{ marginBottom: '20px' }}>
+                    <input
+                        type="text"
+                        value={detailAddress}
+                        onChange={(e) => setDetailAddress(e.target.value)}
+                        placeholder="상세 주소 입력"
+                        style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
+                    />
+                    <input
+                        type="text"
+                        value={roadNameAddress}
+                        readOnly={true}
+                        placeholder="도로명 주소"
+                        style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
+                    />
+                    <hr style={{ margin: '20px 0' }} />
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                    <label>파산관제인명</label>
+                    <input
+                        type="text"
+                        value={bankruptcyName}
+                        onChange={(e) => setBankruptcyName(e.target.value)}
+                        placeholder="파산관제인명"
+                        style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
+                    />
+                    <label>전화번호</label>
+                    <input
+                        type="text"
+                        value={bankruptcyPhone}
+                        onChange={(e) => handlePhoneNumberChange(e,setBankruptcyPhone)}
+                        placeholder="전화번호"
+                        style={{ width: '100%', marginBottom: '20px', height: '30px' }} // Adjust height
+                    />
+                </div>
+
+                <div style={{ marginBottom: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1px' }}>
+                        <span>파일 첨부</span>
+                        <button type="button" onClick={addAdditionalFileInput} className="btn-css">추가</button> {/* Adjust button height */}
+                    </div>
+                    <hr style={{ margin: '10px 0' }} />
                     {additionalFiles.map((fileWrapper, index) => (
-                        <Row className="mb-3" key={index}>
-                            <Form.Group as={Col} xs={3} controlId="fileType">
-                                <Dropdown>
-                                    <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                        Dropdown Button
-                                    </Dropdown.Toggle>
-
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                                        <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                                        <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                                    </Dropdown.Menu>
-      
-                                </Dropdown>
-                            </Form.Group>
-                            <Form.Group as={Col} xs={9}>
-                                <Form.Control
-                                            key={fileWrapper.id}
-                                            type="file"
-                                            onChange={handleAdditionalFileChange(index)}
-                                        />
-                            </Form.Group>
-                        </Row>
+                        <div key={fileWrapper.id} style={{ marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                <select
+                                    value={fileWrapper.selectedOption}
+                                    onChange={handleSelectChange(index)}
+                                    style={{ marginRight: '10px', height: '30px', width: '25%' }} // Adjust width
+                                >
+                                    <option value="">=선택=</option>
+                                    {selectsOptions.map(item => (
+                                        <option key={item.idx} value={item.code}>{item.name}</option>
+                                    ))}
+                                </select>
+                                <input
+                                    type="file"
+                                    onChange={handleAdditionalFileChange(index)}
+                                    style={{ height: '30px', width: '75%' }} // Adjust width
+                                />
+                            </div>
+                        </div>
                     ))}
-                   
-                </Form.Group>
-                
-                <Button variant="primary" type="submit">
-                    Submit
-                </Button>
-            </Form>
-         </CommonBody>
-        </>
+                </div>
+                <hr style={{ margin: '20px 0' }} />
+                <div style={{ marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <span>처분방식</span>
+                        <button type="button" className="btn-css">추가</button> {/* Adjust button height */}
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="처분방식"
+                        style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
+                    />
+                    <label>임차여부</label>
+                    <input
+                        type="text"
+                        placeholder="임차여부"
+                        style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
+                    />
+                    <label>토지</label>
+                    <input
+                        type="text"
+                        placeholder="토지"
+                        style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
+                    />
+                    <label>건축물</label>
+                    <input
+                        type="text"
+                        placeholder="건축물"
+                        style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
+                    />
+                    <label>부동산종류</label>
+                    <input
+                        type="text"
+                        placeholder="부동산종류"
+                        style={{ width: '100%', marginBottom: '20px', height: '30px' }} // Adjust height
+                    />
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <span>입찰일자</span>
+                        <button type="button" className="btn-css">추가</button> {/* Adjust button height */}
+                    </div>
+                    <hr style={{ margin: '10px 0' }} />
+                    <input
+                        type="text"
+                        placeholder="입찰 시작일"
+                        style={{ width: '48%', marginRight: '4%', height: '30px' }} // Adjust height
+                    />
+                    <input
+                        type="text"
+                        placeholder="입찰 종료일"
+                        style={{ width: '48%', height: '30px' }} // Adjust height
+                    />
+                </div>
+                <hr style={{ margin: '20px 0' }} />
+                <div style={{ marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <span>감정가 / 보증금</span>
+                        <button type="button" className="btn-css">추가</button> {/* Adjust button height */}
+                    </div>
+                    <hr style={{ margin: '10px 0' }} />
+                    <input
+                        type="text"
+                        value={connoisseur}
+                        placeholder="감정가 / 보증금"
+                        onChange={(e) => handleNumberInputChange(e, setConnoisseur)}
+                        style={{ width: '100%', height: '30px' }} // Adjust height
+                    />
+                </div>
+                <hr style={{ margin: '20px 0' }} />
+
+                <div style={{ marginBottom: '20px' }}>
+                    <label>유의사항</label>
+                    <CKEditor
+                        editor={ClassicEditor}
+                        data={caution}
+                        onChange={(event, editor) => {
+                            const data = editor.getData();
+                            setCaution(data);
+                        }}
+                        config={{
+                            toolbar: [
+                                'undo', 'redo', '|',
+                                'bold', 'italic', 'underline', 'strikethrough', '|',
+                                'fontColor', 'fontBackgroundColor', '|',
+                                'link', '|',
+                                'numberedList', 'bulletedList', '|',
+                                'alignment', '|',
+                                'insertTable', 'blockQuote', 'codeBlock', '|',
+                                'mediaEmbed', 'imageUpload', 'removeFormat'
+                            ],
+                        }}
+                    />
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                    <label>메모</label>
+                    <CKEditor
+                        editor={ClassicEditor}
+                        data={memo}
+                        onChange={(event, editor) => {
+                            const data = editor.getData();
+                            setMemo(data);
+                        }}
+                        config={{
+                            toolbar: [
+                                'undo', 'redo', '|',
+                                'bold', 'italic', 'underline', 'strikethrough', '|',
+                                'fontColor', 'fontBackgroundColor', '|',
+                                'link', '|',
+                                'numberedList', 'bulletedList', '|',
+                                'alignment', '|',
+                                'insertTable', 'blockQuote', 'codeBlock', '|',
+                                'mediaEmbed', 'imageUpload', 'removeFormat'
+                            ],
+                        }}
+                    />
+                </div>
+
+                <button type="submit" className='btn-submit'>
+                    제출
+                </button>
+            
+                {/* <FindAddr isOpen={isModalOpen} onClose={toggleModal} /> */}
+            </form>
+            <FindAddr
+                show={isModalOpen}
+                onHide={() => toggleModal()}
+                onSelect={selectAddress}
+            />
+        </div>
     );
-}
+};
 
 export default OnBidRegst;
-
-

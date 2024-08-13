@@ -22,7 +22,7 @@ const fetchData = async ({
       },
       signal: abortController,
       body:
-        method === "POST" || method === "DELETE"
+        method === "POST" || method === "DELETE" || method === "PUT"
           ? JSON.stringify(params)
           : null,
     });
@@ -42,11 +42,11 @@ const fetchData = async ({
     // console.error("Error fetching data:", error);
     //return null;
 
-    if (error.name === "AbortError") {
-      console.log("Fetch request was aborted");
-    } else {
-      console.error("An error occurred:", error);
-    }
+    // if (error.name === "AbortError") {
+    //   console.log("Fetch request was aborted");
+    // } else {
+    console.error("An error occurred:", error);
+    // }
   }
 };
 
@@ -58,10 +58,10 @@ const fetchData = async ({
 // ) => {
 
 export const RequestApi = async (
-  url,
+  url: string,
   method = "POST",
   params = {},
-  abortController
+  abortController: AbortSignal
 ) => {
   // const url = "/api/post/find";
 
@@ -81,7 +81,7 @@ export const RequestApi = async (
 export const findCount = async (
   params: { [key: string]: any },
   method: string = "POST",
-  abortController
+  abortController: AbortSignal
 ) => {
   const url = "/api/post/findCount";
 

@@ -14,7 +14,7 @@ export interface IAddressRegst {
   value2?: string;
   onChange1?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChange2?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  showModal?: () => void;
+  showModal: () => void;
 }
 
 interface ViewInfo {
@@ -26,7 +26,7 @@ interface ViewInfo {
 
 export type IFileInput = {
   label?: string;
-  file?: File;
+  file?: File | null;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -65,8 +65,25 @@ export type IAddres = {
 //   gu_upyeonbeonho: string;
 //   upyeonbeonhoillyeonbeonho: string;
 // }
-
+export interface IInput {
+  onHide: () => void;
+  show: boolean;
+  onSelect: (addr1: string, addr2: string) => void;
+}
 export interface Address {
   addr1: string;
   addr2: string;
+}
+
+// 데이터 타입 정의
+export interface CodeItem {
+  idx: number;
+  code: string;
+  scode: string;
+  name: string;
+}
+export interface Query {
+  codename?: string;
+  page?: number;
+  idx?: number; // idx를 추가
 }

@@ -9,7 +9,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Pagination from 'react-bootstrap/Pagination';
 
 import {RequestApi ,findCount} from '../../components/fetchapi/FetchApi';
-import { Address } from '../../components/model/regst';
+import { Address, IFileInput,IInput } from '../../components/model/regst';
 
 import '../../components/css/common.css';
 
@@ -24,8 +24,10 @@ const calculateTotalPages = (totalCount: number, itemsPerPage: number): number =
     return Math.ceil(totalCount / itemsPerPage);
 };
 
+
+// interface 
 const SEARCH_TYPE = 0
-export default function FindAddr(props) {
+const FindAddr: React.FC<IInput> = (props) => {
 
     const [address,setAddress] = useState<Address[]>([]);
     const [query, setQuery] = useState<{ [key: string]: any }>({});
@@ -35,7 +37,7 @@ export default function FindAddr(props) {
     const [pageGroup, setPageGroup] = useState<number>(1);
     const [totalCount, setTotalCount] = useState<number>(1);
 
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string|null>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
     const [debounceSearch,setDebounceSearch] = useState(searchInputRef)
     const abortControllerRef = useRef<AbortController | null>(null);
@@ -97,10 +99,10 @@ export default function FindAddr(props) {
     };
 
 
-    const initParam =(str) =>{
+    const initParam =(str:string) =>{
         // let newQuery = { ...query };
         // newQuery[`addr1`] = str || "";
-        let newQuery = {}
+        let newQuery:Record<string, any> = {};
         newQuery[`addr1`] = str || "";
         setQuery(newQuery);
         return newQuery
@@ -196,7 +198,7 @@ export default function FindAddr(props) {
         }
     };
 
-   const pageGroupChange = (pageGroup) => {
+   const pageGroupChange = (pageGroup: number) => {
         setPageGroup(pageGroup);
         setCurrentPage(((pageGroup - 1) * 10) + 1); // 첫 페이지로 이동
    }
@@ -231,14 +233,14 @@ export default function FindAddr(props) {
             
         setTotalpage(1);
         setPageGroup(1);
-        let newQuery = {}
-        newQuery[`addr1`] = searchInputRef.current.value || "";
+        let newQuery:Record<string, any> = {};
+        newQuery[`addr1`] = searchInputRef.current?.value || "";
        
         setCurrentPage(1);
         handleSearch(e,newQuery, -100); // 현재 searchValue를 검색
     };
 
-    const select = (addr1,addr2) => {
+    const select = (addr1:string,addr2:string) => {
         props.onSelect(addr1,addr2)
         handleCloseModal()
     }
@@ -363,3 +365,5 @@ export default function FindAddr(props) {
         </Modal>
     );
 }
+
+export default FindAddr;
