@@ -149,20 +149,20 @@ const CodeList: React.FC = () => {
             </div>
             <table>
                 <thead>
-                    <tr>
-                        <th style={{ width: '10%' }}>코드그룹</th>
-                        <th style={{ width: '10%' }}>코드값</th>
-                        <th style={{ width: '30%' }}>코드명</th>
-                        <th style={{ width: '10%' }}>작업</th>
+                    <tr >
+                        <th style={{ width: '10%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>코드그룹</th>
+                        <th style={{ width: '10%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>코드값</th>
+                        <th style={{ width: '30%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>코드명</th>
+                        <th style={{ width: '10%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>작업</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.map(item => (
                         <tr key={item.idx}>
-                            <td>{item.scode}</td>
-                            <td>{item.code}</td>
-                            <td>{item.name}</td>
-                            <td className="actions">
+                            <td className='table-td table-td-text-align-center'>{item.scode}</td>
+                            <td className='table-td table-td-text-align-center'>{item.code}</td>
+                            <td className='left table-td'>{item.name}</td>
+                            <td className="table-td table-td-text-align-center">
                                 <button className="action-button" onClick={() => handleEditClick({'idx':item.idx,'code':item.code,'scode':item.scode,'name':item.name})}>수정</button>
                                 <button className="action-button" onClick={() => handleDeleteClick({'idx':item.idx,'code':item.code,'scode':item.scode,'name':item.name})}>삭제</button>
                             </td>

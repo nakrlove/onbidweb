@@ -152,10 +152,10 @@ const OnBidList: React.FC = () => {
             <table>
                 <thead>
                     <tr>
-                        <th style={{ width: '50%' }}>소재지</th>
-                        <th style={{ width: '15%' }}>감정가</th>
-                        <th style={{ width: '10%' }}>입찰일자<br/>마감일자</th>
-                        <th style={{ width: '15%' }}>파산관제인정보</th>
+                        <th style={ { width: '50%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>소재지</th>
+                        <th style={{ width: '15%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>감정가</th>
+                        <th style={{ width: '10%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>입찰일자<br/>마감일자</th>
+                        <th style={{ width: '15%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>파산관제인정보</th>
                         {/* <th style={{ width: '30%' }}>감정가\n최저가</th> */}
                         {/* <th style={{ width: '10%' }}>작업</th> */}
                     </tr>
@@ -175,14 +175,14 @@ const OnBidList: React.FC = () => {
                                 <div className="fontSize13">처분방식 : 매각&nbsp;&nbsp;<span className="orange f12">지상권/지역권,대항력 여지 있는 임차인</span></div>
                                 <div className="fontSize13 colorBlue" >토지 723.9㎡(218.98평) 건물 592.44㎡(179.213평)</div>
                             </td>
-                            <td>
+                            <td className='table-td table-td-text-align-center'>
                                 <span className="fontSize13">28,470,000,000</span>
                             </td>
-                            <td>
+                            <td className='table-td table-td-text-align-center'>
                                 <span className="fontSize13">05.10 10:00</span><br/>
                                 <span className="fontSize13">05.10 17:00</span>
                             </td>
-                            <td>
+                            <td className='table-td table-td-text-align-center'>
                                 <span className="fontSize13">홍길동</span><br/>
                                 <span className="fontSize13">02-1234-1234</span>
                             </td>

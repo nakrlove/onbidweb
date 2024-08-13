@@ -49,7 +49,7 @@
   
   th, td {
     padding: 10px;
-    text-align: center;
+    /* text-align: center; */
   }
   
   th {
@@ -60,9 +60,7 @@
     font-size: 16px; /* 버튼과 맞춤 */
   }
   
-  .actions {
-    text-align: center;
-  }
+
   
   .action-button {
     padding: 6px 12px; /* 수정/삭제 버튼 크기 맞춤 */
@@ -87,20 +85,40 @@
     background-color: #ddd;
   }  
 
+  .table {
+    border-collapse: collapse; /* 테이블 경계선이 겹치지 않도록 설정 */
+  }
   .table-td {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ddd; /* 하단 경계선 */
+    border-left: 1px solid #ddd;   /* 왼쪽 경계선 추가 */
+    border-right: 1px solid #ddd;  /* 오른쪽 경계선 추가 */
     padding: 3px 5px 2px 5px;
     font-weight: normal;
     height: 23px;
-    text-align: left;
   }
 
+  .table-td .left {
+    text-align: left !important;
+  }
 
-.colorBlue {
-  color: #2a62c5;
-  font-size: 10px;
+  .table-td-text-align-center {
+    text-align: center;
+  }
+/* 테이블의 첫 번째 열에 대한 왼쪽 경계선 제거 */
+.table tr td:first-child {
+    border-left: none; /* 첫 번째 열에서는 왼쪽 경계선 제거 */
 }
 
-.fontSize13{
-  font-size: 13px;
+/* 테이블의 마지막 열에 대한 오른쪽 경계선 제거 */
+.table tr td:last-child {
+    border-right: none; /* 마지막 열에서는 오른쪽 경계선 제거 */
 }
+
+  .colorBlue {
+    color: #2a62c5;
+    font-size: 10px;
+  }
+
+  .fontSize13{
+    font-size: 13px;
+  }

@@ -11,18 +11,27 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const OnBidRegst = () => {
     const [address1, setAddress1] = useState('');
-    const [address2, setAddress2] = useState('');
+    // const [address2, setAddress2] = useState('');
     const [detailAddress, setDetailAddress] = useState('');
     const [roadNameAddress, setRoadNameAddress] = useState('');
     const [bankruptcyName, setBankruptcyName] = useState('');
     const [bankruptcyPhone, setBankruptcyPhone] = useState('');
     const [additionalFiles, setAdditionalFiles] = useState<{ id: number, file: File | null, selectedOption: string }[]>([{ id: 0, file: null, selectedOption: '' }]);
 
+    const [bidmethod,setBidmethod]  = useState<{ sdate: string, edate: string , evalue: number,deposit: number }[]>([{ sdate: '', edate: '', evalue: 0,deposit: 0 }]);
+
     /* 감정가/보증금 */
     const [connoisseur , setConnoisseur]= useState('');
     const [selectsOptions, setSelectsOptions] = useState<{ idx: number, code: string, name: string }[]>([]);
-    const [caution, setCaution] = useState('');
+    const [note, setNote] = useState('');
     const [memo, setMemo] = useState('');
+    const [renter, setRenter] = useState(''); /* 임차여부 */
+    const [land, setLand] = useState(''); /* 토지 */
+    const [build, setBuild] = useState(''); /* 건축물 */
+    const [estateType, setEstateType] = useState(''); /* 부동산종류 */
+    const [disposal, setDisposal] = useState(''); /* 처분방식 */
+    
+    
 
     const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태
 
@@ -47,24 +56,30 @@ const OnBidRegst = () => {
         const formData = new FormData();
         formData.append('onbidDTO', new Blob([JSON.stringify({
             addr1: address1,
-            addr2: address2,
             detailAddress: detailAddress,
             roadNameAddress: roadNameAddress,
             bankruptcyName: bankruptcyName,
             bankruptcyPhone: bankruptcyPhone,
-            caution: caution,
+            note: note,     /* 유의사항*/
             memo: memo,
+            renter: renter, /*임차여부*/
+            land: land,     /*토지*/
+            build: build,   /*건축물*/
+            estateType: estateType, /* 부동산 종류*/
+            disposal: disposal /* 처분방식*/
         })], { type: "application/json" }));
 
         // 파일과 옵션을 FormData에 추가
         additionalFiles.forEach((fileWrapper, index) => {
             if (fileWrapper.file) {
-                // formData.append(`additionalFiles[${index}]`, fileWrapper.file);
-                // formData.append(`additionalFileOptions[${index}]`, fileWrapper.selectedOption);
                 formData.append(`additionalFiles`, fileWrapper.file);
                 formData.append(`additionalFileOptions`, fileWrapper.selectedOption);
             }
         });
+
+
+         formData.append('onbidDays', new Blob([JSON.stringify(bidmethod)], { type: 'application/json' }));
+         // 입찰일자 /감정가/보증금
 
         // FormData 내용 확인
         formData.forEach((value, key) => {
@@ -83,6 +98,18 @@ const OnBidRegst = () => {
         } catch (error) {
             console.error('Error submitting the form:', error);
         }
+    };
+
+    // 입력 값 변경 핸들러
+    const handleInputChange = (index:number, event:React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        const newBidmethod = [...bidmethod];
+        newBidmethod[index] = {
+            ...newBidmethod[index],
+            [name]: value,
+        };
+        console.log(JSON.stringify(newBidmethod))
+        setBidmethod(newBidmethod);
     };
 
     const handleAdditionalFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,6 +134,17 @@ const OnBidRegst = () => {
 
     const addAdditionalFileInput = () => {
         setAdditionalFiles([...additionalFiles, { id: additionalFiles.length, file: null, selectedOption: '' }]);
+    };
+
+    /** 입찰일자/감정가/보증금 추가 */
+    const addBidmethod = () => {
+        setBidmethod([...bidmethod, { sdate: '', edate: '', evalue: 0,deposit: 0 }]);
+    };
+    
+    /** 입찰일자/감정가/보증금 삭제 */
+    const delBidmethod = (idx:number) => {
+        const updatedBidmethod = bidmethod.filter((_, i) => i !== idx);
+        setBidmethod(updatedBidmethod);
     };
 
     const fetchSelectOptions = useCallback(async () => {
@@ -141,7 +179,7 @@ const OnBidRegst = () => {
                         placeholder="주소 입력"
                         style={{ flex: 1, marginRight: '10px', height: '30px' }} // Adjust height
                     />
-                    <button type="button" onClick={toggleModal} className="btn-css">주소 검색</button> {/* Adjust button height */}
+                    <button type="button" onClick={toggleModal} className="btn-css">주소 검색</button> 
                 </div>
 
                 <div style={{ marginBottom: '20px' }}>
@@ -217,77 +255,108 @@ const OnBidRegst = () => {
                     </div>
                     <input
                         type="text"
+                        onChange={(e) => setDisposal(e.target.value)}
                         placeholder="처분방식"
                         style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
                     />
                     <label>임차여부</label>
                     <input
                         type="text"
+                        value={renter}
+                        onChange={(e) => setRenter(e.target.value)}
                         placeholder="임차여부"
                         style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
                     />
                     <label>토지</label>
                     <input
                         type="text"
+                        value={land}
+                        onChange={(e) => setLand(e.target.value)}
                         placeholder="토지"
                         style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
                     />
                     <label>건축물</label>
                     <input
                         type="text"
+                        value={build}
+                        onChange={(e) => setBuild(e.target.value)}
                         placeholder="건축물"
                         style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
                     />
                     <label>부동산종류</label>
                     <input
                         type="text"
+                        value={estateType}
                         placeholder="부동산종류"
                         style={{ width: '100%', marginBottom: '20px', height: '30px' }} // Adjust height
                     />
                 </div>
 
+                
                 <div style={{ marginBottom: '20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                         <span>입찰일자</span>
-                        <button type="button" className="btn-css">추가</button> {/* Adjust button height */}
+                        <button type="button" className="btn-css" onClick={addBidmethod}> + </button>
                     </div>
-                    <hr style={{ margin: '10px 0' }} />
-                    <input
-                        type="text"
-                        placeholder="입찰 시작일"
-                        style={{ width: '48%', marginRight: '4%', height: '30px' }} // Adjust height
-                    />
-                    <input
-                        type="text"
-                        placeholder="입찰 종료일"
-                        style={{ width: '48%', height: '30px' }} // Adjust height
-                    />
+                  
+
+                    {bidmethod.map((item,index) => (
+                        <div key={index}>
+                            <hr style={{ margin: '10px 0' }} />
+                            <input
+                                type="text"
+                                value={item.sdate || ''}
+                                name={`sdate`} 
+                                placeholder="입찰 시작일"
+                                onChange={(e) => handleInputChange(index,e)}
+                                style={{ width: '48%', marginRight: '4%', height: '30px' }} 
+                            />
+                            <input
+                                type="text"
+                                value={item.edate || ''}
+                                name={`edate`} 
+                                placeholder="입찰 종료일"
+                                onChange={(e) => handleInputChange(index,e)}
+                                style={{ width: '48%', height: '30px' }} 
+                            />
+    
+                            <div style={{ display: 'flex', alignItems: 'center',marginTop: '10px', marginBottom: '1px' }}>
+                                <span>감정가 / 보증금</span>
+                                <button type="button" className="btn-css" onClick={() => delBidmethod(index)}> - </button>
+                            </div>
+                     
+                            <input
+                                type="text"
+                                value={item.evalue || ''}
+                                name={`evalue`}
+                                placeholder="감정가"
+                                onChange={(e) => handleInputChange(index,e)}
+                                style={{ width: '48%', marginRight: '4%', height: '30px' }} 
+                            />
+                             <input
+                                type="text"
+                                value={item.deposit || ''}
+                                name={`deposit`}
+                                placeholder="보증금"
+                                onChange={(e) => {handleInputChange(index,e)}}
+                                style={{ width: '48%', height: '30px' }} // Adjust height
+                            />
+                        </div>
+                        ))}
+
                 </div>
-                <hr style={{ margin: '20px 0' }} />
-                <div style={{ marginBottom: '20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <span>감정가 / 보증금</span>
-                        <button type="button" className="btn-css">추가</button> {/* Adjust button height */}
-                    </div>
-                    <hr style={{ margin: '10px 0' }} />
-                    <input
-                        type="text"
-                        value={connoisseur}
-                        placeholder="감정가 / 보증금"
-                        onChange={(e) => handleNumberInputChange(e, setConnoisseur)}
-                        style={{ width: '100%', height: '30px' }} // Adjust height
-                    />
-                </div>
+                
+           
                 <hr style={{ margin: '20px 0' }} />
 
                 <div style={{ marginBottom: '20px' }}>
                     <label>유의사항</label>
                     <CKEditor
                         editor={ClassicEditor}
-                        data={caution}
+                        data={note}
                         onChange={(event, editor) => {
                             const data = editor.getData();
-                            setCaution(data);
+                            setNote(data);
                         }}
                         config={{
                             toolbar: [
