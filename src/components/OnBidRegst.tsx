@@ -13,9 +13,9 @@ const OnBidRegst = () => {
     const [address1, setAddress1] = useState('');
     // const [address2, setAddress2] = useState('');
     const [detailAddress, setDetailAddress] = useState('');
-    const [roadNameAddress, setRoadNameAddress] = useState('');
-    const [bankruptcyName, setBankruptcyName] = useState('');
-    const [bankruptcyPhone, setBankruptcyPhone] = useState('');
+    const [rdaddr, setRdaddr] = useState('');
+    const [bruptcyAdminName, setBruptcyAdminName] = useState('');
+    const [bruptcyAdminPhone, setBruptcyAdminPhone] = useState('');
     const [additionalFiles, setAdditionalFiles] = useState<{ id: number, file: File | null, selectedOption: string }[]>([{ id: 0, file: null, selectedOption: '' }]);
 
     const [bidmethod,setBidmethod]  = useState<{ sdate: string, edate: string , evalue: number,deposit: number }[]>([{ sdate: '', edate: '', evalue: 0,deposit: 0 }]);
@@ -26,10 +26,10 @@ const OnBidRegst = () => {
     const [note, setNote] = useState('');
     const [memo, setMemo] = useState('');
     const [renter, setRenter] = useState(''); /* 임차여부 */
-    const [land, setLand] = useState(''); /* 토지 */
-    const [build, setBuild] = useState(''); /* 건축물 */
+    const [ldarea, setLdarea] = useState(''); /* 토지 */
+    const [buildarea, setBuildarea] = useState(''); /* 건축물 */
     const [estateType, setEstateType] = useState(''); /* 부동산종류 */
-    const [disposal, setDisposal] = useState(''); /* 처분방식 */
+    const [disposaltype, setDisposaltype] = useState(''); /* 처분방식 */
     
     
 
@@ -57,16 +57,16 @@ const OnBidRegst = () => {
         formData.append('onbidDTO', new Blob([JSON.stringify({
             addr1: address1,
             detailAddress: detailAddress,
-            roadNameAddress: roadNameAddress,
-            bankruptcyName: bankruptcyName,
-            bankruptcyPhone: bankruptcyPhone,
-            note: note,     /* 유의사항*/
+            rd_addr: rdaddr,
+            bruptcy_admin_name: bruptcyAdminName,
+            bruptcy_admin_phone: bruptcyAdminPhone,
+            note: note,            /* 유의사항*/
             memo: memo,
-            renter: renter, /*임차여부*/
-            land: land,     /*토지*/
-            build: build,   /*건축물*/
-            estateType: estateType, /* 부동산 종류*/
-            disposal: disposal /* 처분방식*/
+            renter: renter,        /*임차여부*/
+            ld_area: ldarea,       /*토지*/
+            build_area: buildarea,          /*건축물*/
+            estateType: estateType,/* 부동산 종류*/
+            disposal_type: disposaltype     /* 처분방식*/
         })], { type: "application/json" }));
 
         // 파일과 옵션을 FormData에 추가
@@ -163,7 +163,7 @@ const OnBidRegst = () => {
     const selectAddress = (addr1: string | null | undefined, addr2: string) => {
         if (typeof addr1 === 'string' && addr1.trim() !== '') {
             setAddress1(addr1);
-            setRoadNameAddress(addr2);
+            setRdaddr(addr2);
         }
     }
 
@@ -192,7 +192,7 @@ const OnBidRegst = () => {
                     />
                     <input
                         type="text"
-                        value={roadNameAddress}
+                        value={rdaddr}
                         readOnly={true}
                         placeholder="도로명 주소"
                         style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
@@ -204,16 +204,16 @@ const OnBidRegst = () => {
                     <label>파산관제인명</label>
                     <input
                         type="text"
-                        value={bankruptcyName}
-                        onChange={(e) => setBankruptcyName(e.target.value)}
+                        value={bruptcyAdminName}
+                        onChange={(e) => setBruptcyAdminName(e.target.value)}
                         placeholder="파산관제인명"
                         style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
                     />
                     <label>전화번호</label>
                     <input
                         type="text"
-                        value={bankruptcyPhone}
-                        onChange={(e) => handlePhoneNumberChange(e,setBankruptcyPhone)}
+                        value={bruptcyAdminPhone}
+                        onChange={(e) => handlePhoneNumberChange(e,setBruptcyAdminPhone)}
                         placeholder="전화번호"
                         style={{ width: '100%', marginBottom: '20px', height: '30px' }} // Adjust height
                     />
@@ -255,7 +255,7 @@ const OnBidRegst = () => {
                     </div>
                     <input
                         type="text"
-                        onChange={(e) => setDisposal(e.target.value)}
+                        onChange={(e) => setDisposaltype(e.target.value)}
                         placeholder="처분방식"
                         style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
                     />
@@ -270,16 +270,16 @@ const OnBidRegst = () => {
                     <label>토지</label>
                     <input
                         type="text"
-                        value={land}
-                        onChange={(e) => setLand(e.target.value)}
+                        value={ldarea}
+                        onChange={(e) => setLdarea(e.target.value)}
                         placeholder="토지"
                         style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
                     />
                     <label>건축물</label>
                     <input
                         type="text"
-                        value={build}
-                        onChange={(e) => setBuild(e.target.value)}
+                        value={buildarea}
+                        onChange={(e) => setBuildarea(e.target.value)}
                         placeholder="건축물"
                         style={{ width: '100%', marginBottom: '10px', height: '30px' }} // Adjust height
                     />
@@ -303,26 +303,30 @@ const OnBidRegst = () => {
                     {bidmethod.map((item,index) => (
                         <div key={index}>
                             <hr style={{ margin: '10px 0' }} />
-                            <input
-                                type="text"
-                                value={item.sdate || ''}
-                                name={`sdate`} 
-                                placeholder="입찰 시작일"
-                                onChange={(e) => handleInputChange(index,e)}
-                                style={{ width: '48%', marginRight: '4%', height: '30px' }} 
-                            />
-                            <input
-                                type="text"
-                                value={item.edate || ''}
-                                name={`edate`} 
-                                placeholder="입찰 종료일"
-                                onChange={(e) => handleInputChange(index,e)}
-                                style={{ width: '48%', height: '30px' }} 
-                            />
-    
+                            <div style={{ display: 'flex'}}>
+                                <input
+                                    type="date"
+                                    value={item.sdate || ''}
+                                    name={`sdate`} 
+                                    placeholder="입찰 시작일"
+                                    onChange={(e) => handleInputChange(index,e)}
+                                    onKeyDown={(e) => e.preventDefault()} // Prevent direct typing
+                                    style={{ width: '43%', marginRight: '4%', height: '30px',pointerEvents: 'auto',userSelect: 'none'}} 
+                                />
+                                <input
+                                    type="date"
+                                    value={item.edate || ''}
+                                    name={`edate`} 
+                                    placeholder="입찰 종료일"
+                                    onKeyDown={(e) => e.preventDefault()} // Prevent direct typing
+                                    onChange={(e) => handleInputChange(index,e)}
+                                    style={{ width: '43%', height: '30px',pointerEvents: 'auto',userSelect: 'none' }} 
+                                />
+                                <button type="button" className="btn-css" onClick={() => delBidmethod(index)}> - </button>
+                            </div>
                             <div style={{ display: 'flex', alignItems: 'center',marginTop: '10px', marginBottom: '1px' }}>
                                 <span>감정가 / 보증금</span>
-                                <button type="button" className="btn-css" onClick={() => delBidmethod(index)}> - </button>
+                                {/* <button type="button" className="btn-css" onClick={() => delBidmethod(index)}> - </button> */}
                             </div>
                      
                             <input
@@ -331,7 +335,7 @@ const OnBidRegst = () => {
                                 name={`evalue`}
                                 placeholder="감정가"
                                 onChange={(e) => handleInputChange(index,e)}
-                                style={{ width: '48%', marginRight: '4%', height: '30px' }} 
+                                style={{ width: '43%', marginRight: '4%', height: '30px' }} 
                             />
                              <input
                                 type="text"
@@ -339,7 +343,7 @@ const OnBidRegst = () => {
                                 name={`deposit`}
                                 placeholder="보증금"
                                 onChange={(e) => {handleInputChange(index,e)}}
-                                style={{ width: '48%', height: '30px' }} // Adjust height
+                                style={{ width: '43%', height: '30px' }} // Adjust height
                             />
                         </div>
                         ))}
