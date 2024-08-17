@@ -14,6 +14,7 @@ const CodeList: React.FC = () => {
     const abortControllerRef = useRef<AbortController | null>(null);
     const navigate = useNavigate(); // useNavigate 훅 사용
 
+    const [error,setError] = useState<string>('');
     // 검색 처리
     const handleSearch = () => {
         setCurrentPage(1);
@@ -112,18 +113,19 @@ const CodeList: React.FC = () => {
             console.log(JSON.stringify(resultData))
             console.log("================resultData==================")
             // 응답 데이터가 배열인지 확인
-            if (Array.isArray(resultData.codes.content)) {
+            if (Array.isArray(resultData.codes.content) && resultData.codes.content.length !== 0) {
                 setData(resultData.codes.content);
 
                 /* 페이징 계산 */
                 setTotalPages(Math.ceil(resultData.count / itemsPerPage));
-                console.log("==========setData called========")
             } else {
-                setData([]); // 응답 데이터가 배열이 아닌 경우 빈 배열로 설정
+                setTotalPages(1);
+                setData([]);
+                setError('데이터가 존재하지 않습니다.'); // 응답 데이터가 배열이 아닌 경우 빈 배열로 설정
                 console.log('Received data is not an array.');
             }
         } catch (err) {
-            setData([]); // 오류 발생 시 빈 배열로 설정
+            setError(`An error occurred while fetching data:${err}`); // 오류 발생 시 빈 배열로 설정
             console.error('An error occurred while fetching data:', err);
         }
     }, [currentPage]);
@@ -157,7 +159,11 @@ const CodeList: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map(item => (
+                    
+                {!data || (Array.isArray(data) && data.length === 0) ? (
+                    <tr ><td colSpan={4} className='table-td-text-align-center' >{error}</td></tr>
+                ) : ( 
+                    data.map(item => (
                         <tr key={item.idx}>
                             <td className='table-td table-td-text-align-center'>{item.scode}</td>
                             <td className='table-td table-td-text-align-center'>{item.code}</td>
@@ -167,7 +173,8 @@ const CodeList: React.FC = () => {
                                 <button className="action-button" onClick={() => handleDeleteClick({'idx':item.idx,'code':item.code,'scode':item.scode,'name':item.name})}>삭제</button>
                             </td>
                         </tr>
-                    ))}
+                    ))
+                )}
                 </tbody>
             </table>
             <div className="pagination">

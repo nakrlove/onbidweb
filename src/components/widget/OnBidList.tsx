@@ -5,10 +5,30 @@ import '../css/common.css';
 import { Query } from '../../components/model/regst';
 // 데이터 타입 정의
 interface OnbidItem {
-    idx: number;
-    code: string;
-    subcode: string;
-    codename: string;
+     bididx: number;
+     addr1 :  string ,
+     addr2 :  string ,
+     regdate : string ,
+     items : string,
+     ld_area :  string ,
+     ld_area_pyeong:number,
+     build_area :  string ,
+     build_area_pyeong:number,
+     rd_addr :  string ,
+     streeaddr2 : string,
+     bruptcy_admin_name :  string ,
+     bruptcy_admin_phone :  string ,
+     renter :  string ,
+     estateType :  string ,
+     disposal_type :  string ,
+     note :  string ,
+     land_classification :  string ,
+     progress_status : string,
+     evalue: string,
+     sdate: string,
+     edate: string,
+     deposit: string,
+     land_classification_name: string
 }
   
 const OnBidList: React.FC = () => {
@@ -20,6 +40,7 @@ const OnBidList: React.FC = () => {
     const abortControllerRef = useRef<AbortController | null>(null);
     const navigate = useNavigate(); // useNavigate 훅 사용
 
+    const [error,setError]  = useState<string>('');
     // 검색 처리
     const handleSearch = () => {
         setCurrentPage(1);
@@ -27,26 +48,24 @@ const OnBidList: React.FC = () => {
     };
     // 등록 버튼 클릭 핸들러
     const handleRegisterClick = () => {
-        navigate('/onbid-regst'); // 등록 화면으로 이동
+        navigate('/onbid-regst',{ replace: true }); // 등록 화면으로 이동
     };
 
 
-    /** JSON형식 파라메터값 넘기기 (수정요청)*/
-    const handleEditClick = (data: object) => {
+    const handleDetailClick = (data: object) => {
         const jsonData = JSON.stringify(data);
+        console.log(jsonData)
         const encodedData = encodeURIComponent(jsonData);
-        navigate(`/code-regist?data=${encodedData}`); 
-    }
+        navigate(`/onbid-detail?data=${encodedData}`,{ replace: true }); // 등록 화면으로 이동
+    };
 
-    //삭제 클릭 핸들러
-    const handleDeleteClick = (data:OnbidItem) => {
-        const userConfirmed = window.confirm('삭제하시겠습니까?');
-        if (userConfirmed) {
-            fetchData(data,"DELETE")
-        }
-      
-    }
-  
+    /** JSON형식 파라메터값 넘기기 (수정요청)*/
+    // const handleEditClick = (data: object) => {
+    //     const jsonData = JSON.stringify(data);
+    //     const encodedData = encodeURIComponent(jsonData);
+    //     navigate(`/code-regist?data=${encodedData}`, { replace: true }); 
+    // }
+
     // 페이지 버튼 클릭 처리
     const handlePageChange = (direction: 'next' | 'prev' | 'first' | 'last' | number) => {
         if (direction === 'next') {
@@ -74,7 +93,7 @@ const OnBidList: React.FC = () => {
         if (!searchCode.current) return;
 
         const formData = new FormData();
-        formData.append('filecode', searchCode.current.value);
+        //formData.append('filecode', searchCode.current.value);
 
         // 이전 요청을 취소합니다.
         if (abortControllerRef.current) {
@@ -97,14 +116,15 @@ const OnBidList: React.FC = () => {
                 if (parsedData) {
                     //삭제처리 키값추가 구분자 
                     newQuery = {...newQuery}
-                    newQuery[`idx`] = parsedData.idx
+                    newQuery[`idx`] = parsedData.bididx
                 }
             } catch (error) {
+                setError(`Failed to parse JSON data from query string:${error}`)
                 console.error('Failed to parse JSON data from query string:', error);
             }
         }
      
-        let url = method === 'POST' ? "/api/onbid/codelist" : "/api/onbid/deletecode";
+        let url = method === 'POST' ? "/api/onbid/onbidAllList" : "/api/onbid/deletecode";
         try {
             const resultData = await RequestApi(url,method,newQuery, signal);
 
@@ -115,18 +135,19 @@ const OnBidList: React.FC = () => {
             }
 
             console.log("응답결과 ===")
-            console.log(resultData)
-            if (Array.isArray(resultData.codes.content)) {
-                setData(resultData.codes.content);
+            console.log(JSON.stringify(resultData))
+            if (Array.isArray(resultData.onbid)) {
+                setData(resultData.onbid);
 
                 /* 페이징 계산 */
                 setTotalPages(Math.ceil(resultData.count / itemsPerPage));
             } else {
                 setData([]); // 응답 데이터가 배열이 아닌 경우 빈 배열로 설정
                 console.log('Received data is not an array.');
+                setError(`데이트가 존재하지 않습니다.`)
             }
         } catch (err) {
-            setData([]); // 오류 발생 시 빈 배열로 설정
+            setError(`An error occurred while fetching data:${err}`); // 오류 발생 시 빈 배열로 설정
             console.error('An error occurred while fetching data:', err);
         }
     }, [currentPage]);
@@ -161,33 +182,39 @@ const OnBidList: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map(item => (
-                        <tr key={item.idx}>
+
+
+                    {!data || (Array.isArray(data) && data.length === 0) ? ( 
+                        <tr ><td colSpan={4} className='table-td-text-align-center' >{error}</td></tr>
+                    ) : (data.map(item => (
+                        
+                        <tr key={item.bididx} onClick={() => handleDetailClick({ 'bididx':item.bididx })}>
                             <td className='table-td'>
-                                <div style={{paddingRight:'20px'}} >다세대주택</div>
+                                <div style={{paddingRight:'20px'}} >다세대주택 (지목:{item.land_classification_name})</div>
                                 <div style={{ 
                                             wordBreak: 'break-word', // 단어가 너무 길면 줄 바꿈
                                             overflowWrap: 'break-word', // 텍스트가 넘치는 경우 줄 바꿈
                                             lineHeight: '1.5', // 줄 높이 조정
                                             color: '#555', // 텍스트 색상 조정
                                             fontSize: '14px' // 텍스트 크기 조정
-                                        }}>서울특별시 은평구 응암동 120-7 더어베인 703호 다세대주택</div>
-                                <div className="fontSize13">처분방식 : 매각&nbsp;&nbsp;<span className="orange f12">지상권/지역권,대항력 여지 있는 임차인</span></div>
-                                <div className="fontSize13 colorBlue" >토지 723.9㎡(218.98평) 건물 592.44㎡(179.213평)</div>
+                                        }}>{item.addr1} {item.addr2}</div>
+                                <div className="fontSize13">처분방식 : {item.disposal_type} <span className="orange f12">{item.renter}</span></div>
+                                <div className="fontSize13 colorBlue" >토지 {item.ld_area}㎡({ item.ld_area_pyeong}평) 건물 {item.build_area}㎡({item.build_area_pyeong}평)</div>
                             </td>
                             <td className='table-td table-td-text-align-center'>
-                                <span className="fontSize13">28,470,000,000</span>
+                                <span className="fontSize13">{item.evalue}</span>
                             </td>
                             <td className='table-td table-td-text-align-center'>
-                                <span className="fontSize13">05.10 10:00</span><br/>
-                                <span className="fontSize13">05.10 17:00</span>
+                                <span className="fontSize13">{item.sdate}</span><br/>
+                                <span className="fontSize13">{item.edate}</span>
                             </td>
                             <td className='table-td table-td-text-align-center'>
-                                <span className="fontSize13">홍길동</span><br/>
-                                <span className="fontSize13">02-1234-1234</span>
+                                <span className="fontSize13">{item.bruptcy_admin_name}</span><br/>
+                                <span className="fontSize13">{item.bruptcy_admin_phone}</span>
                             </td>
                         </tr>
-                    ))}
+                    )))}
+            
                 </tbody>
             </table>
             <div className="pagination">
