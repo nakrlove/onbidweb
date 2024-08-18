@@ -37,6 +37,7 @@ interface OnbidItem {
      sdate: string,
      edate: string,
      deposit: string,
+     status: string,
      land_classification_name: string
 }
   
@@ -144,17 +145,21 @@ const OnBidList: React.FC = () => {
 
             console.log("응답결과 ===")
             console.log(JSON.stringify(resultData))
-            if (Array.isArray(resultData.onbid)) {
+            if (Array.isArray(resultData.onbid) && resultData.count !== 0) {
                 setData(resultData.onbid);
-
                 /* 페이징 계산 */
                 setTotalPages(Math.ceil(resultData.count / itemsPerPage));
-            } else {
-                setData([]); // 응답 데이터가 배열이 아닌 경우 빈 배열로 설정
-                console.log('Received data is not an array.');
-                setError(`데이트가 존재하지 않습니다.`)
-            }
+                return;
+            } 
+
+            setData([]); // 응답 데이터가 배열이 아닌 경우 빈 배열로 설정
+            setTotalPages(1);
+            setError(`데이트가 존재하지 않습니다.`)
+            console.log('Received data is not an array.');
+            
         } catch (err) {
+            setData([]); // 응답 데이터가 배열이 아닌 경우 빈 배열로 설정
+            setTotalPages(1);
             setError(`An error occurred while fetching data:${err}`); // 오류 발생 시 빈 배열로 설정
             console.error('An error occurred while fetching data:', err);
         }
@@ -208,7 +213,7 @@ const OnBidList: React.FC = () => {
                                 </div> */}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingRight: '20px' }}>
                                     <span>다세대주택 (지목: {item.land_classification_name})</span>
-                                    <span>(지목: 낙찰)</span>
+                                    { item.status ? (<span className="onbid-color">{item.status}</span>) :("") }
                                 </div>
                                 <div style={{ 
                                             wordBreak: 'break-word', // 단어가 너무 길면 줄 바꿈

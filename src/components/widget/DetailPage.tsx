@@ -8,6 +8,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import styled from 'styled-components';
 import plus from '../../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
 import edit from '../../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
+import check from '../../assets/check.png'; // 경로는 파일의 위치에 따라 조정
 const Image = styled.img`
   width: 20px;
   height: 20px;
@@ -168,6 +169,11 @@ const DetailPage = () => {
         }
     };
     
+    const handleViewFile = (fileId:number) => {
+        // 서버에서 파일을 요청하여 새로운 탭에서 열기
+        const url = `http://localhost:8080/api/onbid/${fileId}`;
+        window.open(url, '_blank');
+    };
 
     const openMap = (type: 'daum' | 'naver') => {
         const url = type === 'daum'
@@ -276,7 +282,7 @@ const DetailPage = () => {
                                                     type="button"
                                                     className="add-memo-button"
                                                     onClick={() => handleMark(expensiveValue,item.daysidx)}>
-                                                <img src="/path/to/add-icon.png" alt="Add" />
+                                                 <Image src={check} alt="check" style={{width:'40px',height:'40px'}}/>
                                             </button>
 
                                            )
@@ -290,7 +296,7 @@ const DetailPage = () => {
             {/* 6. 공고문 */}
             <div className="box memo-box">
                 <h3>공고문</h3>
-                <p>파일내용</p>
+                <p onClick={() => { handleViewFile(42)}}>파일내용</p>
                 {/* 파일 내용은 여기에 표시됩니다 */}
             </div>
 
