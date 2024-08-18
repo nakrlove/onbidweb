@@ -3,6 +3,15 @@ import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import { RequestApi } from '../fetchapi/FetchApi';
 import '../css/common.css';
 import { Query } from '../../components/model/regst';
+import styled from 'styled-components';
+import plus from '../../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
+import edit from '../../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
+import search from '../../assets/search.png'; // 경로는 파일의 위치에 따라 조정
+const Image = styled.img`
+  width: 20px;
+  height: 20px;
+`;
+
 // 데이터 타입 정의
 interface OnbidItem {
      bididx: number;
@@ -54,7 +63,6 @@ const OnBidList: React.FC = () => {
 
     const handleDetailClick = (data: object) => {
         const jsonData = JSON.stringify(data);
-        console.log(jsonData)
         const encodedData = encodeURIComponent(jsonData);
         navigate(`/onbid-detail?data=${encodedData}`,{ replace: true }); // 등록 화면으로 이동
     };
@@ -160,14 +168,19 @@ const OnBidList: React.FC = () => {
     return (
         <div className="code-list">
             <div className="header">
-                <button className="register-button" onClick={handleRegisterClick}>등록</button>
+                <button className="register-button" onClick={handleRegisterClick}>
+                    <Image src={plus} alt="modify"/>
+                </button>
                 <div className="search-wrapper">
                     <input
                         type="text"
                         ref={searchCode}
                         placeholder="코드명 검색"
+                       
                     />
-                    <button onClick={handleSearch}>검색</button>
+                    <button onClick={handleSearch} style={{ width: '22%', textAlign: 'center',border: '1px solid #ddd' }}>
+                       <Image src={search} alt="search"/> 검색
+                    </button>
                 </div>
             </div>
             <table>
@@ -190,7 +203,13 @@ const OnBidList: React.FC = () => {
                         
                         <tr key={item.bididx} onClick={() => handleDetailClick({ 'bididx':item.bididx })}>
                             <td className='table-td'>
-                                <div style={{paddingRight:'20px'}} >다세대주택 (지목:{item.land_classification_name})</div>
+                                {/* <div style={{paddingRight:'20px'}} >다세대주택 (지목:{item.land_classification_name})
+                                <div >(지목:낙찰)</div>
+                                </div> */}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', paddingRight: '20px' }}>
+                                    <span>다세대주택 (지목: {item.land_classification_name})</span>
+                                    <span>(지목: 낙찰)</span>
+                                </div>
                                 <div style={{ 
                                             wordBreak: 'break-word', // 단어가 너무 길면 줄 바꿈
                                             overflowWrap: 'break-word', // 텍스트가 넘치는 경우 줄 바꿈

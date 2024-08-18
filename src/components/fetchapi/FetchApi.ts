@@ -39,14 +39,15 @@ const fetchData = async ({
     const data = await response.json();
     return data;
   } catch (error) {
-    // console.error("Error fetching data:", error);
-    //return null;
+    console.error("Error fetching data:", JSON.stringify(params));
+    // return null;
 
     // if (error.name === "AbortError") {
     //   console.log("Fetch request was aborted");
     // } else {
     console.error("An error occurred:", error);
     // }
+    throw error;
   }
 };
 

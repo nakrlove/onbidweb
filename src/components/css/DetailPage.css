@@ -1,31 +1,3 @@
-.detail-page {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .button-section {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .detail-button {
-    padding: 10px 20px;
-    border: 1px solid #ddd;
-    background-color: #f0f0f0;
-    cursor: pointer;
-  }
-  
-  .box {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 20px;
-  }
-  
-
-
-
 
 .item-box1 .row {
     display: flex;
@@ -52,77 +24,130 @@
 
 
 
+/* DetailPage.css */
+.button-section {
+  padding: 10px 0px;
+  font-size: 16px;
+}
+
+.file-box {
+  padding: 20px 0px;
+}
+
+/* 전체 페이지 스타일 */
+.detail-page {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+/* 메모 박스 스타일 */
+.memo-box {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.memo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-memo-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.editor-container {
+  margin-top: 10px;
+}
+
+.item-box1 {
+  margin-bottom: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.item1 {
+  flex: 1;
+}
 
 
+.bidding-history {
+  padding: 20px 10px;
+  border-collapse: collapse;
+}
 
 
+/* 입찰 이력 테이블 스타일 */
+.bidding-history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
+.bidding-history-header, .bidding-history-row {
+  display: grid;
+  /* grid-template-columns: repeat(4, 1fr); */
+   grid-template-columns: 0.2fr 1.2fr 0.6fr 1fr; /* 회차 셀 넓이 조정 */
+  border-bottom: 1px solid #ddd;
+}
 
+.cell {
+  padding: 10px;
+  border-right: 1px  #ddd;
+  text-align: center;
+}
 
+.bidding-history-row .cell:last-child {
+  border-right: none;
+}
 
-  .memo-box {
-    background-color: #f9f9f9;
-  }
-  
-  .notes-box {
-    background-color: #f9f9f9;
-  }
-  
-  .address-section {
-    margin-bottom: 20px;
-  }
-  
-  .item-box {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .item {
-    margin-bottom: 10px;
-  }
-  
-  .bidding-history {
-    margin-bottom: 20px;
-  }
-  
-  .bidding-round {
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .round-number {
-    font-weight: bold;
-    margin-right: 10px;
-  }
-  
-  .file-box {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .button-group {
-    margin-bottom: 20px;
-  }
-  
-  .map-section {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .map {
-    flex: 1;
-  }
-  
-  .additional-info {
-    border: 1px solid #ddd;
-    padding: 10px;
-  }
-  
-  .info-item {
-    margin-bottom: 10px;
-  }
-  
+/* 버튼 그룹 스타일 */
+.button-group {
+  margin-bottom: 20px;
+}
+
+.detail-button {
+  margin-right: 10px;
+  border: 1px solid #ddd;
+}
+
+/* 지도 섹션 스타일 */
+.map-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.map {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.map h3 {
+  margin-bottom: 10px;
+}
+
+/* 추가 정보 스타일 */
+.additional-info {
+  margin-top: 20px;
+}
+
+.info-item {
+  margin-bottom: 10px;
+}
+
+.info-item span {
+  font-weight: bold;
+}
+
+.onbid-color { 
+  padding: 0px 0px; 
+  color: #ff0000; 
+  border: none; 
+  border-radius: 1px ;
+}

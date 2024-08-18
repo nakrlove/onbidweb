@@ -6,6 +6,12 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import './css/OnBidRegst.css'; // CSS 파일 import
 import FindAddr from './modals/FindAddr';
 import { handlePhoneNumberChange, handleNumberInputChange, handleKeyPress } from './utils/validationUtils';
+import styled from 'styled-components';
+import plus from '../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
+import plus1 from '../assets/plus-1.png'; // 경로는 파일의 위치에 따라 조정
+import minus from '../assets/minus.png'; // 경로는 파일의 위치에 따라 조정
+import edit from '../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
+import search from '../assets/search.png'; // 경로는 파일의 위치에 따라 조정
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -59,6 +65,12 @@ const OnBidRegst = () => {
         onbid_status:'',
         onbid_status_array:''
     });
+
+    const Image = styled.img`
+        width: 20px;
+        height: 20px;
+    `;
+  
 
     const navigate = useNavigate(); // useNavigate 훅 사용
     const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태
@@ -312,15 +324,16 @@ const OnBidRegst = () => {
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', textAlign: 'left' }}>
             <h2>정보 등록</h2>
             <form onSubmit={doSubmit}>
+                
                 <div style={{ display: 'flex', alignItems: 'left', marginBottom: '0px' }}>
-                <label style={{ marginBottom: '10px',marginRight: '1px', height: '30px', width: '10%' }}>진행상태</label>
-                <select onChange={(e) => setOnbidstatus(e.target.value)}
-                            style={{ marginBottom: '10px',marginRight: '10px', height: '30px', width: '25%' }}>
-                                <option value="">=선택=</option>
-                                {onbid_status_array?.map(item => (
-                                    <option key={item.idx} value={item.code}>{item.name}</option>
-                                ))}
-                </select>
+                    <label style={{ marginBottom: '10px',marginRight: '1px', height: '30px', width: '10%' }}>진행상태</label>
+                    <select onChange={(e) => setOnbidstatus(e.target.value)}
+                                style={{ marginBottom: '10px',marginRight: '10px', height: '30px', width: '25%' }}>
+                                    <option value="">=선택=</option>
+                                    {onbid_status_array?.map(item => (
+                                        <option key={item.idx} value={item.code}>{item.name}</option>
+                                    ))}
+                    </select>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                     <input
@@ -330,7 +343,9 @@ const OnBidRegst = () => {
                         placeholder="주소 입력"
                         style={{ flex: 1, marginRight: '10px', height: '30px' }}
                     />
-                    <button type="button" onClick={toggleModal} className="btn-css">주소 검색</button>
+                    <button type="button" onClick={toggleModal} style={{ width: '22%', textAlign: 'center',border: '1px solid #ddd' }}>
+                        <Image src={search} alt="search"/> 주소 검색
+                    </button>
                     
                 </div>
                 {errors.address1 && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.address1}</div>}
@@ -378,7 +393,9 @@ const OnBidRegst = () => {
                 <div style={{ marginBottom: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1px' }}>
                         <span>파일 첨부</span>
-                        <button type="button" onClick={addAdditionalFileInput} className="btn-css">추가</button>
+                        <button type="button" onClick={addAdditionalFileInput} className="btn-css register-button">
+                            <Image src={plus} alt="Add"/>
+                        </button>
                     </div>
                     <hr style={{ margin: '10px 0' }} />
                     {additionalFiles.map((fileWrapper, index) => (
@@ -469,7 +486,9 @@ const OnBidRegst = () => {
                 <div style={{ marginBottom: '20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                         <span>입찰일자</span>
-                        <button type="button" className="btn-css" onClick={addBidmethod}> + </button>
+                        <button type="button" className="btn-css register-button" onClick={addBidmethod}> 
+                            <Image src={plus1} alt="Add"/>
+                        </button>
                     </div>
 
                     {bidmethod.map((item, index) => (
@@ -495,7 +514,9 @@ const OnBidRegst = () => {
                                     onKeyDown={(e) => e.preventDefault()} // Prevent direct typing
                                     style={{ width: '43%', height: '30px' }}
                                 />
-                                <button type="button" className="btn-css" onClick={() => delBidmethod(index)}> - </button>
+                                <button type="button" className="btn-css register-button" onClick={() => delBidmethod(index)}>
+                                    <Image src={minus} alt="Minus"/>    
+                                </button>
                             </div>
                             {errors[`edate`] && <div style={{ color: 'red', marginTop: '-2px',marginBottom: '10px' }}>{errors[`edate`]}</div>}
                             <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px', marginBottom: '1px' }}>

@@ -15,8 +15,11 @@
   }
   
   .register-button {
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 5px 5px;
+    /* padding: 10px 20px; */
+    font-size: 6px;
+    border: 1px solid #ddd;
+    
   }
   
   .search-wrapper {
@@ -31,10 +34,17 @@
     width: 300px; /* 사이즈 조정 */
   }
   
+  /*
   button {
     padding: 8px 16px;
     font-size: 16px;
     margin-left: 10px;
+  }
+    */
+  button {
+    padding: 4px 7px;
+    font-size: 16px;
+    margin-left: 3px;
   }
   
   table {
