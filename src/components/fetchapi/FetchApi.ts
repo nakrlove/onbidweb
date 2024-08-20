@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+
 interface FetchDataParams {
   url: string;
   method?: string; // 선택적
@@ -14,7 +16,8 @@ const fetchData = async ({
 }: FetchDataParams) => {
   try {
     const host = "http://localhost:8080";
-
+    // const host = process.env.REACT_APP_API_URL;
+    // console.log("11 API URL:", host);
     const response = await fetch(`${host}${url}`, {
       method: method,
       headers: {
@@ -65,7 +68,6 @@ export const RequestApi = async (
   abortController: AbortSignal
 ) => {
   // const url = "/api/post/find";
-
   if (url === null || url === "") {
     alert("요청주소를 알수 없습니다.");
     return;

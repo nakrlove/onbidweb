@@ -2,7 +2,7 @@ import React from 'react';
 
 const FileViewer = () => {
 
-    const handleViewFile = (fileId) => {
+    const handleViewFile = (fileId:number) => {
         // 서버에서 파일을 요청하여 새로운 탭에서 열기
         const url = `/files/${fileId}`;
         window.open(url, '_blank');

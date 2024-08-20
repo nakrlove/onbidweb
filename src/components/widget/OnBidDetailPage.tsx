@@ -1,14 +1,20 @@
 import React, { useState, useEffect,useCallback,useRef ,useMemo} from 'react';
-import '../css/DetailPage.css'; // 스타일을 위한 CSS 파일
+import '../css/OnBidDetailPage.css'; // 스타일을 위한 CSS 파일
 import { RequestApi } from '../fetchapi/FetchApi';
 import { useLocation } from 'react-router-dom';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import styled from 'styled-components';
-import plus from '../../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
-import edit from '../../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
-import check from '../../assets/check.png'; // 경로는 파일의 위치에 따라 조정
+import plus from '../../assets/plus.png'; // 추가
+import minus from '../../assets/minus.png'; // 삭제
+import modify from '../../assets/modify.png'; //메모수정
+import edit from '../../assets/edit.png'; // 수정
+import check from '../../assets/check.png'; // 저장
+import newfile from '../../assets/new-file.png'; // 추가
+import save from '../../assets/save.png'; // 저장
+import deletebtn from '../../assets/delete-minus.png'; // 저장
+
 const Image = styled.img`
   width: 20px;
   height: 20px;
@@ -34,7 +40,7 @@ interface OnbidItem {
     note: string;
     land_classification: string;
     progress_status: string;
-    memo: string;
+    // memo: string;
     land_classification_name: string;
     name: string;
 }
@@ -51,16 +57,37 @@ interface OnbidDays {
     name: string;
 }
 
-const DetailPage = () => {
+interface OnBidCategroy {
+    idx     : number;
+    bididx  : number;
+    code    : string,
+    filename: string,
+    filetype: string,    
+    filesize: number,
+    filepath: string,
+    file    : any,
+    codename: string,
+}
+interface OnBidMemo{
+    idx    : number,
+    memo_contents: string,
+    regdate: string,
+    bididx : number,
+}
+
+const OnBidDetailPage = () => {
     const [data, setData] = useState<OnbidItem>(); // 초기 데이터는 빈 배열
     const [days, setDays] = useState<OnbidDays[]>([]); // 초기 데이터는 빈 배열
+    const [category, setCategory] = useState<OnBidCategroy[]>([]); //등록된카테고리목록
+    const [memo, setMemo] = useState<OnBidMemo[]>([]); //메모
+    
     const [showEditor, setShowEditor] = useState<boolean>(false); // CKEditor 표시 상태
     const [editorData, setEditorData] = useState<string>(''); // CKEditor 데이터
     const [error,setError]  = useState<string>('');
 
     const [mbididx, setMbididx] = useState<number>();
     const [onbid, setOnbid] = useState<boolean>();
-
+    const [salenotice,setSalenotice] = useState<OnBidCategroy>();
 
     // 파라메터 넘겨받기 시작
     const { search } = useLocation();
@@ -70,10 +97,11 @@ const DetailPage = () => {
 
     const expensiveValue = useMemo(() => {
       // 가상의 복잡한 계산
-      console.log('Expensive calculation');
       return mbididx;
     }, [mbididx]);
 
+
+    
     useEffect(() => {
         const fetchData = async () => {
             if (paramData) {
@@ -82,14 +110,25 @@ const DetailPage = () => {
                     if (parsedData) {
                         const abortController = new AbortController();
                         const signal = abortController.signal;
-                        const data = await RequestApi("/api/onbid/onbidLDetil", "POST", parsedData, signal);
+                        const data = await RequestApi("/api/onbid/onBidDetil", "POST", parsedData, signal);
+                        console.log(JSON.stringify(data))
                         if (data) {
                             setData(data?.bidMap);
                             setDays(data?.bidDay);
+                            setMemo(data?.memos)
                             setMbididx(parsedData.bididx)
+                        }
+
+                        const Icategory = await RequestApi("/api/onbid/category", "POST", parsedData, signal);
+                        if(Icategory){
+                            setCategory(Icategory)
+                            // console.log(JSON.stringify(Icategory))
+                          
                         }
                         return () => abortController.abort(); // Cleanup function to abort the request
                     }
+
+
                 } catch (error) {
                     console.error('Failed to parse JSON data from query string:', error);
                 }
@@ -103,7 +142,13 @@ const DetailPage = () => {
             const firstOnbid = days.find(item => item.onbid_status === '039');
             if(firstOnbid?.onbid_status === '039') setOnbid(true)
         }
-    },[days]);
+
+
+        if(category) { /* 매각공고 */
+            let sale = category.find((item) =>  item.code === '041' )
+            setSalenotice(sale)
+        }
+    },[days,category]);
 
 
     const handleAddMemo = () => {
@@ -115,11 +160,35 @@ const DetailPage = () => {
         setEditorData(data);
     };
 
+    /* 메모추가 */
     const handleSaveMemo = () => {
-        if (data) {
-            setData({ ...data, memo: editorData });
+        const fetchData = async () => {
+            const abortController = new AbortController();
+            const signal = abortController.signal;
+            const mData = {'bididx':mbididx,'memo_contents':editorData}
+            const memoData = await RequestApi("/api/onbid/momeSave", "POST", (mData), signal);
+            if (memoData) {
+                setMemo(prevMemo => [...prevMemo,memoData]);
+                setEditorData("")
+            }
         }
+        fetchData();
         setShowEditor(false);
+    };
+
+    /* 메모삭제 */
+    const handleDeleteMemo = (obj:OnBidMemo) => {
+       
+        const fetchData = async (obj:OnBidMemo) => {
+            const abortController = new AbortController();
+            const signal = abortController.signal;
+            const mData = {'idx':obj.idx}
+            const memoData = await RequestApi("/api/onbid/memoDelete", "POST", (mData), signal);
+            if (!memoData) {
+                setMemo(prevMemo => prevMemo.filter(item => item.idx !== obj.idx));
+            }
+        }
+        fetchData(obj);
     };
 
     const handleMark  = async (bididx:number|undefined,dyasidx:number) => {
@@ -169,10 +238,12 @@ const DetailPage = () => {
         }
     };
     
-    const handleViewFile = (fileId:number) => {
+    /* 첨부파일 열기 */
+    const handleViewFile = (categroy:OnBidCategroy| undefined) => {
         // 서버에서 파일을 요청하여 새로운 탭에서 열기
-        const url = `http://localhost:8080/api/onbid/${fileId}`;
-        window.open(url, '_blank');
+       // const url = `${process.env.REACT_APP_API_URL}/api/onbid/${salenotice?.idx}`;
+        const url = `http://localhost:8080/api/onbid/${categroy?.idx}`;
+        window.open(url, '_blank','width=1024,height=900');
     };
 
     const openMap = (type: 'daum' | 'naver') => {
@@ -192,18 +263,44 @@ const DetailPage = () => {
             </div>
 
             {/* 2. Box형 메모 */}
+           
             <div className="box memo-box">
                 <div className="memo-header">
                     <h3>메모</h3>
+                   
                     <button
                         type="button"
                         className="add-memo-button"
                         onClick={handleAddMemo}
+                        style={{ marginTop: '5px',textAlign: 'center',border: '1px solid #ddd' }}
                     >
-                        <Image src={plus} alt="modify"/>
+                        <Image src={newfile} alt="add" />추가
                     </button>
                 </div>
-                <p>{data?.memo}</p>
+               
+                {memo && Array.isArray(memo) && memo.length > 0
+                 
+                   ? memo?.map((item, index) => (
+                                                <div  style={{ padding: '5px',marginTop: '2px',textAlign: 'left',border: '1px solid #ddd' }} >
+                                                    
+                                                    <div 
+                                                        key={index} 
+                                                        dangerouslySetInnerHTML={{ __html: item.memo_contents|| '' }} />
+                                                    
+                                                    
+                                                    <div className='wrapper'>
+                                                        <div>{item.regdate} </div>
+                                                        <div/>
+                                                        <div style={{paddingRight: '5px' ,textAlign: 'right',border: '0px solid #ddd' }}>
+                                                            <Image src={modify} alt="modify" style={{width: '38px',height: '38px' }}/>
+                                                            <Image src={minus} onClick={() =>handleDeleteMemo(item)} alt="Minus"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                )) 
+                   : ("")
+                   
+                }
                 {showEditor && (
                     <div className="editor-container">
                         <CKEditor
@@ -223,11 +320,19 @@ const DetailPage = () => {
                                 ],
                             }}
                         />
-                        <button type="button" onClick={handleSaveMemo}>저장</button>
+                        {/* <button type="button" onClick={handleSaveMemo} style={{ marginTop: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
+                        <Image src={deletebtn} alt="delete"/>삭제
+                        </button> &nbsp; */}
+                        <button type="button" onClick={handleSaveMemo} style={{ marginTop: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
+                        <Image src={save} alt="add"/>저장
+                        </button>
+                    
                     </div>
+                    
                 )}
+               
             </div>
-
+           
             {/* 2. Box형 유의사항 */}
             <div className="box memo-box">
                 <h3>유의사항</h3>
@@ -286,8 +391,7 @@ const DetailPage = () => {
                                             </button>
 
                                            )
-                                 }
-                                 
+                                 }                   
                             </div>
                         </div>
                     ))}
@@ -296,15 +400,20 @@ const DetailPage = () => {
             {/* 6. 공고문 */}
             <div className="box memo-box">
                 <h3>공고문</h3>
-                <p onClick={() => { handleViewFile(42)}}>파일내용</p>
+                <p onClick={() => handleViewFile(salenotice)}>파일내용</p>
                 {/* 파일 내용은 여기에 표시됩니다 */}
             </div>
 
-            {/* 7. 버튼들 */}
+            {/* 7. 첨부된 파일 버튼들 */}
             <div className="button-group">
-                <button className="detail-button">토지이용계획확인원</button>
+
+                {category 
+                  ? category.map( item => (<button className="detail-button" key={item.idx} onClick={()=>handleViewFile(item)}>{item.codename}</button>)) 
+                  : ("")
+                }
+                {/* <button className="detail-button">토지이용계획확인원</button>
                 <button className="detail-button">토지대장</button>
-                <button className="detail-button">건축물대장</button>
+                <button className="detail-button">건축물대장</button> */}
             </div>
 
             {/* 8. 지도 */}
@@ -336,4 +445,4 @@ const DetailPage = () => {
     );
 };
 
-export default DetailPage;
+export default OnBidDetailPage;

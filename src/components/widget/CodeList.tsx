@@ -4,6 +4,15 @@ import { RequestApi } from '../fetchapi/FetchApi';
 import '../css/common.css';
 import { CodeItem,Query } from '../../components/model/regst';
 
+import styled from 'styled-components';
+import plus from '../../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
+// import edit from '../../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
+// import check from '../../assets/check.png'; // 경로는 파일의 위치에 따라 조정
+import search from '../../assets/search.png'; // 경로는 파일의 위치에 따라 조정
+const Image = styled.img`
+  width: 20px;
+  height: 20px;
+`;
 
 const CodeList: React.FC = () => {
     const [data, setData] = useState<CodeItem[]>([]); // 초기 데이터는 빈 배열
@@ -139,14 +148,19 @@ const CodeList: React.FC = () => {
     return (
         <div className="code-list">
             <div className="header">
-                <button className="register-button" onClick={handleRegisterClick}>등록</button>
+                <button className="register-button" onClick={handleRegisterClick}>
+                <Image src={plus} alt="add"/>
+                </button>
+                
                 <div className="search-wrapper">
                     <input
                         type="text"
                         ref={searchCode}
                         placeholder="코드명 검색"
                     />
-                    <button onClick={handleSearch}>검색</button>
+                    <button onClick={handleSearch}>
+                    <Image src={search} alt="search"/> 검색
+                    </button>
                 </div>
             </div>
             <table>

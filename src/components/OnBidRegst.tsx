@@ -9,6 +9,7 @@ import { handlePhoneNumberChange, handleNumberInputChange, handleKeyPress } from
 import styled from 'styled-components';
 import plus from '../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
 import plus1 from '../assets/plus-1.png'; // 경로는 파일의 위치에 따라 조정
+
 import minus from '../assets/minus.png'; // 경로는 파일의 위치에 따라 조정
 import edit from '../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
 import search from '../assets/search.png'; // 경로는 파일의 위치에 따라 조정
@@ -208,8 +209,9 @@ const OnBidRegst = () => {
             console.log(`${key}: ${value}`);
         });
 
+       
         // 서버에 요청 보내기
-        const URL = 'http://localhost:8080/api/onbid/onbidL';
+        const URL = `${process.env.REACT_APP_API_URL}/api/onbid/onbidL`;
         try {
             const response = await axios.post(URL, formData, {
                 headers: {
@@ -284,6 +286,7 @@ const OnBidRegst = () => {
 
     const fetchSelectOptions = useCallback(async () => {
 
+        /* 파일첨부 코드조회 */
         try {
             const response = await axios.post('/api/onbid/file-code');
             setSelectsOptions(response.data);

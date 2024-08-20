@@ -5,7 +5,7 @@ import OnBidList from '../src/components/widget/OnBidList.tsx';
 import Header from '../src/components/widget/Header.tsx';
 import CodeList from '../src/components/widget/CodeList.tsx';
 import CodeRegist from '../src/components/widget/CodeRegist.tsx';
-import DetailPage from '../src/components/widget/DetailPage.tsx';
+import OnBidDetailPage from './components/widget/OnBidDetailPage.tsx';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CustomNavBar from '../src/components/CustomNavBar.tsx';
 import ThemeProvider from 'react-bootstrap/ThemeProvider';
@@ -24,7 +24,7 @@ function App() {
         <Routes>
           <Route path="/onbid-list" element={<OnBidList />}/>
           <Route path="/onbid-regst" element={<OnBidRegst />}/>
-          <Route path="/onbid-detail" element={<DetailPage />}/>
+          <Route path="/onbid-detail" element={<OnBidDetailPage />}/>
           <Route path="/file-code" element={<CodeList />}/>
           <Route path="/code-regist" element={<CodeRegist />} />
           {/* <Route path="/day/:day" element={<Day />} />

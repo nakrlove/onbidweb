@@ -133,6 +133,7 @@ const OnBidList: React.FC = () => {
             }
         }
      
+       
         let url = method === 'POST' ? "/api/onbid/onbidAllList" : "/api/onbid/deletecode";
         try {
             const resultData = await RequestApi(url,method,newQuery, signal);
