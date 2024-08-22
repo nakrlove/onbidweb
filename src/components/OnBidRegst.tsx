@@ -211,7 +211,8 @@ const OnBidRegst = () => {
 
        
         // 서버에 요청 보내기
-        const URL = `${process.env.REACT_APP_API_URL}/api/onbid/onbidL`;
+        //const URL = `${process.env.REACT_APP_API_URL}/api/onbid/onbidL`;
+        const URL = `http://localhost:8080/api/onbid/onbidL`;
         try {
             const response = await axios.post(URL, formData, {
                 headers: {

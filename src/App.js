@@ -9,6 +9,7 @@ import OnBidDetailPage from './components/widget/OnBidDetailPage.tsx';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CustomNavBar from '../src/components/CustomNavBar.tsx';
 import ThemeProvider from 'react-bootstrap/ThemeProvider';
+import FileViewer from './components/widget/FileViewer.tsx';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/onbid-detail" element={<OnBidDetailPage />}/>
           <Route path="/file-code" element={<CodeList />}/>
           <Route path="/code-regist" element={<CodeRegist />} />
+          <Route path="/code-file" element={<FileViewer />} />
           {/* <Route path="/day/:day" element={<Day />} />
           <Route path="/create_word" element={<CreateWord />} />
           <Route path="/create_day" element={<CreateDay />} />
