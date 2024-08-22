@@ -9,6 +9,20 @@ import plus from '../../assets/plus.png'; // 경로는 파일의 위치에 따�
 // import edit from '../../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
 // import check from '../../assets/check.png'; // 경로는 파일의 위치에 따라 조정
 import search from '../../assets/search.png'; // 경로는 파일의 위치에 따라 조정
+
+
+
+import minus from '../../assets/minus.png'; // 삭제
+import modify from '../../assets/modify.png'; //메모수정
+import edit from '../../assets/edit.png'; // 수정
+import check from '../../assets/check.png'; // 저장
+import newfile from '../../assets/new-file.png'; // 추가
+import save from '../../assets/save.png'; // 저장
+import deletebtn from '../../assets/delete-minus.png'; // 저장
+
+
+
+
 const Image = styled.img`
   width: 20px;
   height: 20px;
@@ -118,9 +132,7 @@ const CodeList: React.FC = () => {
                 fetchData(null,"POST"); // 컴포넌트가 처음 마운트될 때 데이터 조회
                 return;
             }
-            console.log("================resultData==================")
-            console.log(JSON.stringify(resultData))
-            console.log("================resultData==================")
+
             // 응답 데이터가 배열인지 확인
             if (Array.isArray(resultData.codes.content) && resultData.codes.content.length !== 0) {
                 setData(resultData.codes.content);
@@ -183,8 +195,17 @@ const CodeList: React.FC = () => {
                             <td className='table-td table-td-text-align-center'>{item.code}</td>
                             <td className='left table-td'>{item.name}</td>
                             <td className="table-td table-td-text-align-center">
-                                <button className="action-button" onClick={() => handleEditClick({'idx':item.idx,'code':item.code,'scode':item.scode,'name':item.name})}>수정</button>
-                                <button className="action-button" onClick={() => handleDeleteClick({'idx':item.idx,'code':item.code,'scode':item.scode,'name':item.name})}>삭제</button>
+                                <Image 
+                                    src={modify} 
+                                    onClick={() => handleEditClick({'idx':item.idx,'code':item.code,'scode':item.scode,'name':item.name})}
+                                    alt="modify" 
+                                    style={{ width: '38px', height: '38px' }}
+                                />
+                                <Image 
+                                    src={minus} 
+                                    onClick={() => handleDeleteClick({'idx':item.idx,'code':item.code,'scode':item.scode,'name':item.name})}
+                                    alt="Minus"
+                                />
                             </td>
                         </tr>
                     ))

@@ -17,6 +17,7 @@ import search from '../assets/search.png'; // 경로는 파일의 위치에 따�
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const OnBidRegst = () => {
+    
     const [address1, setAddress1] = useState('');
     const [detailAddress, setDetailAddress] = useState('');
     const [rdaddr, setRdaddr] = useState('');
@@ -372,120 +373,6 @@ const OnBidRegst = () => {
                     <hr style={{ margin: '20px 0' }} />
                 </div>
 
-                <div style={{ marginBottom: '20px' }}>
-                    <label>파산관제인명</label>
-                    <input
-                        type="text"
-                        value={bruptcyAdminName}
-                        onChange={(e) => setBruptcyAdminName(e.target.value)}
-                        placeholder="파산관제인명"
-                        style={{ width: '100%', marginBottom: '10px', height: '30px' }}
-                    />
-                    {errors.bruptcyAdminName && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.bruptcyAdminName}</div>}
-
-                    <label>전화번호</label>
-                    <input
-                        type="text"
-                        value={bruptcyAdminPhone}
-                        onChange={(e) => handlePhoneNumberChange(e, setBruptcyAdminPhone)}
-                        placeholder="전화번호"
-                        style={{ width: '100%', marginBottom: '20px', height: '30px' }}
-                    />
-                    {errors.bruptcyAdminPhone && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.bruptcyAdminPhone}</div>}
-                </div>
-
-                <div style={{ marginBottom: '10px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1px' }}>
-                        <span>파일 첨부</span>
-                        <button type="button" onClick={addAdditionalFileInput} className="btn-css register-button">
-                            <Image src={plus} alt="Add"/>
-                        </button>
-                    </div>
-                    <hr style={{ margin: '10px 0' }} />
-                    {additionalFiles.map((fileWrapper, index) => (
-                        <div key={fileWrapper.id} style={{ marginBottom: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                                <select
-                                    value={fileWrapper.selectedOption}
-                                    onChange={handleSelectChange(index)}
-                                    style={{ marginRight: '10px', height: '30px', width: '25%' }}
-                                >
-                                    <option value="">=선택=</option>
-                                    {selectsOptions?.map(item => (
-                                        <option key={item.idx} value={item.code}>{item.name}</option>
-                                    ))}
-                                </select>
-                                <input
-                                    type="file"
-                                    onChange={handleAdditionalFileChange(index)}
-                                    style={{ height: '30px', width: '75%' }}
-                                />
-                            </div>
-                        </div>
-                    ))}
-                    {/* {errors.file && <div style={{ color: 'red', marginBottom: '10px' }}>{errors.file}</div>} */}
-                </div>
-                <hr style={{ margin: '20px 0' }} />
-                <div style={{ marginBottom: '20px' }}>
-                    {/* <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <span>처분방식</span>
-                        <button type="button" className="btn-css">추가</button>
-                    </div> */}
-                    <input
-                        type="text"
-                        value={disposaltype}
-                        onChange={(e) => setDisposaltype(e.target.value)}
-                        placeholder="처분방식"
-                        style={{ width: '100%', marginBottom: '10px', height: '30px' }}
-                    />
-                    {errors.Disposaltype && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.Disposaltype}</div>}
-                    <label>임차여부</label>
-                    <input
-                        type="text"
-                        value={renter}
-                        onChange={(e) => setRenter(e.target.value)}
-                        placeholder="임차여부"
-                        style={{ width: '100%', marginBottom: '10px', height: '30px' }}
-                    />
-                    <label>지목/면적</label>
-                    <div style={{ display: 'flex' }}>
-                        <select onChange={(e) => setLandclassification(e.target.value)}
-                                style={{ marginRight: '10px', height: '30px', width: '25%' }}>
-                                    <option value="">=선택=</option>
-                                    {land_classification_array?.map(item => (
-                                        <option key={item.idx} value={item.code}>{item.name}</option>
-                                    ))}
-                        </select>
-                        
-                        <input
-                            type="text"
-                            value={ldarea}
-                            onChange={(e) => setLdarea(e.target.value)}
-                            placeholder="토지면적"
-                            style={{ width: '45%', marginBottom: '10px', height: '30px' }}
-                        />
-                    </div>
-                    {errors.ldarea && <div style={{ color: 'red',marginTop: '-10px',marginBottom: '10px' }}>{errors.ldarea}</div>}
-                    <label>건축물</label>
-                    <input
-                        type="text"
-                        value={buildarea}
-                        onChange={(e) => setBuildarea(e.target.value)}
-                        placeholder="건축물"
-                        style={{ width: '100%', marginBottom: '10px', height: '30px' }}
-                    />
-                    {errors.buildarea && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.buildarea}</div>}
-                    <label>부동산종류</label>
-                    <input
-                        type="text"
-                        value={estateType}
-                        onChange={(e) => setEstateType(e.target.value)}
-                        placeholder="부동산종류"
-                        style={{ width: '100%', marginBottom: '20px', height: '30px' }}
-                    />
-                    
-                    {errors.estateType && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.estateType}</div>}
-                </div>
 
                 <div style={{ marginBottom: '20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
@@ -547,6 +434,119 @@ const OnBidRegst = () => {
                             {errors[`deposit`] && <div style={{ color: 'red',  marginTop: '-2px',marginBottom: '10px' }}>{errors[`deposit`]}</div>}
                         </div>
                     ))}
+                </div>
+
+                <hr style={{ margin: '20px 0' }} />
+
+                <div style={{ marginBottom: '20px' }}>
+                    <label>파산관제인명</label>
+                    <input
+                        type="text"
+                        value={bruptcyAdminName}
+                        onChange={(e) => setBruptcyAdminName(e.target.value)}
+                        placeholder="파산관제인명"
+                        style={{ width: '100%', marginBottom: '10px', height: '30px' }}
+                    />
+                    {errors.bruptcyAdminName && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.bruptcyAdminName}</div>}
+
+                    <label>전화번호</label>
+                    <input
+                        type="text"
+                        value={bruptcyAdminPhone}
+                        onChange={(e) => handlePhoneNumberChange(e, setBruptcyAdminPhone)}
+                        placeholder="전화번호"
+                        style={{ width: '100%', marginBottom: '20px', height: '30px' }}
+                    />
+                    {errors.bruptcyAdminPhone && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.bruptcyAdminPhone}</div>}
+                </div>
+
+                <div style={{ marginBottom: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1px' }}>
+                        <span>파일 첨부</span>
+                        <button type="button" onClick={addAdditionalFileInput} className="btn-css register-button">
+                            <Image src={plus} alt="Add"/>
+                        </button>
+                    </div>
+                    <hr style={{ margin: '10px 0' }} />
+                    {additionalFiles.map((fileWrapper, index) => (
+                        <div key={fileWrapper.id} style={{ marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                <select
+                                    value={fileWrapper.selectedOption}
+                                    onChange={handleSelectChange(index)}
+                                    style={{ marginRight: '10px', height: '30px', width: '25%' }}
+                                >
+                                    <option value="">=선택=</option>
+                                    {selectsOptions?.map(item => (
+                                        <option key={item.idx} value={item.code}>{item.name}</option>
+                                    ))}
+                                </select>
+                                <input
+                                    type="file"
+                                    onChange={handleAdditionalFileChange(index)}
+                                    style={{ height: '30px', width: '75%' }}
+                                />
+                            </div>
+                        </div>
+                    ))}
+                    {/* {errors.file && <div style={{ color: 'red', marginBottom: '10px' }}>{errors.file}</div>} */}
+                </div>
+                <hr style={{ margin: '20px 0' }} />
+                <div style={{ marginBottom: '20px' }}>
+                    <input
+                        type="text"
+                        value={disposaltype}
+                        onChange={(e) => setDisposaltype(e.target.value)}
+                        placeholder="처분방식"
+                        style={{ width: '100%', marginBottom: '10px', height: '30px' }}
+                    />
+                    {errors.Disposaltype && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.Disposaltype}</div>}
+                    <label>임차여부</label>
+                    <input
+                        type="text"
+                        value={renter}
+                        onChange={(e) => setRenter(e.target.value)}
+                        placeholder="임차여부"
+                        style={{ width: '100%', marginBottom: '10px', height: '30px' }}
+                    />
+                    <label>지목/면적</label>
+                    <div style={{ display: 'flex' }}>
+                        <select onChange={(e) => setLandclassification(e.target.value)}
+                                style={{ marginRight: '10px', height: '30px', width: '25%' }}>
+                                    <option value="">=선택=</option>
+                                    {land_classification_array?.map(item => (
+                                        <option key={item.idx} value={item.code}>{item.name}</option>
+                                    ))}
+                        </select>
+                        
+                        <input
+                            type="text"
+                            value={ldarea}
+                            onChange={(e) => setLdarea(e.target.value)}
+                            placeholder="토지면적"
+                            style={{ width: '45%', marginBottom: '10px', height: '30px' }}
+                        />
+                    </div>
+                    {errors.ldarea && <div style={{ color: 'red',marginTop: '-10px',marginBottom: '10px' }}>{errors.ldarea}</div>}
+                    <label>건축물</label>
+                    <input
+                        type="text"
+                        value={buildarea}
+                        onChange={(e) => setBuildarea(e.target.value)}
+                        placeholder="건축물"
+                        style={{ width: '100%', marginBottom: '10px', height: '30px' }}
+                    />
+                    {errors.buildarea && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.buildarea}</div>}
+                    <label>부동산종류</label>
+                    <input
+                        type="text"
+                        value={estateType}
+                        onChange={(e) => setEstateType(e.target.value)}
+                        placeholder="부동산종류"
+                        style={{ width: '100%', marginBottom: '20px', height: '30px' }}
+                    />
+                    
+                    {errors.estateType && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.estateType}</div>}
                 </div>
 
                 <hr style={{ margin: '20px 0' }} />

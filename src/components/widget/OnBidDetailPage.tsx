@@ -56,6 +56,7 @@ interface OnbidDays {
     daysidx: number;
     onbid_status: string;
     name: string;
+    bblig: number;
 }
 
 interface OnBidCategroy {
@@ -186,7 +187,6 @@ const OnBidDetailPage = () => {
     }, []);
 
 
-
     const handleAddMemo = () => {
         setShowEditor(true);
     };
@@ -195,8 +195,6 @@ const OnBidDetailPage = () => {
         const data = editor.getData();
         setEditorData(data);
     };
-
-
 
     /* 메모추가 */
     const handleSaveMemo = () => {
@@ -277,10 +275,6 @@ const OnBidDetailPage = () => {
         setMemoDumy(null)
     };
 
-
-    useEffect(() => {
-        console.log("================<<< selectRef >>>==================")
-    },[]);
 
     /**
      * 입찰상태 등록
@@ -482,7 +476,51 @@ const OnBidDetailPage = () => {
                 )}
                
             </div>
-           
+           {/* 5. 입찰이력 */}
+           <div className="bidding-history">
+                <h3>입찰이력</h3>
+                <div className="bidding-history-table">
+                    <div className="bidding-history-header">
+                        <div className="cell">회차</div>
+                        <div className="cell">시작일자  ~  종료일자</div>
+                        <div className="cell">감정가격(보증금)</div>
+                        <div className="cell">진행상태</div>
+                    </div>
+                    {days?.map((item, index) => (
+                        <div className="bidding-history-row" key={index}>
+                            <div className="cell">{index + 1}회차</div>
+                            <div className="cell">{item.sdate} ~ {item.edate}</div>
+                            <div className="cell">{item.evalue}원 ({item.deposit}원)</div>
+                            <div className="cell">
+                                { onbidarray.includes(item.onbid_status) ? 
+                                (
+                                   item.onbid_status !== '039' ? (<span >{item.name}</span> ): <span className="onbid-color">{item.name}</span> 
+                                ) :
+                                ( (item.bblig > 0) ? ("") :(
+                                    <div>
+                                        <select
+                                            ref={(el) => (selectRefs.current[index] = el)}
+                                            style={{ marginBottom: '0px',marginRight: '2px', height: '30px', width: '25%' }}>
+                                            <option value="">=선택=</option>
+                                            {onBidStatusArray?.map(item => (
+                                                <option key={item.idx} value={item.code}>{item.name}</option>
+                                            ))}
+                                        </select>
+                                        <button
+                                                type="button"
+                                                className="add-memo-button"
+                                                onClick={() => handleOnBidStatusConfirm(expensiveValue,item.daysidx,index)}>
+                                            <Image src={check} alt="check" style={{width:'25px',height:'25px'}}/>
+                                        </button>
+                                    </div>  
+                                        )         
+                                )
+                                }                   
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
             {/* 2. Box형 유의사항 */}
             <div className="box memo-box">
                 <h3>유의사항</h3>
@@ -515,50 +553,7 @@ const OnBidDetailPage = () => {
                 </div>
             </div>
 
-            {/* 5. 입찰이력 */}
-            <div className="bidding-history">
-                <h3>입찰이력</h3>
-                <div className="bidding-history-table">
-                    <div className="bidding-history-header">
-                        <div className="cell">회차</div>
-                        <div className="cell">시작일자  ~  종료일자</div>
-                        <div className="cell">감정가격(보증금)</div>
-                        <div className="cell">진행상태</div>
-                    </div>
-                    {days?.map((item, index) => (
-                        <div className="bidding-history-row" key={index}>
-                            <div className="cell">{index + 1}회차</div>
-                            <div className="cell">{item.sdate} ~ {item.edate}</div>
-                            <div className="cell">{item.evalue}원 ({item.deposit}원)</div>
-                            <div className="cell">
-                                { onbidarray.includes(item.onbid_status) ? 
-                                (
-                                   item.onbid_status !== '039' ? (<span >{item.name}</span> ): <span className="onbid-color">{item.name}</span> 
-                                ) :
-                                (
-                                    <div>
-                                        <select
-                                            ref={(el) => (selectRefs.current[index] = el)}
-                                            style={{ marginBottom: '0px',marginRight: '2px', height: '30px', width: '25%' }}>
-                                            <option value="">=선택=</option>
-                                            {onBidStatusArray?.map(item => (
-                                                <option key={item.idx} value={item.code}>{item.name}</option>
-                                            ))}
-                                        </select>
-                                        <button
-                                                type="button"
-                                                className="add-memo-button"
-                                                onClick={() => handleOnBidStatusConfirm(expensiveValue,item.daysidx,index)}>
-                                            <Image src={check} alt="check" style={{width:'25px',height:'25px'}}/>
-                                        </button>
-                                    </div>           
-                                )
-                                }                   
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            
             {/* 6. 공고문 */}
             <div className="box memo-box">
                 <h3>공고문</h3>
