@@ -339,7 +339,7 @@ const OnBidDetailPage = () => {
     const handleViewFile = (categroy:OnBidCategroy| undefined) => {
         // 서버에서 파일을 요청하여 새로운 탭에서 열기
        // const url = `${process.env.REACT_APP_API_URL}/api/onbid/${salenotice?.idx}`;
-        const url = `http://localhost:8080/api/onbid/${categroy?.idx}`;
+        const url = `${process.env.REACT_APP_API_URL}/api/onbid/${categroy?.idx}`;
         window.open(url, '_blank','width=1024,height=900');
     };
 

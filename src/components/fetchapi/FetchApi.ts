@@ -15,9 +15,9 @@ const fetchData = async ({
   abortController,
 }: FetchDataParams) => {
   try {
-    const host = "http://localhost:8080";
-    // const host = process.env.REACT_APP_API_URL;
-    // console.log("11 API URL:", host);
+    //const host = "http://localhost:8080";
+    const host = process.env.REACT_APP_API_URL;
+    console.log("11 API URL:", host);
     const response = await fetch(`${host}${url}`, {
       method: method,
       headers: {

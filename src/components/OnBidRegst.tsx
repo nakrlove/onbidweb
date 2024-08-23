@@ -40,9 +40,9 @@ const OnBidRegst = () => {
     const [renter        , setRenter]         = useState('');
     const [ldarea        , setLdarea]         = useState('');
     const [buildarea     , setBuildarea]      = useState('');
-    const [estateType    , setEstateType]     = useState('');
     const [estateTypes   , setEstateTypes]    = useState<Code[]>([]);
-    
+     // 하나의 선택된 부동산 종류를 관리하는 상태 변수
+     const [selectedEstateType, setSelectedEstateType] = useState<Code['code']>('');
 
     const [disposaltype  , setDisposaltype]   = useState('');
     const [debtor        , setDebtor]         = useState(''); /* 채무자명 */
@@ -58,26 +58,26 @@ const OnBidRegst = () => {
 
     // Validation States
     const [errors, setErrors] = useState({
-        address1: '',
-        detailAddress: '',
-        bruptcyAdminName: '',
+        address1         : '',
+        detailAddress    : '',
+        bruptcyAdminName : '',
         bruptcyAdminPhone: '',
         Disposaltype: '',
-        ldarea: '',
-        buildarea: '',
-        estateType: '', 
+        ldarea      : ''    ,
+        buildarea   : ''    ,
+        estateType  : ''    , /* 부동산종류 */
         selectedOption: '',
-        file: '',
-        sdate: '',
-        edate: '',
-        evalue: '',
-        deposit: '',
+        file        : '',
+        sdate       : '',
+        edate       : '',
+        evalue      : '',
+        deposit     : '',
         disposal_type: '',
         land_classification: '',
         progress_status: '',
         onbid_status:'',
         onbid_status_array:'',
-        debtor: '' //채무자명
+        debtor      : '' //채무자명
     });
 
     const Image = styled.img`
@@ -143,12 +143,12 @@ const OnBidRegst = () => {
             isValid = false;
         }
 
-        
+           
 
-        // if (!estateType) {
-        //     newErrors.estateType = '부동산 종류 입력이 필요합니다.';
-        //     isValid = false;
-        // }
+        if (!selectedEstateType) {
+            newErrors.estateType = '부동산 종류 선택이 필요합니다.';
+            isValid = false;
+        }
 
      
         bidmethod.forEach((item, index) => {
@@ -202,7 +202,7 @@ const OnBidRegst = () => {
             renter: renter,
             ld_area: ldarea,
             build_area: buildarea,
-            estateType: estateType,
+            estateType: selectedEstateType,
             disposal_type: disposaltype,
             land_classification:land_classification,
             progress_status: progress_status,
@@ -288,11 +288,20 @@ const OnBidRegst = () => {
 
     // 부동산 종류 선택 핸들러
     const handleEstateTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // const { value } = e.target;
-        // const updatedEstateType = estateTypes.includes(value)
-        //     ? estateTypes.filter(type => type !== value) // 이미 선택된 경우 제거
+        const { value } = e.target;
+
+         // allEstateTypes 배열에서 value에 해당하는 객체 찾기
+        const selectedType = estateTypes.find(type => type.code === value);
+
+        if (selectedType) {
+            // value에 해당하는 객체가 없으면 종료
+            setSelectedEstateType(selectedType.code); // 선택된 객체로 상태 업데이트
+            return;
+        }
+        // const updatedEstateType = estateTypes.find(type => type.code === value)
+        //     ? estateTypes.filter(type => type.code !== value) // 이미 선택된 경우 제거
         //     : [...estateTypes, value]; // 선택되지 않은 경우 추가
-        // setEstateTypes(updatedEstateType);
+       // setEstateTypes(updatedEstateType);
     };
 
     const addAdditionalFileInput = () => {
@@ -372,7 +381,16 @@ const OnBidRegst = () => {
                                         <option key={item.idx} value={item.code}>{item.name}</option>
                                     ))}
                     </select>
-                    <label style={{ marginBottom: '10px',marginLeft: '60px', height: '30px', width: '10%' }}>채무자명</label>
+                    <label style={{ marginBottom: '10px',marginLeft: '10px', alignItems: 'center', height: '30px', width: '10%' }}>관심목록</label>
+                    <select onChange={(e) => setOnbidstatus(e.target.value)}
+                                style={{ marginBottom: '10px',marginRight: '10px', height: '30px', width: '25%' }}>
+                                    <option value="">=선택=</option>
+                                    {onbid_status_array?.map(item => (
+                                        <option key={item.idx} value={item.code}>{item.name}</option>
+                                    ))}
+                    </select>
+
+                    <label style={{ marginBottom: '10px',marginLeft: '10px', height: '30px', width: '10%' }}>채무자명</label>
                     <input
                         type="text"
                         value={debtor}
@@ -382,6 +400,7 @@ const OnBidRegst = () => {
                     />
                 </div>
                 {errors.debtor && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.debtor}</div>}
+                <hr style={{ margin: '2px 0' }} />
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                     <input
                         type="text"
@@ -498,6 +517,32 @@ const OnBidRegst = () => {
                     />
                     {errors.bruptcyAdminPhone && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.bruptcyAdminPhone}</div>}
                 </div>
+                <hr style={{ margin: '10px 0' }} />
+                <div style={{ marginBottom: '20px' }}>
+                    <label>유의사항</label>
+                    <CKEditor
+                        editor={ClassicEditor}
+                        data={note}
+                        onChange={(event, editor) => {
+                            const data = editor.getData();
+                            setNote(data);
+                        }}
+                        config={{
+                            toolbar: [
+                                'undo', 'redo', '|',
+                                'bold', 'italic', 'underline', 'strikethrough', '|',
+                                'fontColor', 'fontBackgroundColor', '|',
+                                'link', '|',
+                                'numberedList', 'bulletedList', '|',
+                                'alignment', '|',
+                                'insertTable', 'blockQuote', 'codeBlock', '|',
+                                'mediaEmbed', 'imageUpload', 'removeFormat'
+                            ],
+                        }}
+                    />
+                </div>
+
+                <hr style={{ margin: '10px 0' }} />
 
                 <div style={{ marginBottom: '2px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '-9px' }}>
@@ -605,8 +650,8 @@ const OnBidRegst = () => {
                             <label key={index} className="estateTypeLabel">
                                 <input
                                     type="checkbox"
-                                    value={type.name}
-                                    checked={estateType.includes(type.code)}
+                                    value={type.code}
+                                    checked={selectedEstateType === type.code}
                                     onChange={handleEstateTypeChange}
                                     className="estateTypeCheckbox"
                                 />
@@ -619,29 +664,7 @@ const OnBidRegst = () => {
 
                 <hr style={{ margin: '20px 0' }} />
 
-                <div style={{ marginBottom: '20px' }}>
-                    <label>유의사항</label>
-                    <CKEditor
-                        editor={ClassicEditor}
-                        data={note}
-                        onChange={(event, editor) => {
-                            const data = editor.getData();
-                            setNote(data);
-                        }}
-                        config={{
-                            toolbar: [
-                                'undo', 'redo', '|',
-                                'bold', 'italic', 'underline', 'strikethrough', '|',
-                                'fontColor', 'fontBackgroundColor', '|',
-                                'link', '|',
-                                'numberedList', 'bulletedList', '|',
-                                'alignment', '|',
-                                'insertTable', 'blockQuote', 'codeBlock', '|',
-                                'mediaEmbed', 'imageUpload', 'removeFormat'
-                            ],
-                        }}
-                    />
-                </div>
+                
 
                 <div style={{ marginBottom: '20px' }}>
                     <label>메모</label>
