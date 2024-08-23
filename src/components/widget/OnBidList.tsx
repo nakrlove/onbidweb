@@ -34,7 +34,7 @@ interface OnbidItem {
      land_classification :  string ,
      progress_status : string,
      evalue: string,
-     sdate: string,
+    // sdate: string,
      edate: string,
      deposit: string,
      status: string,
@@ -230,7 +230,7 @@ const OnBidList: React.FC = () => {
                                 <span className="fontSize13">{item.evalue}</span>
                             </td>
                             <td className='table-td table-td-text-align-center'>
-                                <span className="fontSize13">{item.sdate}</span><br/>
+                                {/* <span className="fontSize13">{item.sdate}</span><br/> */}
                                 <span className="fontSize13">{item.edate}</span>
                             </td>
                             <td className='table-td table-td-text-align-center'>

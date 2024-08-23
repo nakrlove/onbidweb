@@ -86,3 +86,28 @@ dt {
     .wrapper > div {
         flex: 1;
     }
+
+
+    /* 부동산 종류 컨테이너 스타일 */
+.estateTypeContainer {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 한 줄에 5개 */
+  gap:1px; /* 항목 사이의 간격 */
+  margin-bottom: 20px; /* 아래 여백 */
+}
+
+/* 개별 부동산 종류 라벨 스타일 */
+.estateTypeLabel {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* 체크박스 스타일 */
+.estateTypeCheckbox {
+  margin-right: 15px; /* 체크박스와 라벨 사이의 간격 */
+  width: 18px;
+  height: 18px;
+}

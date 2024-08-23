@@ -16,34 +16,45 @@ import search from '../assets/search.png'; // 경로는 파일의 위치에 따�
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
+interface Code {
+    idx: number;
+    code: string;
+    name: string;
+}
+
+
 const OnBidRegst = () => {
     
-    const [address1, setAddress1] = useState('');
-    const [detailAddress, setDetailAddress] = useState('');
-    const [rdaddr, setRdaddr] = useState('');
-    const [bruptcyAdminName, setBruptcyAdminName] = useState('');
-    const [bruptcyAdminPhone, setBruptcyAdminPhone] = useState('');
-    const [additionalFiles, setAdditionalFiles] = useState<{ id: number, file: File | null, selectedOption: string }[]>([{ id: 0, file: null, selectedOption: '' }]);
-    const [bidmethod, setBidmethod] = useState<{ sdate: string, edate: string, evalue: number, deposit: number }[]>([{ sdate: '', edate: '', evalue: 0, deposit: 0 }]);
+    const [address1         , setAddress1]         = useState('');
+    const [detailAddress    , setDetailAddress]    = useState('');
+    const [rdaddr           , setRdaddr]           = useState('');
+    const [bruptcyAdminName , setBruptcyAdminName] = useState('');
+    const [bruptcyAdminPhone, setBruptcyAdminPhone]= useState('');
+    const [additionalFiles  , setAdditionalFiles]  = useState<{ id: number, file: File | null, selectedOption: string }[]>([{ id: 0, file: null, selectedOption: '' }]);
+    const [bidmethod        , setBidmethod]        = useState<{  edate: string, evalue: number, deposit: number }[]>([{ edate: '', evalue: 0, deposit: 0 }]);
 
     // const [connoisseur, setConnoisseur] = useState('');
-    const [selectsOptions, setSelectsOptions] = useState<{ idx: number, code: string, name: string }[]>([]);
-    const [note, setNote] = useState('');
-    const [memo, setMemo] = useState('');
-    const [renter, setRenter] = useState('');
-    const [ldarea, setLdarea] = useState('');
-    const [buildarea, setBuildarea] = useState('');
-    const [estateType, setEstateType] = useState('');
-    const [disposaltype, setDisposaltype] = useState('');
+    const [selectsOptions, setSelectsOptions] = useState<Code[]>([]);
+    const [note          , setNote]           = useState('');
+    const [memo          , setMemo]           = useState('');
+    const [renter        , setRenter]         = useState('');
+    const [ldarea        , setLdarea]         = useState('');
+    const [buildarea     , setBuildarea]      = useState('');
+    const [estateType    , setEstateType]     = useState('');
+    const [estateTypes   , setEstateTypes]    = useState<Code[]>([]);
+    
 
+    const [disposaltype  , setDisposaltype]   = useState('');
+    const [debtor        , setDebtor]         = useState(''); /* 채무자명 */
+    
     const [land_classification, setLandclassification] = useState(''); /* 지목 */
-    const [land_classification_array, setLandclassificationarray] = useState<{ idx: number, code: string, name: string }[]>([]); /* 지목 */
+    const [land_classification_array, setLandclassificationarray] = useState<Code[]>([]); /* 지목 */
     const [progress_status, setProgressstatus] = useState(''); /* 진행상태*/
 
 
     const [onbid_status, setOnbidstatus] = useState(''); /* 지목 */
     /* 입찰진행상태*/
-    const [onbid_status_array,setOnbidstatusarray] = useState<{ idx: number, code: string, name: string }[]>([]); /* 진행상태 */
+    const [onbid_status_array,setOnbidstatusarray] = useState<Code[]>([]); /* 진행상태 */
 
     // Validation States
     const [errors, setErrors] = useState({
@@ -65,7 +76,8 @@ const OnBidRegst = () => {
         land_classification: '',
         progress_status: '',
         onbid_status:'',
-        onbid_status_array:''
+        onbid_status_array:'',
+        debtor: '' //채무자명
     });
 
     const Image = styled.img`
@@ -126,19 +138,21 @@ const OnBidRegst = () => {
             isValid = false;
         }
 
-        if (!estateType) {
-            newErrors.estateType = '부동산 종류 입력이 필요합니다.';
+        if (!debtor) {
+            newErrors.debtor = '채무자명 입력이 필요합니다.';
             isValid = false;
         }
 
+        
+
+        // if (!estateType) {
+        //     newErrors.estateType = '부동산 종류 입력이 필요합니다.';
+        //     isValid = false;
+        // }
+
      
         bidmethod.forEach((item, index) => {
-            if (!item.sdate) {
-                // newErrors[`sdate`] = '입찰일자 입력이 필요합니다.';
-                newErrors[`edate`] = '입찰일자 입력이 필요합니다.';
-                isValid = false;
-            }
-
+           
             if (!item.edate) {
                 newErrors[`edate`] = '입찰일자 입력이 필요합니다.';
                 isValid = false;
@@ -192,7 +206,8 @@ const OnBidRegst = () => {
             disposal_type: disposaltype,
             land_classification:land_classification,
             progress_status: progress_status,
-            onbid_status: onbid_status
+            onbid_status: onbid_status,
+            debtor: debtor
         })], { type: "application/json" }));
 
         // 파일과 옵션을 FormData에 추가
@@ -271,13 +286,22 @@ const OnBidRegst = () => {
     };
 
 
+    // 부동산 종류 선택 핸들러
+    const handleEstateTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // const { value } = e.target;
+        // const updatedEstateType = estateTypes.includes(value)
+        //     ? estateTypes.filter(type => type !== value) // 이미 선택된 경우 제거
+        //     : [...estateTypes, value]; // 선택되지 않은 경우 추가
+        // setEstateTypes(updatedEstateType);
+    };
+
     const addAdditionalFileInput = () => {
         setAdditionalFiles([...additionalFiles, { id: additionalFiles.length, file: null, selectedOption: '' }]);
     };
 
     /** 입찰일자/감정가/보증금 추가 */
     const addBidmethod = () => {
-        setBidmethod([...bidmethod, { sdate: '', edate: '', evalue: 0, deposit: 0 }]);
+        setBidmethod([...bidmethod, {  edate: '', evalue: 0, deposit: 0 }]);
     };
 
     /** 입찰일자/감정가/보증금 삭제 */
@@ -286,7 +310,7 @@ const OnBidRegst = () => {
         setBidmethod(updatedBidmethod);
     };
 
-    const fetchSelectOptions = useCallback(async () => {
+    const initfetchSelectOptions = useCallback(async () => {
 
         /* 파일첨부 코드조회 */
         try {
@@ -311,12 +335,21 @@ const OnBidRegst = () => {
         } catch (error) {
             console.error('Error fetching select options:', error);
         }
+
+        /* 부동산종류 */
+        try {
+            const response = await axios.post('/api/onbid/file-code?codes=044');
+            setEstateTypes(response.data);
+        } catch (error) {
+            console.error('Error fetching select options:', error);
+        }
+
         
     }, []);
 
     useEffect(() => {
-        fetchSelectOptions();
-    }, [fetchSelectOptions]);
+        initfetchSelectOptions();
+    }, [initfetchSelectOptions]);
 
     const selectAddress = (addr1: string | null | undefined, addr2: string) => {
         if (typeof addr1 === 'string' && addr1.trim() !== '') {
@@ -339,7 +372,16 @@ const OnBidRegst = () => {
                                         <option key={item.idx} value={item.code}>{item.name}</option>
                                     ))}
                     </select>
+                    <label style={{ marginBottom: '10px',marginLeft: '60px', height: '30px', width: '10%' }}>채무자명</label>
+                    <input
+                        type="text"
+                        value={debtor}
+                        onChange={(e) => setDebtor(e.target.value)}
+                        placeholder="채무자명"
+                        style={{ flex: 1, height: '30px' }}
+                    />
                 </div>
+                {errors.debtor && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.debtor}</div>}
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                     <input
                         type="text"
@@ -374,19 +416,20 @@ const OnBidRegst = () => {
                 </div>
 
 
-                <div style={{ marginBottom: '20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <span>입찰일자</span>
+                <div style={{ marginBottom: '3px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '-4px' }}>
+                        <span style={{ width: '30%',marginRight: '5%'}}>입찰일자</span>
+                        <span >감정가/보증금</span>
                         <button type="button" className="btn-css register-button" onClick={addBidmethod}> 
                             <Image src={plus1} alt="Add"/>
                         </button>
                     </div>
-
+                    <hr style={{ margin: '4px 0' }} />
                     {bidmethod.map((item, index) => (
                         <div key={index}>
-                            <hr style={{ margin: '10px 0' }} />
+                           
                             <div style={{ display: 'flex' }}>
-                                <input
+                                {/* <input
                                     type="date"
                                     value={item.sdate || ''}
                                     name={`sdate`}
@@ -394,7 +437,7 @@ const OnBidRegst = () => {
                                     onChange={(e) => handleInputChange(index, e)}
                                     onKeyDown={(e) => e.preventDefault()} // Prevent direct typing
                                     style={{ width: '43%', marginRight: '4%', height: '30px' }}
-                                />
+                                /> */}
                                 {/* {errors[`sdate`] && <div style={{ color: 'red', marginBottom: '1px' }}>{errors[`sdate`]}</div>} */}
                                 <input
                                     type="date"
@@ -403,40 +446,36 @@ const OnBidRegst = () => {
                                     placeholder="입찰 종료일"
                                     onChange={(e) => handleInputChange(index, e)}
                                     onKeyDown={(e) => e.preventDefault()} // Prevent direct typing
-                                    style={{ width: '43%', height: '30px' }}
+                                    style={{ width: '30%',marginRight: '5%', height: '30px' }}
+                                />
+                                
+                                <input
+                                    type="text"
+                                    value={item.evalue || ''}
+                                    name={`evalue`}
+                                    placeholder="감정가"
+                                    onChange={(e) => handleInputChange(index, e)}
+                                    style={{ width: '30%', marginRight: '0.5%', height: '30px' }}
+                                />
+                                <input
+                                    type="text"
+                                    value={item.deposit || ''}
+                                    name={`deposit`}
+                                    placeholder="보증금"
+                                    onChange={(e) => handleInputChange(index, e)}
+                                    style={{ width: '30%',  marginRight: '1%',height: '30px' }}
                                 />
                                 <button type="button" className="btn-css register-button" onClick={() => delBidmethod(index)}>
                                     <Image src={minus} alt="Minus"/>    
                                 </button>
                             </div>
                             {errors[`edate`] && <div style={{ color: 'red', marginTop: '-2px',marginBottom: '10px' }}>{errors[`edate`]}</div>}
-                            <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px', marginBottom: '1px' }}>
-                                <span>감정가 / 보증금</span>
-                            </div>
-
-                            <input
-                                type="text"
-                                value={item.evalue || ''}
-                                name={`evalue`}
-                                placeholder="감정가"
-                                onChange={(e) => handleInputChange(index, e)}
-                                style={{ width: '43%', marginRight: '4%', height: '30px' }}
-                            />
-                            {/* {errors[`evalue`] && <div style={{ color: 'red', marginBottom: '1px' }}>{errors[`evalue`]}</div>} */}
-                            <input
-                                type="text"
-                                value={item.deposit || ''}
-                                name={`deposit`}
-                                placeholder="보증금"
-                                onChange={(e) => handleInputChange(index, e)}
-                                style={{ width: '43%', height: '30px' }}
-                            />
                             {errors[`deposit`] && <div style={{ color: 'red',  marginTop: '-2px',marginBottom: '10px' }}>{errors[`deposit`]}</div>}
                         </div>
                     ))}
                 </div>
 
-                <hr style={{ margin: '20px 0' }} />
+                <hr style={{ margin: '10px 0' }} />
 
                 <div style={{ marginBottom: '20px' }}>
                     <label>파산관제인명</label>
@@ -460,8 +499,8 @@ const OnBidRegst = () => {
                     {errors.bruptcyAdminPhone && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.bruptcyAdminPhone}</div>}
                 </div>
 
-                <div style={{ marginBottom: '10px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1px' }}>
+                <div style={{ marginBottom: '2px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '-9px' }}>
                         <span>파일 첨부</span>
                         <button type="button" onClick={addAdditionalFileInput} className="btn-css register-button">
                             <Image src={plus} alt="Add"/>
@@ -512,40 +551,69 @@ const OnBidRegst = () => {
                     <label>지목/면적</label>
                     <div style={{ display: 'flex' }}>
                         <select onChange={(e) => setLandclassification(e.target.value)}
-                                style={{ marginRight: '10px', height: '30px', width: '25%' }}>
+                                style={{ marginRight: '10px', height: '30px', width: '15%' }}>
                                     <option value="">=선택=</option>
                                     {land_classification_array?.map(item => (
                                         <option key={item.idx} value={item.code}>{item.name}</option>
                                     ))}
                         </select>
-                        
                         <input
                             type="text"
                             value={ldarea}
                             onChange={(e) => setLdarea(e.target.value)}
                             placeholder="토지면적"
-                            style={{ width: '45%', marginBottom: '10px', height: '30px' }}
+                            style={{ width: '25%', marginBottom: '10px', height: '30px' }}
+                        />
+                        <input
+                            type="text"
+                            value={ldarea}
+                            onChange={() => {}}
+                            placeholder="토지면적 메모"
+                            style={{ width: '100%', marginLeft: '5px', height: '30px' }}
                         />
                     </div>
                     {errors.ldarea && <div style={{ color: 'red',marginTop: '-10px',marginBottom: '10px' }}>{errors.ldarea}</div>}
-                    <label>건축물</label>
-                    <input
-                        type="text"
-                        value={buildarea}
-                        onChange={(e) => setBuildarea(e.target.value)}
-                        placeholder="건축물"
-                        style={{ width: '100%', marginBottom: '10px', height: '30px' }}
-                    />
+                
+                    <label>건축물면적</label>
+                    <div style={{ display: 'flex' }}>
+                        <input
+                            type="text"
+                            value={buildarea}
+                            onChange={(e) => setBuildarea(e.target.value)}
+                            placeholder="건축물면적"
+                            style={{ width: '42%', marginBottom: '10px',  marginRight: '5px',height: '30px' }}
+                        />
+                        <input
+                            type="text"
+                            value={buildarea}
+                            onChange={() => {}}
+                            placeholder="건축물면적 메모"
+                            style={{ width: '100%', marginBottom: '10px', height: '30px' }}
+                        />
+                    </div> 
                     {errors.buildarea && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.buildarea}</div>}
                     <label>부동산종류</label>
-                    <input
+                    {/* <input
                         type="text"
                         value={estateType}
                         onChange={(e) => setEstateType(e.target.value)}
                         placeholder="부동산종류"
                         style={{ width: '100%', marginBottom: '20px', height: '30px' }}
-                    />
-                    
+                    /> */}
+                    <div className="estateTypeContainer">
+                        {estateTypes.map((type, index) => (
+                            <label key={index} className="estateTypeLabel">
+                                <input
+                                    type="checkbox"
+                                    value={type.name}
+                                    checked={estateType.includes(type.code)}
+                                    onChange={handleEstateTypeChange}
+                                    className="estateTypeCheckbox"
+                                />
+                               {type.name}
+                            </label>
+                        ))}
+                    </div>
                     {errors.estateType && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.estateType}</div>}
                 </div>
 
