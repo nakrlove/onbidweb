@@ -41,6 +41,11 @@ const OnBidRegst = () => {
     const [ldarea        , setLdarea]         = useState('');
     const [buildarea     , setBuildarea]      = useState('');
     const [estateTypes   , setEstateTypes]    = useState<Code[]>([]);
+    const [other_laws    , setOtherLaws]      = useState('');             //다른 법령 등에 따른 지역ㆍ지구등
+    const [enforcement_decree                , setEnforcementdecree] = useState('');  //시행령
+    const [national_land_planning_use_laws   , setNationalLandPlanningUseLaws] = useState(''); //「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등
+    
+    
      // 하나의 선택된 부동산 종류를 관리하는 상태 변수
      const [selectedEstateType, setSelectedEstateType] = useState<Code['code']>('');
 
@@ -74,10 +79,13 @@ const OnBidRegst = () => {
         deposit     : '',
         disposal_type: '',
         land_classification: '',
-        progress_status: '',
-        onbid_status:'',
+        progress_status:   '',
+        onbid_status:      '',
         onbid_status_array:'',
-        debtor      : '' //채무자명
+        debtor      :      '', //채무자명
+        national_land_planning_use_laws : '', //「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등
+        other_laws  :      '',   //다른 법령 등에 따른 지역ㆍ지구등
+        enforcement_decree: '', //시행령
     });
 
     const Image = styled.img`
@@ -192,22 +200,25 @@ const OnBidRegst = () => {
         // FormData 생성
         const formData = new FormData();
         formData.append('onbidDTO', new Blob([JSON.stringify({
-            addr1: address1,
-            detailAddress: detailAddress,
-            rd_addr: rdaddr,
-            bruptcy_admin_name: bruptcyAdminName,
+            addr1: address1                       ,
+            detailAddress: detailAddress          ,
+            rd_addr: rdaddr                       ,
+            bruptcy_admin_name: bruptcyAdminName  ,
             bruptcy_admin_phone: bruptcyAdminPhone,
-            note: note,
-            memo: memo,
-            renter: renter,
-            ld_area: ldarea,
-            build_area: buildarea,
-            estateType: selectedEstateType,
-            disposal_type: disposaltype,
+            note: note                            ,
+            memo: memo                            ,
+            renter: renter                        ,
+            ld_area: ldarea                       ,
+            build_area: buildarea                 ,
+            estateType: selectedEstateType        ,
+            disposal_type: disposaltype           ,
             land_classification:land_classification,
-            progress_status: progress_status,
-            onbid_status: onbid_status,
-            debtor: debtor
+            progress_status: progress_status      ,
+            onbid_status: onbid_status            ,
+            debtor: debtor                        ,
+            national_land_planning_use_laws: national_land_planning_use_laws,
+            other_laws: other_laws                ,
+            enforcement_decree: enforcement_decree,
         })], { type: "application/json" }));
 
         // 파일과 옵션을 FormData에 추가
@@ -228,7 +239,7 @@ const OnBidRegst = () => {
        
         // 서버에 요청 보내기
         //const URL = `${process.env.REACT_APP_API_URL}/api/onbid/onbidL`;
-        const URL = `http://localhost:8080/api/onbid/onbidL`;
+        const URL = `${process.env.REACT_APP_API_URL}/api/onbid/onBidRegist`;
         try {
             const response = await axios.post(URL, formData, {
                 headers: {
@@ -381,14 +392,7 @@ const OnBidRegst = () => {
                                         <option key={item.idx} value={item.code}>{item.name}</option>
                                     ))}
                     </select>
-                    <label style={{ marginBottom: '10px',marginLeft: '10px', alignItems: 'center', height: '30px', width: '10%' }}>관심목록</label>
-                    <select onChange={(e) => setOnbidstatus(e.target.value)}
-                                style={{ marginBottom: '10px',marginRight: '10px', height: '30px', width: '25%' }}>
-                                    <option value="">=선택=</option>
-                                    {onbid_status_array?.map(item => (
-                                        <option key={item.idx} value={item.code}>{item.name}</option>
-                                    ))}
-                    </select>
+                
 
                     <label style={{ marginBottom: '10px',marginLeft: '10px', height: '30px', width: '10%' }}>채무자명</label>
                     <input
@@ -637,6 +641,72 @@ const OnBidRegst = () => {
                         />
                     </div> 
                     {errors.buildarea && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.buildarea}</div>}
+                    <hr style={{ margin: '15px 0' }} />
+                    <label>「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등</label>
+                    <CKEditor
+                        editor={ClassicEditor}
+                        data={national_land_planning_use_laws}
+                        onChange={(event, editor) => {
+                            const data = editor.getData();
+                            setNationalLandPlanningUseLaws(data);
+                        }}
+                        config={{
+                            toolbar: [
+                                'undo', 'redo', '|',
+                                'bold', 'italic', 'underline', 'strikethrough', '|',
+                                'fontColor', 'fontBackgroundColor', '|',
+                                'link', '|',
+                                'numberedList', 'bulletedList', '|',
+                                'alignment', '|',
+                                'insertTable', 'blockQuote', 'codeBlock', '|',
+                                'mediaEmbed', 'imageUpload', 'removeFormat'
+                            ],
+                        }}
+                    />
+                    <label style={{  marginTop: '15px' }}>다른 법령 등에 따른 지역ㆍ지구등</label>
+                    <CKEditor
+                        editor={ClassicEditor}
+                        data={other_laws}
+                        onChange={(event, editor) => {
+                            const data = editor.getData();
+                            setOtherLaws(data);
+                        }}
+                        config={{
+                            toolbar: [
+                                'undo', 'redo', '|',
+                                'bold', 'italic', 'underline', 'strikethrough', '|',
+                                'fontColor', 'fontBackgroundColor', '|',
+                                'link', '|',
+                                'numberedList', 'bulletedList', '|',
+                                'alignment', '|',
+                                'insertTable', 'blockQuote', 'codeBlock', '|',
+                                'mediaEmbed', 'imageUpload', 'removeFormat'
+                            ],
+                        }}
+                    />
+                    <label style={{  marginTop: '15px' }}>「토지이용규제 기본법 시행령」</label>
+                    <CKEditor
+                        editor={ClassicEditor}
+                        data={enforcement_decree}
+                        onChange={(event, editor) => {
+                            const data = editor.getData();
+                            setEnforcementdecree(data);
+                        }}
+                        config={{
+                            toolbar: [
+                                'undo', 'redo', '|',
+                                'bold', 'italic', 'underline', 'strikethrough', '|',
+                                'fontColor', 'fontBackgroundColor', '|',
+                                'link', '|',
+                                'numberedList', 'bulletedList', '|',
+                                'alignment', '|',
+                                'insertTable', 'blockQuote', 'codeBlock', '|',
+                                'mediaEmbed', 'imageUpload', 'removeFormat'
+                            ],
+                        }}
+                    />
+
+                    <hr style={{ margin: '15px 0' }} />
                     <label>부동산종류</label>
                     {/* <input
                         type="text"
@@ -667,7 +737,15 @@ const OnBidRegst = () => {
                 
 
                 <div style={{ marginBottom: '20px' }}>
-                    <label>메모</label>
+                    <label>메모</label> 
+                    <label style={{ marginBottom: '10px',marginLeft: '10px', alignItems: 'center', height: '30px', width: '10%' }}>관심목록</label>
+                    <select onChange={(e) => setOnbidstatus(e.target.value)}
+                                style={{ marginBottom: '10px',marginRight: '10px', height: '30px', width: '25%' }}>
+                                    <option value="">=선택=</option>
+                                    {onbid_status_array?.map(item => (
+                                        <option key={item.idx} value={item.code}>{item.name}</option>
+                                    ))}
+                    </select>
                     <CKEditor
                         editor={ClassicEditor}
                         data={memo}
