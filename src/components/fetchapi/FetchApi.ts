@@ -18,16 +18,18 @@ const fetchData = async ({
     //const host = "http://localhost:8080";
     const host = process.env.REACT_APP_API_URL;
     console.log("11 API URL:", host);
+    console.log("12 params:", params);
     const response = await fetch(`${host}${url}`, {
       method: method,
       headers: {
         "Content-Type": "application/json",
       },
       signal: abortController,
-      body:
-        method === "POST" || method === "DELETE" || method === "PUT"
-          ? JSON.stringify(params)
-          : null,
+      body: JSON.stringify(params),
+      // body:
+      //   method === "POST" || method === "DELETE" || method === "PUT"
+      //     ? JSON.stringify(params)
+      //     : null,
     });
 
     console.log("============== param ===========");

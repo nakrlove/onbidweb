@@ -5,6 +5,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import './css/OnBidRegst.css'; // CSS 파일 import
 import FindAddr from './modals/FindAddr';
+import Categroy from './modals/Categroy';
 import { handlePhoneNumberChange, handleNumberInputChange, handleKeyPress } from './utils/validationUtils';
 import styled from 'styled-components';
 import plus from '../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
@@ -99,7 +100,7 @@ const OnBidRegst = () => {
 
     /* 주소검색 요청 팝업 */
     const toggleModal = () => {
-        setIsModalOpen(!isModalOpen);
+        setIsModalOpen(prev => !prev);
     };
 
     const validateForm = () => {
@@ -772,11 +773,16 @@ const OnBidRegst = () => {
                     제출
                 </button>
 
-                <FindAddr
+                {/* <FindAddr
                     show={isModalOpen}
-                    onHide={() => toggleModal()}
+                    onHide={toggleModal}
                     onSelect={selectAddress}
-                />
+                /> */}
+                {
+                isModalOpen ? ( <Categroy show={isModalOpen} onClose={toggleModal}  onSelect={()=>{}} />) : ""
+                }
+             
+
             </form>
         </div>
     );

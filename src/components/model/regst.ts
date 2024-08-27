@@ -87,3 +87,9 @@ export interface Query {
   page?: number;
   idx?: number; // idx를 추가
 }
+
+export interface IItem {
+  show: Boolean;
+  onClose: () => void;
+  onSelect: () => void;
+}
