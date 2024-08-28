@@ -137,3 +137,25 @@
 
 
   /* 주소검색 모달창 CSS 끝 */
+  .list-item {
+    display: flex;
+    align-items: center; /* 수직 중앙 정렬 */
+    padding: 10px; /* 항목 간 간격 */
+    border-bottom: 1px solid #ddd; /* 항목 구분선 */
+  }
+  
+  .list-item-content {
+    display: flex;
+    align-items: center; /* 수직 중앙 정렬 */
+    width: 100%; /* 전체 너비 사용 */
+  }
+  
+  .list-item-content span {
+    flex: 3; /* 가로 비율 2 */
+  }
+  
+  .list-item-content button {
+    flex: 1; /* 가로 비율 1 */
+    margin: 0px; /* 버튼과 내용 사이 간격 */
+    border: 0px solid #ffffff; /* 항목 구분선 */
+  }

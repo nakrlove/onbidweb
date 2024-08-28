@@ -35,7 +35,7 @@ const CodeRegist = () => {
     const [btnname, setBtnname] = useState("등록하기");
     const codename = useRef<HTMLInputElement>(null);
     const code = useRef<HTMLInputElement>(null);
-    const abortControllerRef = useRef<AbortController | null>(null);
+    // const abortControllerRef = useRef<AbortController | null>(null);
 
     const navigate = useNavigate(); // useNavigate 훅 사용
 
@@ -70,9 +70,9 @@ const CodeRegist = () => {
     }, []);
 
     const mastFn = useCallback(async() =>  {
-      const abortController = new AbortController();
-      const signal = abortController.signal;
-      const data = await RequestApi("/api/onbid/groupcode","POST",{'subcode':'000'},signal);
+      // const abortController = new AbortController();
+      // const signal = abortController.signal;
+      const data = await RequestApi("/api/onbid/groupcode","POST",{'subcode':'000'});
       if (data) {
         setSelectsOptions(data)
         return;
@@ -92,14 +92,14 @@ const CodeRegist = () => {
         formData.append('filecode', codename.current.value);
 
           // 이전 요청을 취소합니다.
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-            //return;
-        }
+        // if (abortControllerRef.current) {
+        //     abortControllerRef.current.abort();
+        //     //return;
+        // }
 
-        const abortController = new AbortController();
-        const signal = abortController.signal;
-        abortControllerRef.current = abortController;
+        // const abortController = new AbortController();
+        // const signal = abortController.signal;
+        // abortControllerRef.current = abortController;
         
         let newUrl = btnname === '등록하기' ? "/api/onbid/regstcode" : "/api/onbid/updatecode";
         let method = btnname === '등록하기' ? "POST" : "PUT";
@@ -114,7 +114,7 @@ const CodeRegist = () => {
 
 
           //등록/수정 요청
-          const data = await RequestApi(newUrl,method,newQuery,signal);
+          const data = await RequestApi(newUrl,method,newQuery);
 
           if (data) {
               const userConfirmed = window.confirm('정상처리 되었습니다. 목록으로 이동하시겠습니까?');

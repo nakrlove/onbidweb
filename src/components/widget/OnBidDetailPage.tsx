@@ -7,6 +7,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import styled from 'styled-components';
+
 import plus from '../../assets/plus.png'; // 추가
 import minus from '../../assets/minus.png'; // 삭제
 import modify from '../../assets/modify.png'; //메모수정
@@ -103,7 +104,7 @@ const OnBidDetailPage = () => {
     const { search } = useLocation();
     const queryParams = new URLSearchParams(search);
     const paramData = queryParams.get('data');
-    const abortControllerRef = useRef<AbortController | null>(null);
+    // const abortControllerRef = useRef<AbortController | null>(null);
 
     // onbidarray: 체크할 상태 코드를 배열로 정의합니다.
     const onbidarray = ['039', '040', '041','-01'];
@@ -290,14 +291,14 @@ const OnBidDetailPage = () => {
 
         const formData = new FormData();
 
-        // 이전 요청을 취소합니다.
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-        }
+        // // 이전 요청을 취소합니다.
+        // if (abortControllerRef.current) {
+        //     abortControllerRef.current.abort();
+        // }
 
-        const abortController = new AbortController();
-        const signal = abortController.signal;
-        abortControllerRef.current = abortController;
+        // const abortController = new AbortController();
+        // const signal = abortController.signal;
+        // abortControllerRef.current = abortController;
 
         console.log('Selected Value:', selectRefs.current[index]?.value);
         let newQuery = {
@@ -316,7 +317,7 @@ const OnBidDetailPage = () => {
         try {
             console.log("================<<< days >>>==================")
             console.log(JSON.stringify(days))
-            const resultData = await RequestApi(url,"PUT",newQuery,signal);
+            const resultData = await RequestApi(url,"PUT",newQuery);
             console.log("================<<< resultData >>>==================")
             console.log(JSON.stringify(resultData))
             console.log("================<<< resultData >>>==================")

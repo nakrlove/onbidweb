@@ -14,12 +14,12 @@ const FindAddr: React.FC<IInput> = (props) => {
     const [totalCount, setTotalCount] = useState<number>(1);
     const [error, setError] = useState<string | null>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
-    const abortControllerRef = useRef<AbortController | null>(null);
+    // const abortControllerRef = useRef<AbortController | null>(null);
 
     const init = () => {
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-        }
+        // if (abortControllerRef.current) {
+        //     abortControllerRef.current.abort();
+        // }
         setAddress([]);
         setQuery({});
         setTotalPage(1);
@@ -62,12 +62,12 @@ const FindAddr: React.FC<IInput> = (props) => {
             return;
         }
 
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-        }
-        const abortController = new AbortController();
-        const signal = abortController.signal;
-        abortControllerRef.current = abortController;
+        // if (abortControllerRef.current) {
+        //     abortControllerRef.current.abort();
+        // }
+        // const abortController = new AbortController();
+        // const signal = abortController.signal;
+        // abortControllerRef.current = abortController;
 
         const page = initPage === -100 ? 0 : currentPage;
 
@@ -77,7 +77,7 @@ const FindAddr: React.FC<IInput> = (props) => {
         setQuery(newQuery);
 
         try {
-            const data = await RequestApi("/api/post/findZipCode", "POST", newQuery, signal);
+            const data = await RequestApi("/api/post/findZipCode", "POST", newQuery);
             if (data) {
                 if (page === 0) {
                     setTotalCount(data.count);

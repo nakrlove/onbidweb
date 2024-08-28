@@ -5,7 +5,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import './css/OnBidRegst.css'; // CSS 파일 import
 import FindAddr from './modals/FindAddr';
-import Categroy from './modals/Categroy';
+import Category from './modals/Categroy';
 import { handlePhoneNumberChange, handleNumberInputChange, handleKeyPress } from './utils/validationUtils';
 import styled from 'styled-components';
 import plus from '../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
@@ -14,6 +14,7 @@ import plus1 from '../assets/plus-1.png'; // 경로는 파일의 위치에 따�
 import minus from '../assets/minus.png'; // 경로는 파일의 위치에 따라 조정
 import edit from '../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
 import search from '../assets/search.png'; // 경로는 파일의 위치에 따라 조정
+import UIButton from './ui/UIButton';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -23,6 +24,38 @@ interface Code {
     name: string;
 }
 
+const Image = styled.img`
+width: 20px;
+height: 20px;
+`;
+
+// interface Param{
+//     address1         : string,
+//     detailAddress    : string,
+//     bruptcyAdminName : string,
+//     bruptcyAdminPhone: string,
+//     Disposaltype: string,
+//     ldarea      : string    ,
+//     buildarea   : string    ,
+//     estateType  : string    , /* 부동산종류 */
+//     selectedOption: string,
+//     file        : string,
+//     sdate       : string,
+//     edate       : string,
+//     evalue      : string,
+//     deposit     : string,
+//     disposal_type: string,
+//     land_classification: string,
+//     progress_status:   string,
+//     onbid_status:      string,
+//     onbidStatusArray:string,
+//     debtor      :      string, //채무자명
+//     national_land_planning_use_laws : string, //「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등
+//     other_laws  :      string,   //다른 법령 등에 따른 지역ㆍ지구등
+//     enforcement_decree: string, //시행령
+// }
+
+interface Category{ idx: number; content: string; user: string; regdate: string }
 
 const OnBidRegst = () => {
     
@@ -32,7 +65,7 @@ const OnBidRegst = () => {
     const [bruptcyAdminName , setBruptcyAdminName] = useState('');
     const [bruptcyAdminPhone, setBruptcyAdminPhone]= useState('');
     const [additionalFiles  , setAdditionalFiles]  = useState<{ id: number, file: File | null, selectedOption: string }[]>([{ id: 0, file: null, selectedOption: '' }]);
-    const [bidmethod        , setBidmethod]        = useState<{  edate: string, evalue: number, deposit: number }[]>([{ edate: '', evalue: 0, deposit: 0 }]);
+    const [bidMethod        , setBidMethod]        = useState<{  edate: string, evalue: number, deposit: number }[]>([{ edate: '', evalue: 0, deposit: 0 }]);
 
     // const [connoisseur, setConnoisseur] = useState('');
     const [selectsOptions, setSelectsOptions] = useState<Code[]>([]);
@@ -58,9 +91,11 @@ const OnBidRegst = () => {
     const [progress_status, setProgressstatus] = useState(''); /* 진행상태*/
 
 
-    const [onbid_status, setOnbidstatus] = useState(''); /* 지목 */
+    const [onbid_status, setOnbidStatus] = useState(''); /* 지목 */
+    const [categorystatus, setCategoryStatus] = useState(''); /* 지목 */
+    const [category,setCategory] = useState<Category[]>([]); /* 관심목록 */
     /* 입찰진행상태*/
-    const [onbid_status_array,setOnbidstatusarray] = useState<Code[]>([]); /* 진행상태 */
+    const [onbidStatusArray,setOnbidStatusArray] = useState<Code[]>([]); /* 진행상태 */
 
     // Validation States
     const [errors, setErrors] = useState({
@@ -82,25 +117,23 @@ const OnBidRegst = () => {
         land_classification: '',
         progress_status:   '',
         onbid_status:      '',
-        onbid_status_array:'',
+        onbidStatusArray:'',
         debtor      :      '', //채무자명
         national_land_planning_use_laws : '', //「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등
         other_laws  :      '',   //다른 법령 등에 따른 지역ㆍ지구등
         enforcement_decree: '', //시행령
     });
 
-    const Image = styled.img`
-        width: 20px;
-        height: 20px;
-    `;
-  
 
     const navigate = useNavigate(); // useNavigate 훅 사용
-    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태
-
+    const [isAddrModalOpen, setIsAddrModalOpen] = useState(false); // 모달 열림 상태
+    const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false); // 모달 열림 상태
     /* 주소검색 요청 팝업 */
-    const toggleModal = () => {
-        setIsModalOpen(prev => !prev);
+    const toggleAddrModal = () => {
+        setIsAddrModalOpen(prev => !prev);
+    };
+    const toggleCategoryModal = () => {
+        setIsCategoryModalOpen(prev => !prev);
     };
 
     const validateForm = () => {
@@ -160,7 +193,7 @@ const OnBidRegst = () => {
         }
 
      
-        bidmethod.forEach((item, index) => {
+        bidMethod.forEach((item, index) => {
            
             if (!item.edate) {
                 newErrors[`edate`] = '입찰일자 입력이 필요합니다.';
@@ -230,7 +263,7 @@ const OnBidRegst = () => {
             }
         });
 
-        formData.append('onbidDays', new Blob([JSON.stringify(bidmethod)], { type: 'application/json' }));
+        formData.append('onbidDays', new Blob([JSON.stringify(bidMethod)], { type: 'application/json' }));
 
         // FormData 내용 확인
         formData.forEach((value, key) => {
@@ -257,12 +290,12 @@ const OnBidRegst = () => {
     // 입력 값 변경 핸들러
     const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-        const newBidmethod = [...bidmethod];
+        const newBidmethod = [...bidMethod];
         newBidmethod[index] = {
             ...newBidmethod[index],
             [name]: value,
         };
-        setBidmethod(newBidmethod);
+        setBidMethod(newBidmethod);
     };
 
     const handleAdditionalFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -322,13 +355,13 @@ const OnBidRegst = () => {
 
     /** 입찰일자/감정가/보증금 추가 */
     const addBidmethod = () => {
-        setBidmethod([...bidmethod, {  edate: '', evalue: 0, deposit: 0 }]);
+        setBidMethod([...bidMethod, {  edate: '', evalue: 0, deposit: 0 }]);
     };
 
     /** 입찰일자/감정가/보증금 삭제 */
     const delBidmethod = (idx: number) => {
-        const updatedBidmethod = bidmethod.filter((_, i) => i !== idx);
-        setBidmethod(updatedBidmethod);
+        const updatedBidmethod = bidMethod.filter((_, i) => i !== idx);
+        setBidMethod(updatedBidmethod);
     };
 
     const initfetchSelectOptions = useCallback(async () => {
@@ -352,7 +385,7 @@ const OnBidRegst = () => {
         /* 입찰진행상태 */
         try {
             const response = await axios.post('/api/onbid/file-code?codes=037');
-            setOnbidstatusarray(response.data);
+            setOnbidStatusArray(response.data);
         } catch (error) {
             console.error('Error fetching select options:', error);
         }
@@ -365,6 +398,14 @@ const OnBidRegst = () => {
             console.error('Error fetching select options:', error);
         }
 
+
+         /* 관심목록 */
+         try {
+            const response = await axios.post('/api/onbid/categroyList');
+            setCategory(response.data);
+        } catch (error) {
+            console.error('Error fetching select options:', error);
+        }
         
     }, []);
 
@@ -386,10 +427,10 @@ const OnBidRegst = () => {
                 
                 <div style={{ display: 'flex', alignItems: 'left', marginBottom: '0px' }}>
                     <label style={{ marginBottom: '10px',marginRight: '1px', height: '30px', width: '10%' }}>진행상태</label>
-                    <select onChange={(e) => setOnbidstatus(e.target.value)}
+                    <select onChange={(e) => setOnbidStatus(e.target.value)}
                                 style={{ marginBottom: '10px',marginRight: '10px', height: '30px', width: '25%' }}>
                                     <option value="">=선택=</option>
-                                    {onbid_status_array?.map(item => (
+                                    {onbidStatusArray?.map(item => (
                                         <option key={item.idx} value={item.code}>{item.name}</option>
                                     ))}
                     </select>
@@ -414,7 +455,7 @@ const OnBidRegst = () => {
                         placeholder="주소 입력"
                         style={{ flex: 1, marginRight: '10px', height: '30px' }}
                     />
-                    <button type="button" onClick={toggleModal} style={{ width: '22%', textAlign: 'center',border: '1px solid #ddd' }}>
+                    <button type="button" onClick={toggleAddrModal} style={{ width: '22%', textAlign: 'center',border: '1px solid #ddd' }}>
                         <Image src={search} alt="search"/> 주소 검색
                     </button>
                     
@@ -449,7 +490,7 @@ const OnBidRegst = () => {
                         </button>
                     </div>
                     <hr style={{ margin: '4px 0' }} />
-                    {bidmethod.map((item, index) => (
+                    {bidMethod.map((item, index) => (
                         <div key={index}>
                            
                             <div style={{ display: 'flex' }}>
@@ -740,13 +781,14 @@ const OnBidRegst = () => {
                 <div style={{ marginBottom: '20px' }}>
                     <label>메모</label> 
                     <label style={{ marginBottom: '10px',marginLeft: '10px', alignItems: 'center', height: '30px', width: '10%' }}>관심목록</label>
-                    <select onChange={(e) => setOnbidstatus(e.target.value)}
+                    <select onChange={(e) => setCategoryStatus(e.target.value)}
                                 style={{ marginBottom: '10px',marginRight: '10px', height: '30px', width: '25%' }}>
                                     <option value="">=선택=</option>
-                                    {onbid_status_array?.map(item => (
-                                        <option key={item.idx} value={item.code}>{item.name}</option>
+                                    {category?.map(item => (
+                                        <option key={item.idx} value={item.idx}>{item.content}</option>
                                     ))}
                     </select>
+                    <UIButton onClick={toggleCategoryModal} >관심목록추가</UIButton>
                     <CKEditor
                         editor={ClassicEditor}
                         data={memo}
@@ -773,14 +815,8 @@ const OnBidRegst = () => {
                     제출
                 </button>
 
-                {/* <FindAddr
-                    show={isModalOpen}
-                    onHide={toggleModal}
-                    onSelect={selectAddress}
-                /> */}
-                {
-                isModalOpen ? ( <Categroy show={isModalOpen} onClose={toggleModal}  onSelect={()=>{}} />) : ""
-                }
+                { isAddrModalOpen ? (<FindAddr show={isAddrModalOpen} onHide={toggleAddrModal} onSelect={selectAddress} />) : "" }   
+                { isCategoryModalOpen ? ( <Category show={isCategoryModalOpen} onClose={toggleCategoryModal}  onSelect={()=>{}} />) : "" }
              
 
             </form>

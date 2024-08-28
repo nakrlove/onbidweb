@@ -47,7 +47,7 @@ const OnBidList: React.FC = () => {
     const [itemsPerPage] = useState<number>(10);
     const [totalPages,setTotalPages] = useState<number>(1);
     const searchCode = useRef<HTMLInputElement>(null);
-    const abortControllerRef = useRef<AbortController | null>(null);
+    // const abortControllerRef = useRef<AbortController | null>(null);
     const navigate = useNavigate(); // useNavigate 훅 사용
 
     const [error,setError]  = useState<string>('');
@@ -105,13 +105,13 @@ const OnBidList: React.FC = () => {
         //formData.append('filecode', searchCode.current.value);
 
         // 이전 요청을 취소합니다.
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-        }
+        // if (abortControllerRef.current) {
+        //     abortControllerRef.current.abort();
+        // }
 
-        const abortController = new AbortController();
-        const signal = abortController.signal;
-        abortControllerRef.current = abortController;
+        // const abortController = new AbortController();
+        // const signal = abortController.signal;
+        // abortControllerRef.current = abortController;
 
         let newQuery:Query = { 
             'codename': searchCode.current?.value ,
@@ -136,7 +136,7 @@ const OnBidList: React.FC = () => {
     
         let url = method === 'POST' ? "/api/onbid/onbidAllList" : "/api/onbid/deletecode";
         try {
-            const resultData = await RequestApi(url,method,newQuery, signal);
+            const resultData = await RequestApi(url,method,newQuery);
 
             if( method === 'DELETE') {
                 
