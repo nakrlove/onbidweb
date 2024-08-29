@@ -9,7 +9,7 @@ import { Query } from '../../components/model/regst';
 import '../css/common.css';
 import styled from 'styled-components';
 import plus from '../../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
-import edit from '../../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
+//import edit from '../../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
 import search from '../../assets/search.png'; // 경로는 파일의 위치에 따라 조정
 const Image = styled.img`
   width: 20px;
@@ -97,18 +97,9 @@ const OnBidList: React.FC = () => {
         }
     };
 
-    // 페이지 번호 생성
-   // const totalPages = Math.ceil(data.length / itemsPerPage);
-    let pageNumbers = Array.from({ length: Math.min(totalPages, 10) }, (_, i) => i + 1);
-    /* 패이지 재계산 */
-    useEffect(() => {
-        pageNumbers = Array.from({ length: Math.min(totalPages, 10) }, (_, i) => i + 1);
-    }, [data]); // 의존성 배열에 fetchData를 추가
-
-    const fetchData = useCallback(async (data:OnbidItem | null,method:string) => {
-       // if (!searchCode.current) return;
 
 
+    const initDataSet = async() => {
         /* 관심목록 */
         try {
             const response = await axios.post('/api/onbid/categroyList');
@@ -117,12 +108,29 @@ const OnBidList: React.FC = () => {
         } catch (error) {
             console.error('Error fetching select options:', error);
         }
+    }
+
+   
+    // 페이지 번호 생성
+   // const totalPages = Math.ceil(data.length / itemsPerPage);
+    let pageNumbers = Array.from({ length: Math.min(totalPages, 10) }, (_, i) => i + 1);
+    /* 패이지 재계산 */
+    useEffect(() => {
+        pageNumbers = Array.from({ length: Math.min(totalPages, 10) }, (_, i) => i + 1);
+    }, [data]); // 의존성 배열에 fetchData를 추가
+
+    useEffect(() => {
+        //init 관심종목 가져오기 
+        initDataSet()
+    },[])
 
 
-        const formData = new FormData();
-      
+    const fetchData = useCallback(async (data:OnbidItem | null,method:string) => {
+       // if (!searchCode.current) return;
+        //const formData = new FormData();
         let newQuery:Query = { 
             'idx':  isNaN(parseInt(categorystatus)) ? 0 : parseInt(categorystatus) ,
+            // 'idx':  categorystatus ,
             'page': ((currentPage - 1) *10),
         };
 
@@ -143,7 +151,7 @@ const OnBidList: React.FC = () => {
         }
      
     
-        let url = method === 'POST' ? "/api/onbid/onbidAllList" : "/api/onbid/deletecode";
+        let url = method === 'POST' ? "/api/onbid/onbid-alls" : "/api/onbid/deletecode";
         try {
             const resultData = await RequestApi(url,method,newQuery);
 
@@ -164,23 +172,24 @@ const OnBidList: React.FC = () => {
             setData([]); // 응답 데이터가 배열이 아닌 경우 빈 배열로 설정
             setTotalPages(1);
             setError(`데이트가 존재하지 않습니다.`)
-            console.log('Received data is not an array.');
             
         } catch (err) {
             setData([]); // 응답 데이터가 배열이 아닌 경우 빈 배열로 설정
             setTotalPages(1);
             setError(`An error occurred while fetching data:${err}`); // 오류 발생 시 빈 배열로 설정
-            console.error('An error occurred while fetching data:', err);
         }
-    }, [currentPage]);
+    }, [currentPage,categorystatus]);
 
+   
+    
     useEffect(() => {
         fetchData(null,"POST"); // 컴포넌트가 처음 마운트될 때 데이터 조회
-    }, [fetchData]); // 의존성 배열에 fetchData를 추가
+    }, [currentPage]); // 의존성 배열에 fetchData를 추가
 
     /* 관심종목 선택 */
     const categorySelectChange = (value: string) => {
-        setCategoryStatus(value)
+        console.log(" categorySelectChange >>>>    ", value)
+       setCategoryStatus(value)
     };
 
     return (
@@ -189,17 +198,17 @@ const OnBidList: React.FC = () => {
                 <button className="register-button" onClick={handleRegisterClick}>
                     <Image src={plus} alt="modify"/>
                 </button>
-                <div className="search-wrapper" style={{width: '40%', border: '1px solid #ddd' }}>
+                <div className="search-wrapper" style={{width: '35%', border: '0px solid #ddd' }}>
                   
                     <select onChange={(e) => categorySelectChange(e.target.value)}
-                                style={{  width: '30%' }}>
+                                style={{ height: '34px', width: '70%' }}>
                                     <option value="">=선택=</option>
-                                    {categories?.map(item => (
-                                        <option key={item.idx} value={item.idx}>{item.content}</option>
+                                    {categories?.map((item,index) => (
+                                        <option key={index} value={item.idx}>{item.content}</option>
                                     ))}
                     </select>
 
-                    <button onClick={handleSearch} style={{ width: '40%', marginLeft: '20px',textAlign: 'center',border: '1px solid #ddd' }}>
+                    <button onClick={handleSearch} style={{ width: '30%', marginLeft: '2px',textAlign: 'center',border: '1px solid #ddd' }}>
                        <Image src={search} alt="search"/> 검색
                     </button>
                 </div>
