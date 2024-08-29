@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
+
+import { useCategory } from '../../components/provider/CategoryProvider'; // Context 사용
+import { RequestApi }  from '../../components/fetchapi/FetchApi';
+
 import ListItem from '../common/ListItem';
-import { RequestApi } from '../../components/fetchapi/FetchApi';
-import UIInput from '../ui/UIInput';
+import UIInput  from '../ui/UIInput';
 import UIButton from '../ui/UIButton';
 import '../css/Category.css';
 
 interface CategoryProps {
   show: boolean;
-  onClose: () => void;
+  onClose: (e:React.MouseEvent<HTMLElement,MouseEvent>) => void;
   onSelect: (item: { id: number; content: string }) => void;
 }
 
 const Category: React.FC<CategoryProps> = ({ show, onClose, onSelect }) => {
-    const [items,setItems] = useState<{ idx: number; content: string; user: string; regdate: string }[]>([]);
-    const [inputCategory,setInputCategory] = useState('');
 
+    const [inputCategory,setInputCategory] = useState('');
+    const { categories, setCategories } = useCategory(); //provier 적용
+    
     const updateDelete = async (url: string, params: any,type:string) => {
      
             const data = await RequestApi(url, 'POST', params);
@@ -37,7 +41,7 @@ const Category: React.FC<CategoryProps> = ({ show, onClose, onSelect }) => {
                
             const data = await RequestApi(url, 'POST', params);
             if(data) {
-               setItems(data)
+               setCategories(data)
                return;
             }
             
@@ -51,7 +55,13 @@ const Category: React.FC<CategoryProps> = ({ show, onClose, onSelect }) => {
     };
 
     useEffect(() => {
-        initSearch('/api/onbid/categroyList', {});
+
+        //initSearch('/api/onbid/categroyList', {});
+        document.body.classList.add('modal-open'); // 배경 스크롤 방지
+        return () => {
+            document.body.classList.remove('modal-open');
+        };
+
     },[show]);
 
     
@@ -73,7 +83,7 @@ const Category: React.FC<CategoryProps> = ({ show, onClose, onSelect }) => {
             <div className={`modal ${show ? '' : 'hidden'}`} onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2>Category Management</h2>
-                    <UIButton onClick={onClose}>
+                    <UIButton onClick={(e) => onClose(e) }>
                         <span>X</span>
                     </UIButton>
                 </div>
@@ -84,7 +94,7 @@ const Category: React.FC<CategoryProps> = ({ show, onClose, onSelect }) => {
                 />
                 <UIButton onClick={handleAdd}><span>추가</span></UIButton>
 
-                {items && items.map((item) => (
+                {categories && categories.map((item) => (
                     <ListItem
                         key={item.idx}
                         item={item}

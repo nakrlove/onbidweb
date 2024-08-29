@@ -39,6 +39,10 @@ const FindAddr: React.FC<IInput> = (props) => {
         } else {
             document.body.classList.remove('modal-open'); // 배경 스크롤 복구
         }
+
+        return () => {
+            document.body.classList.remove('modal-open');
+        };
     }, [props.show]);
 
     useEffect(() => {
@@ -61,13 +65,6 @@ const FindAddr: React.FC<IInput> = (props) => {
         if (Object.keys(param).length === 0) {
             return;
         }
-
-        // if (abortControllerRef.current) {
-        //     abortControllerRef.current.abort();
-        // }
-        // const abortController = new AbortController();
-        // const signal = abortController.signal;
-        // abortControllerRef.current = abortController;
 
         const page = initPage === -100 ? 0 : currentPage;
 
@@ -144,9 +141,9 @@ const FindAddr: React.FC<IInput> = (props) => {
         handleSearch(e, newQuery, -100); // 현재 searchValue를 검색
     };
 
-    const select = (addr1: string, addr2: string) => {
+    const select = (e:React.MouseEvent<HTMLElement,MouseEvent>, addr1: string, addr2: string) => {
         props.onSelect(addr2, addr1);
-        handleCloseModal();
+        handleCloseModal(e);
     };
 
     const pageing = (): JSX.Element[] => {
@@ -172,21 +169,21 @@ const FindAddr: React.FC<IInput> = (props) => {
         }
     };
 
-    const handleCloseModal = () => {
+    const handleCloseModal = (e:React.MouseEvent<HTMLElement,MouseEvent>) => {
         init();
         if (props.onHide) {
-            props.onHide(); // props.onHide 호출
+            props.onHide(e); // props.onHide 호출
         }
     };
 
     return (
         <>
             {props.show && (
-                <div className="modal-overlay">
-                    <div className="modal-container">
+                <div className="modal-overlay" >
+                    <div className="modal-container" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
                             <h2>주소검색</h2>
-                            <button className="close-button" onClick={handleCloseModal}>X</button>
+                            <button className="close-button" onClick={(e) => handleCloseModal(e)}>X</button>
                         </div>
                         <div className="modal-body">
                             <div>
@@ -222,7 +219,7 @@ const FindAddr: React.FC<IInput> = (props) => {
                                     {address.map((addr, index) => (
                                         <li
                                             key={index}
-                                            onClick={() => select(addr.addr1, addr.addr2)}
+                                            onClick={(e) => select(e,addr.addr1, addr.addr2)}
                                         >
                                             <div><strong>지 번:</strong> {addr.addr2 || '정보 없음'}</div>
                                             <div><strong>도로명:</strong> {addr.addr1 || '정보 없음'}</div>

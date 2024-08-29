@@ -4,17 +4,25 @@ import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import './css/OnBidRegst.css'; // CSS 파일 import
+
+import { useCategory } from './provider/CategoryProvider'; // Context 사용
 import FindAddr from './modals/FindAddr';
 import Category from './modals/Categroy';
 import { handlePhoneNumberChange, handleNumberInputChange, handleKeyPress } from './utils/validationUtils';
+
+
+
 import styled from 'styled-components';
+
 import plus from '../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
 import plus1 from '../assets/plus-1.png'; // 경로는 파일의 위치에 따라 조정
-
 import minus from '../assets/minus.png'; // 경로는 파일의 위치에 따라 조정
 import edit from '../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
 import search from '../assets/search.png'; // 경로는 파일의 위치에 따라 조정
 import UIButton from './ui/UIButton';
+
+
+
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -29,31 +37,6 @@ width: 20px;
 height: 20px;
 `;
 
-// interface Param{
-//     address1         : string,
-//     detailAddress    : string,
-//     bruptcyAdminName : string,
-//     bruptcyAdminPhone: string,
-//     Disposaltype: string,
-//     ldarea      : string    ,
-//     buildarea   : string    ,
-//     estateType  : string    , /* 부동산종류 */
-//     selectedOption: string,
-//     file        : string,
-//     sdate       : string,
-//     edate       : string,
-//     evalue      : string,
-//     deposit     : string,
-//     disposal_type: string,
-//     land_classification: string,
-//     progress_status:   string,
-//     onbid_status:      string,
-//     onbidStatusArray:string,
-//     debtor      :      string, //채무자명
-//     national_land_planning_use_laws : string, //「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등
-//     other_laws  :      string,   //다른 법령 등에 따른 지역ㆍ지구등
-//     enforcement_decree: string, //시행령
-// }
 
 interface Category{ idx: number; content: string; user: string; regdate: string }
 
@@ -72,10 +55,12 @@ const OnBidRegst = () => {
     const [note          , setNote]           = useState('');
     const [memo          , setMemo]           = useState('');
     const [renter        , setRenter]         = useState('');
-    const [ldarea        , setLdarea]         = useState('');
-    const [buildarea     , setBuildarea]      = useState('');
-    const [estateTypes   , setEstateTypes]    = useState<Code[]>([]);
-    const [other_laws    , setOtherLaws]      = useState('');             //다른 법령 등에 따른 지역ㆍ지구등
+    const [ld_area         , setLdarea]         = useState('');
+    const [ld_area_memo    , setLdareamemo]     = useState(''); //토지면적 메모
+    const [build_area      , setBuildarea]      = useState('');
+    const [build_area_memo , setBuildareamemo]  = useState(''); //건물면적 메모
+    const [estateTypes     , setEstateTypes]    = useState<Code[]>([]);
+    const [other_laws      , setOtherLaws]      = useState('');             //다른 법령 등에 따른 지역ㆍ지구등
     const [enforcement_decree                , setEnforcementdecree] = useState('');  //시행령
     const [national_land_planning_use_laws   , setNationalLandPlanningUseLaws] = useState(''); //「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등
     
@@ -92,8 +77,8 @@ const OnBidRegst = () => {
 
 
     const [onbid_status, setOnbidStatus] = useState(''); /* 지목 */
-    const [categorystatus, setCategoryStatus] = useState(''); /* 지목 */
-    const [category,setCategory] = useState<Category[]>([]); /* 관심목록 */
+    const [categorystatus, setCategoryStatus] = useState(''); /* 관심종목 */
+    //const [category,setCategory] = useState<Category[]>([]); /* 관심목록 */
     /* 입찰진행상태*/
     const [onbidStatusArray,setOnbidStatusArray] = useState<Code[]>([]); /* 진행상태 */
 
@@ -104,8 +89,10 @@ const OnBidRegst = () => {
         bruptcyAdminName : '',
         bruptcyAdminPhone: '',
         Disposaltype: '',
-        ldarea      : ''    ,
-        buildarea   : ''    ,
+        ld_area      : ''    ,
+        ld_area_memo  : ''    ,
+        build_area   : ''    ,
+        build_area_memo   : ''    ,
         estateType  : ''    , /* 부동산종류 */
         selectedOption: '',
         file        : '',
@@ -122,17 +109,24 @@ const OnBidRegst = () => {
         national_land_planning_use_laws : '', //「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등
         other_laws  :      '',   //다른 법령 등에 따른 지역ㆍ지구등
         enforcement_decree: '', //시행령
+        idx: 0 , //관심종목 '0' 전체
     });
 
-
+    const { categories, setCategories } = useCategory(); //provier 적용
     const navigate = useNavigate(); // useNavigate 훅 사용
+
     const [isAddrModalOpen, setIsAddrModalOpen] = useState(false); // 모달 열림 상태
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false); // 모달 열림 상태
     /* 주소검색 요청 팝업 */
-    const toggleAddrModal = () => {
+    const toggleAddrModal = (e: React.MouseEvent<HTMLElement,MouseEvent>) => {
+        e.preventDefault(); // 기본 폼 제출 방지
+        e.stopPropagation();
         setIsAddrModalOpen(prev => !prev);
     };
-    const toggleCategoryModal = () => {
+   
+    const toggleCategoryModal = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        e.preventDefault(); // 기본 폼 제출 방지
+        e.stopPropagation();
         setIsCategoryModalOpen(prev => !prev);
     };
 
@@ -170,12 +164,12 @@ const OnBidRegst = () => {
             isValid = false;
         }
 
-        if (!ldarea) {
+        if (!ld_area) {
             newErrors.ldarea = '토지 입력이 필요합니다.';
             isValid = false;
         }
 
-        if (!buildarea) {
+        if (!build_area) {
             newErrors.buildarea = '건축물 입력이 필요합니다.';
             isValid = false;
         }
@@ -242,8 +236,10 @@ const OnBidRegst = () => {
             note: note                            ,
             memo: memo                            ,
             renter: renter                        ,
-            ld_area: ldarea                       ,
-            build_area: buildarea                 ,
+            ld_area: ld_area                       ,
+            ld_area_memo: ld_area_memo                ,
+            build_area: build_area                 ,
+            build_area_memo: build_area_memo          ,
             estateType: selectedEstateType        ,
             disposal_type: disposaltype           ,
             land_classification:land_classification,
@@ -253,6 +249,7 @@ const OnBidRegst = () => {
             national_land_planning_use_laws: national_land_planning_use_laws,
             other_laws: other_laws                ,
             enforcement_decree: enforcement_decree,
+            idx: categorystatus  , //관심종목 
         })], { type: "application/json" }));
 
         // 파일과 옵션을 FormData에 추가
@@ -267,7 +264,7 @@ const OnBidRegst = () => {
 
         // FormData 내용 확인
         formData.forEach((value, key) => {
-            console.log(`${key}: ${value}`);
+            console.log(`${key}: ${JSON.stringify(value)}`);
         });
 
        
@@ -328,6 +325,11 @@ const OnBidRegst = () => {
             return fileWrapper.code;
         });
         // setAdditionalFiles(newFiles);
+    };
+
+    /* 관심종목 선택 */
+    const categorySelectChange = (value: string) => {
+        setCategoryStatus(value)
     };
 
 
@@ -399,13 +401,16 @@ const OnBidRegst = () => {
         }
 
 
-         /* 관심목록 */
-         try {
+        /* 관심목록 */
+       
+        try {
             const response = await axios.post('/api/onbid/categroyList');
-            setCategory(response.data);
+            //setCategory(response.data);
+            setCategories(response.data)
         } catch (error) {
             console.error('Error fetching select options:', error);
         }
+     
         
     }, []);
 
@@ -650,39 +655,39 @@ const OnBidRegst = () => {
                         </select>
                         <input
                             type="text"
-                            value={ldarea}
+                            value={ld_area}
                             onChange={(e) => setLdarea(e.target.value)}
                             placeholder="토지면적"
                             style={{ width: '25%', marginBottom: '10px', height: '30px' }}
                         />
                         <input
                             type="text"
-                            value={ldarea}
-                            onChange={() => {}}
+                            value={ld_area_memo}
+                            onChange={(e) => setLdareamemo(e.target.value)}
                             placeholder="토지면적 메모"
                             style={{ width: '100%', marginLeft: '5px', height: '30px' }}
                         />
                     </div>
-                    {errors.ldarea && <div style={{ color: 'red',marginTop: '-10px',marginBottom: '10px' }}>{errors.ldarea}</div>}
+                    {errors.ld_area && <div style={{ color: 'red',marginTop: '-10px',marginBottom: '10px' }}>{errors.ld_area}</div>}
                 
                     <label>건축물면적</label>
                     <div style={{ display: 'flex' }}>
                         <input
                             type="text"
-                            value={buildarea}
+                            value={build_area}
                             onChange={(e) => setBuildarea(e.target.value)}
                             placeholder="건축물면적"
                             style={{ width: '42%', marginBottom: '10px',  marginRight: '5px',height: '30px' }}
                         />
                         <input
                             type="text"
-                            value={buildarea}
-                            onChange={() => {}}
+                            value={build_area_memo}
+                            onChange={(e) => setBuildareamemo(e.target.value)}
                             placeholder="건축물면적 메모"
                             style={{ width: '100%', marginBottom: '10px', height: '30px' }}
                         />
                     </div> 
-                    {errors.buildarea && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.buildarea}</div>}
+                    {errors.build_area && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.build_area}</div>}
                     <hr style={{ margin: '15px 0' }} />
                     <label>「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등</label>
                     <CKEditor
@@ -781,10 +786,10 @@ const OnBidRegst = () => {
                 <div style={{ marginBottom: '20px' }}>
                     <label>메모</label> 
                     <label style={{ marginBottom: '10px',marginLeft: '10px', alignItems: 'center', height: '30px', width: '10%' }}>관심목록</label>
-                    <select onChange={(e) => setCategoryStatus(e.target.value)}
+                    <select onChange={(e) => categorySelectChange(e.target.value)}
                                 style={{ marginBottom: '10px',marginRight: '10px', height: '30px', width: '25%' }}>
                                     <option value="">=선택=</option>
-                                    {category?.map(item => (
+                                    {categories?.map(item => (
                                         <option key={item.idx} value={item.idx}>{item.content}</option>
                                     ))}
                     </select>
@@ -815,8 +820,8 @@ const OnBidRegst = () => {
                     제출
                 </button>
 
-                { isAddrModalOpen ? (<FindAddr show={isAddrModalOpen} onHide={toggleAddrModal} onSelect={selectAddress} />) : "" }   
-                { isCategoryModalOpen ? ( <Category show={isCategoryModalOpen} onClose={toggleCategoryModal}  onSelect={()=>{}} />) : "" }
+                { isAddrModalOpen ? (<FindAddr show={isAddrModalOpen} onHide={ (e) => toggleAddrModal(e)} onSelect={selectAddress} />) : "" }   
+                { isCategoryModalOpen ? ( <Category show={isCategoryModalOpen} onClose={(e) =>toggleCategoryModal(e)}  onSelect={()=>{}} />) : "" }
              
 
             </form>

@@ -1,8 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import axios from 'axios';
+import { useCategory } from './../provider/CategoryProvider'; // Context 사용
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import { RequestApi } from '../fetchapi/FetchApi';
-import '../css/common.css';
+
 import { Query } from '../../components/model/regst';
+
+import '../css/common.css';
 import styled from 'styled-components';
 import plus from '../../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
 import edit from '../../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
@@ -48,8 +52,11 @@ const OnBidList: React.FC = () => {
     const [totalPages,setTotalPages] = useState<number>(1);
     const searchCode = useRef<HTMLInputElement>(null);
     // const abortControllerRef = useRef<AbortController | null>(null);
-    const navigate = useNavigate(); // useNavigate 훅 사용
 
+
+    const { categories, setCategories } = useCategory(); //provier 적용
+    const navigate = useNavigate(); // useNavigate 훅 사용
+    const [categorystatus, setCategoryStatus] = useState(''); /* 관심종목 */
     const [error,setError]  = useState<string>('');
     // 검색 처리
     const handleSearch = () => {
@@ -99,25 +106,27 @@ const OnBidList: React.FC = () => {
     }, [data]); // 의존성 배열에 fetchData를 추가
 
     const fetchData = useCallback(async (data:OnbidItem | null,method:string) => {
-        if (!searchCode.current) return;
+       // if (!searchCode.current) return;
+
+
+        /* 관심목록 */
+        try {
+            const response = await axios.post('/api/onbid/categroyList');
+            //setCategory(response.data);
+            setCategories(response.data)
+        } catch (error) {
+            console.error('Error fetching select options:', error);
+        }
+
 
         const formData = new FormData();
-        //formData.append('filecode', searchCode.current.value);
-
-        // 이전 요청을 취소합니다.
-        // if (abortControllerRef.current) {
-        //     abortControllerRef.current.abort();
-        // }
-
-        // const abortController = new AbortController();
-        // const signal = abortController.signal;
-        // abortControllerRef.current = abortController;
-
+      
         let newQuery:Query = { 
-            'codename': searchCode.current?.value ,
-            'page': currentPage-1 ,
+            'idx':  isNaN(parseInt(categorystatus)) ? 0 : parseInt(categorystatus) ,
+            'page': ((currentPage - 1) *10),
         };
 
+        console.log(` ${JSON.stringify(newQuery)}`)
         //삭제처리  구분자 
         if( method === 'DELETE') {
             try {
@@ -144,8 +153,7 @@ const OnBidList: React.FC = () => {
                 return;
             }
 
-            console.log("응답결과 ===")
-            console.log(JSON.stringify(resultData))
+          
             if (Array.isArray(resultData.onbid) && resultData.count !== 0) {
                 setData(resultData.onbid);
                 /* 페이징 계산 */
@@ -170,6 +178,10 @@ const OnBidList: React.FC = () => {
         fetchData(null,"POST"); // 컴포넌트가 처음 마운트될 때 데이터 조회
     }, [fetchData]); // 의존성 배열에 fetchData를 추가
 
+    /* 관심종목 선택 */
+    const categorySelectChange = (value: string) => {
+        setCategoryStatus(value)
+    };
 
     return (
         <div className="code-list">
@@ -177,14 +189,17 @@ const OnBidList: React.FC = () => {
                 <button className="register-button" onClick={handleRegisterClick}>
                     <Image src={plus} alt="modify"/>
                 </button>
-                <div className="search-wrapper">
-                    <input
-                        type="text"
-                        ref={searchCode}
-                        placeholder="코드명 검색"
-                       
-                    />
-                    <button onClick={handleSearch} style={{ width: '22%', textAlign: 'center',border: '1px solid #ddd' }}>
+                <div className="search-wrapper" style={{width: '40%', border: '1px solid #ddd' }}>
+                  
+                    <select onChange={(e) => categorySelectChange(e.target.value)}
+                                style={{  width: '30%' }}>
+                                    <option value="">=선택=</option>
+                                    {categories?.map(item => (
+                                        <option key={item.idx} value={item.idx}>{item.content}</option>
+                                    ))}
+                    </select>
+
+                    <button onClick={handleSearch} style={{ width: '40%', marginLeft: '20px',textAlign: 'center',border: '1px solid #ddd' }}>
                        <Image src={search} alt="search"/> 검색
                     </button>
                 </div>

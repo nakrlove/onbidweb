@@ -66,7 +66,7 @@ export type IAddres = {
 //   upyeonbeonhoillyeonbeonho: string;
 // }
 export interface IInput {
-  onHide: () => void;
+  onHide: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
   show: boolean;
   onSelect: (addr1: string, addr2: string) => void;
 }

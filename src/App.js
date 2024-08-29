@@ -1,15 +1,19 @@
 // import logo from './logo.svg';
 // import './App.css';
-import OnBidRegst from '../src/components/OnBidRegst.tsx';
-import OnBidList from '../src/components/widget/OnBidList.tsx';
-import Header from '../src/components/widget/Header.tsx';
-import CodeList from '../src/components/widget/CodeList.tsx';
-import CodeRegist from '../src/components/widget/CodeRegist.tsx';
-import OnBidDetailPage from './components/widget/OnBidDetailPage.tsx';
+import OnBidRegst from '../src/components/OnBidRegst';
+import OnBidList from '../src/components/widget/OnBidList';
+// import Header from '../src/components/widget/Header.tsx';
+import CodeList from '../src/components/widget/CodeList';
+import CodeRegist from '../src/components/widget/CodeRegist';
+import OnBidDetailPage from './components/widget/OnBidDetailPage';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import CustomNavBar from '../src/components/CustomNavBar.tsx';
+import CustomNavBar from '../src/components/CustomNavBar';
 import ThemeProvider from 'react-bootstrap/ThemeProvider';
-import FileViewer from './components/widget/FileViewer.tsx';
+
+/** 등록화면의 관심목록 selectbox와 관심목록팝업화면 데이터 공유하기위해 provider적용 */
+import {CategoryProvider} from './components/provider/CategoryProvider';
+
+import FileViewer from './components/widget/FileViewer';
 
 function App() {
   return (
@@ -22,6 +26,7 @@ function App() {
         {/* <Header>파산공매</Header> */}
         {/* <main><OnBidRegst /></main> */}
         <CustomNavBar/>
+        <CategoryProvider>
         <Routes>
           <Route path="/onbid-list" element={<OnBidList />}/>
           <Route path="/onbid-regst" element={<OnBidRegst />}/>
@@ -35,9 +40,9 @@ function App() {
           <Route path="*" element={<EmptyPage />} />
     */}
         </Routes>
+        </CategoryProvider>
 
-
-        <footer>SCC</footer>
+        <footer>{}</footer>
       </div >
     </Router>
     </ThemeProvider>
