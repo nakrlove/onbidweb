@@ -65,7 +65,7 @@ const OnBidDetailPage = () => {
    
     useEffect(() => {
 
-console.log(` #### ${JSON.stringify(memos)}`)
+    console.log(` #### ${JSON.stringify(memos)}`)
 
         if(days){
         //    // days.some(): days 배열에 있는 각 item의 onbid_status가 onbidarray 포함되어 있는지 확인합니다. 하나라도 포함되어 있으면 true를 반환합니다.

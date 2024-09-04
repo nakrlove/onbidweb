@@ -27,6 +27,7 @@ import UIButton from './ui/UIButton';
 import { initial } from 'lodash';
 
 import { format } from 'date-fns';
+import { selectOptions } from '@testing-library/user-event/dist/types/utility';
 
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 10MB
@@ -140,24 +141,6 @@ interface Category{ idx: number; content: string; user: string; regdate: string 
 
 
 
-// const initialSetup = () => {
-//     console.log('초기 설정 작업 수행');
-//     // 여기에 초기 설정 코드 작성
-
-//     const {  data ,days,setDays, replaceDays, appendDays
-//         // , memo ,setMemo,replaceMemo
-//          , status
-//          , bididx
-//          , attchfile
-//          , loading
-//          , error } = useFetchData<DataSet,OnbidDays,OnBidMemo,OnBidCategroy>();
-    
-//     console.log(`  JSON result ${JSON.stringify(data)}`)
-//     return data
-// };
-
-
-
 // 반환 타입 정의
 interface FetchSelectOptionsResult {
     selectsOptions: Code[];
@@ -247,15 +230,6 @@ const fileFromBase64 = (base64:string, filename: string,filetype: string) => {
 const OnBidRegst = () => {
     
     const { categories, setCategories } = useCategory(); //provier 적용
-
-    /* 지목*/
-    // const selectRefs = useRef<(HTMLSelectElement)>(null);
-    // const [addr1         , setAddr1]         = useState('');
-    // const [addr2         , setAddr2]    = useState('');
-    // const [rd_addr           , setRdaddr]           = useState('');
-    // const [bruptcy_admin_name , setBruptcyAdminName] = useState('');
-    // const [bruptcy_admin_phone, setBruptcyAdminPhone]= useState('');
-    // const [categories  , setCategories]  = useState<States[]>([])
     
     ///////////////////////////////////////////////////////////
     const [filesOrigin      , setFilesOrigin]      = useState<Attchfile[]>([files]);
@@ -271,38 +245,18 @@ const OnBidRegst = () => {
     const [bankruptcyAuctionBidDate       , setBankruptcyAuctionBidDate]        = useState<OnbidDays[]>([bidDate]);
     const [bankruptcyAuctionBidDateOrigin , setBankruptcyAuctionBidDateOrigin] = useState<OnbidDays[]>([bidDate]);
    
-    // const [connoisseur, setConnoisseur] = useState('');
     const [selectsOptions, setSelectsOptions] = useState<Code[]>([]);
-
-    // const [note          , setNote]           = useState('');
-   
-    
-   
-    // const [renter        , setRenter]         = useState('');
-    // const [ld_area         , setLdarea]         = useState('');
-    // const [ld_area_memo    , setLdareamemo]     = useState(''); //토지면적 메모
-    // const [build_area      , setBuildarea]      = useState('');
-    // const [build_area_memo , setBuildareamemo]  = useState(''); //건물면적 메모
     const [estateTypes     , setEstateTypes]    = useState<Code[]>([]);
-    // const [other_laws      , setOtherLaws]      = useState('');             //다른 법령 등에 따른 지역ㆍ지구등
-    // const [enforcement_decree                , setEnforcementdecree] = useState('');  //시행령
-    const [national_land_planning_use_laws   , setNationalLandPlanningUseLaws] = useState(''); //「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등
-    
-    
-     // 하나의 선택된 부동산 종류를 관리하는 상태 변수
-     const [selectedEstateType, setSelectedEstateType] = useState<Code['code']>('');
 
-    // const [disposal_type  , setDisposaltype]   = useState('');
-    // const [debtor        , setDebtor]          = useState(''); /* 채무자명 */
-    
+     // 하나의 선택된 부동산 종류를 관리하는 상태 변수
+    const [selectedEstateType, setSelectedEstateType] = useState<Code['code']>('');
     const [land_classification, setLandclassification] = useState(''); /* 지목 */
     const [land_classification_array, setLandclassificationarray] = useState<Code[]>([]); /* 지목 */
-    // const [progress_status, setProgressstatus] = useState(''); /* 진행상태*/
+
 
 
     const [onbid_status, setOnbidStatus]      = useState(''); /* 지목 */
     const [categorystatus, setCategoryStatus] = useState<number>(); /* 관심종목 */
-    //const [category,setCategory] = useState<Category[]>([]); /* 관심목록 */
 
 
     /* 입찰진행상태*/
@@ -336,6 +290,7 @@ const OnBidRegst = () => {
         other_laws  :      '',   //다른 법령 등에 따른 지역ㆍ지구등
         enforcement_decree: '', //시행령
         idx: 0 , //관심종목 '0' 전체
+        msg: '',
     });
     
     
@@ -344,14 +299,7 @@ const OnBidRegst = () => {
     const [isAddrModalOpen    , setIsAddrModalOpen    ] = useState(false); // 모달 열림 상태
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false); // 모달 열림 상태
     const [dataLoaded, setDataLoaded] = useState(false);
-    // const [onbidData , setOnbidData] = useState<OnbidItem>(initialState);
-    // const stateManager = SingletonStateManager.getInstance();
-    // 상태 업데이트 함수를 싱글톤으로부터 얻음
-    // const { updateState, updateSpecificKey }  = stateManager.useCustomStateManagement<OnbidItem>(initialState, setOnbidData);
-    // const { state, updateState, updateSpecificKey } = stateManager.useCustomState(initialState);
-   
 
-   
    
     // useFetchData 훅 호출하여 데이터 상태 가져오기
     let action: Boolean  = false;
@@ -430,12 +378,18 @@ const OnBidRegst = () => {
                 setDataLoaded(!dataLoaded);
             }
             if(attchfile){
-                //     console.log(` fiile input 입니다.`)
-                setDataLoaded(!dataLoaded);
-                //첨부파일
-                setAdditionalFiles(attchfile)
-                setFilesOrigin(attchfile)
-            }
+                
+                 setDataLoaded(!dataLoaded);
+                 if(Array.isArray(attchfile) && attchfile.length === 0){
+                    setAdditionalFiles([files])
+                    setFilesOrigin([files])
+                 }else {
+                    
+                    //첨부파일
+                    setAdditionalFiles(attchfile)
+                    setFilesOrigin(attchfile)
+                 }
+            } 
             console.log(`  state ${JSON.stringify(state)}`)
          };
        
@@ -467,80 +421,104 @@ const OnBidRegst = () => {
 
         const newErrors: any = {};
         let isValid = true;
-
+        let msg:string = ''; 
         if (!state.addr1) {
             newErrors.addr1 = '주소 입력이 필요합니다.';
+            msg =   newErrors.addr1 ;
             isValid = false;
         }
 
         if (!state.addr2) {
             newErrors.addr2 = '상세 주소 입력이 필요합니다.';
+            msg =   newErrors.addr2 ;
             isValid = false;
         }
 
         if (!state.bruptcy_admin_name) {
             newErrors.bruptcy_admin_name = '파산관제인명 입력이 필요합니다.';
+            msg =   newErrors.bruptcy_admin_name ;
             isValid = false;
         }
 
         if (!state.bruptcy_admin_phone) {
             newErrors.bruptcy_admin_phone = '전화번호 입력이 필요합니다.';
+            msg =   newErrors.bruptcy_admin_phone ;
             isValid = false;
         }
 
         if (additionalFiles.some(fileWrapper => !fileWrapper.file)) {
             newErrors.file = '파일이 필요합니다.';
+            msg =   newErrors.file ;
             isValid = false;
         }
 
         if (!state.disposal_type) {
             newErrors.disposal_type = '처분방식 입력이 필요합니다.';
+            msg =   newErrors.disposal_type ;
             isValid = false;
         }
 
         if (!state.ld_area) {
             newErrors.ldarea = '토지 입력이 필요합니다.';
+            msg =   newErrors.ldarea ;
             isValid = false;
         }
 
         if (!state.build_area) {
             newErrors.buildarea = '건축물 입력이 필요합니다.';
+            msg =   newErrors.buildarea ;
             isValid = false;
         }
 
         if (!state.debtor) {
             newErrors.debtor = '채무자명 입력이 필요합니다.';
+            msg =   newErrors.debtor ;
             isValid = false;
         }
         
         if (!selectedEstateType) {
             newErrors.estateType = '부동산 종류 선택이 필요합니다.';
+            msg =   newErrors.estateType ;
             isValid = false;
         }
 
         bankruptcyAuctionBidDate.forEach((item, index) => {
-           
+            
             if (!item.edate) {
-                newErrors[`edate`] = '입찰일자 입력이 필요합니다.';
+                newErrors.edate = '입찰일자 입력이 필요합니다.';
+                msg =   newErrors.edate ;
                 isValid = false;
             }
 
             if (!item.evalue && item.evalue === 0) {
                 // newErrors[`evalue`] = '감정가 입력이 필요합니다.';
                 newErrors[`deposit`] = '감정가 입력이 필요합니다.';
+                msg =   newErrors.deposit ;
                 isValid = false;
             }
 
             if (!item.deposit && item.deposit === 0) {
                 newErrors[`deposit`] = '보증금 입력이 필요합니다.';
+                msg =   newErrors.deposit ;
                 isValid = false;
             }
         });
 
+
+        additionalFiles.forEach((item,index) => {
+            //selectsOptions.filter(data => data.code item.code)
+            if(!item.code || !item.file){
+                newErrors.msg = '첨부파일종류 및 파일을 선택 하세요!';
+                msg = newErrors.msg
+                isValid = false;
+            }
+        });
+        
         setErrors(newErrors);
-        return isValid;
+        return {isValid,msg};
     };
 
+  
     /**
      * 첨부파일이 변경됐는지 체크함
      * 변경된게 없다면 파일첨부하지 않음
@@ -605,11 +583,13 @@ const OnBidRegst = () => {
     const doSubmit = async (e: React.FormEvent) => {
       
         e.preventDefault();
-      
-        if (!validateForm()) {
+        /** 값 validate */
+        let {isValid,msg} = validateForm();
+        if (!isValid) {
+            alert(msg);
             return;
         }
-
+      
         // 파일 크기 확인
         for (const fileWrapper of additionalFiles) {
             if (fileWrapper.file && fileWrapper.filesize > MAX_FILE_SIZE) {
@@ -638,7 +618,7 @@ const OnBidRegst = () => {
             progress_status: state.progress_status         ,
             onbid_status: onbid_status                     ,
             debtor: state.debtor                           ,
-            national_land_planning_use_laws: national_land_planning_use_laws,
+            national_land_planning_use_laws: state.national_land_planning_use_laws,
             other_laws: state.other_laws                   ,
             enforcement_decree: state.enforcement_decree   ,
             idx: categorystatus                            , //관심종목 
@@ -662,16 +642,13 @@ const OnBidRegst = () => {
             // }
         });
 
-       // let isCheck = isFilsChanged()
-       // if(isCheck){
+     
         additionalFiles.forEach((fileWrapper, index) => {
             if (fileWrapper.file) { 
-                // == orgin ${filesOrigin[index].filename}:[${filesOrigin[index].file?.size}]
-                console.log(`new${fileWrapper.filename}:[${fileWrapper.file.size}]`)
-                // if(isFileChanged(index)){
-                    formData.append(`additionalFiles`      , fileWrapper.file);
-                    formData.append(`additionalFileOptions`, fileWrapper.code);
-                // }
+   
+                formData.append(`additionalFiles`      , fileWrapper.file);
+                formData.append(`additionalFileOptions`, fileWrapper.code);
+    
             }
         });
         // }
@@ -695,7 +672,7 @@ const OnBidRegst = () => {
         }
     };
 
-    // 입력 값 변경 핸들러
+    // 입력값 변경 핸들러
     const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
         const newbankruptcyAuctionBidDate = [...bankruptcyAuctionBidDate];
@@ -706,15 +683,15 @@ const OnBidRegst = () => {
         setBankruptcyAuctionBidDate(newbankruptcyAuctionBidDate);
     };
 
-    const handleAdditionalFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newFiles = additionalFiles.map((fileWrapper, idx) => {
-            if (index === idx) {
-                return { ...fileWrapper, file: e.target.files ? e.target.files[0] : null };
-            }
-            return fileWrapper;
-        });
-        setAdditionalFiles(newFiles);
-    };
+    // const handleAdditionalFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const newFiles = additionalFiles.map((fileWrapper, idx) => {
+    //         if (index === idx) {
+    //             return { ...fileWrapper, file: e.target.files ? e.target.files[0] : null };
+    //         }
+    //         return fileWrapper;
+    //     });
+    //     setAdditionalFiles(newFiles);
+    // };
 
     /* 파일첨부 종류선택 */
     const handleSelectChange = (index: number) => (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -826,6 +803,21 @@ const OnBidRegst = () => {
     const handleAddNewFile = (newFile: File, code: string) => {
         addAdditionalFile(newFile, code); // code 값을 추가합니다.
     };
+
+
+    /* 첨부파일삭제 */
+    const handleFileDelete = (attchfile:Attchfile) => {
+    
+        if(!window.confirm('삭제하시겠습니까?')){
+            return;
+        }
+
+       // 특정 객체를 제외한 새로운 배열을 생성
+        setAdditionalFiles(prevFiles => 
+            prevFiles.filter(file => file !== attchfile)
+        );
+    };
+    
     ///////////////////// files End///////////////////////////
 
 
@@ -839,9 +831,6 @@ const OnBidRegst = () => {
         const updatedbankruptcyAuctionBidDate = bankruptcyAuctionBidDate.filter((_, i) => i !== idx);
         setBankruptcyAuctionBidDate(updatedbankruptcyAuctionBidDate);
     };
-
-  
-   
 
     const selectAddress = (addr1: string | null | undefined, addr2: string) => {
         if (typeof addr1 === 'string' && addr1.trim() !== '') {
@@ -884,7 +873,7 @@ const OnBidRegst = () => {
                         style={{ flex: 1, height: '30px' }}
                     />
                 </div>
-                {errors.debtor && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.debtor}</div>}
+                {errors.debtor && <div style={{ color: 'red', marginTop: '-15px',marginBottom: '10px' }}>{errors.debtor}</div>}
                 <hr style={{ margin: '2px 0' }} />
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                     <input
@@ -936,7 +925,6 @@ const OnBidRegst = () => {
                         <div key={`onbid-days-${index}`}>
                            
                             <div style={{ display: 'flex' }}>
-                            {item.edate|| ''}
                                 <input
                                     type="date"
                                     value={item.edate|| ''}
@@ -1049,13 +1037,15 @@ const OnBidRegst = () => {
                               
                                 <input
                                     type="file"
-                                    // onChange={handleAdditionalFileChange(index)}
                                     onChange={(e) =>handleFileChange(index,e)}
-                                    
                                     style={{ height: '30px', width: '90%' }}
                                 />
-
-                            </div>
+                                {/* 첨부파일 삭제버튼 */}
+                                <button type="button" onClick={()=>handleFileDelete(fileWrapper)} className="btn-css register-button">
+                                        <Image  src={minus} alt="Minus" />
+                                </button>
+                                                                
+                    </div>
                         </div>
                     ))}
                     {/* {errors.file && <div style={{ color: 'red', marginBottom: '10px' }}>{errors.file}</div>} */}
@@ -1134,10 +1124,10 @@ const OnBidRegst = () => {
                     <label>「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등</label>
                     <CKEditor
                         editor={ClassicEditor}
-                        data={national_land_planning_use_laws}
+                        data={state.national_land_planning_use_laws}
                         onChange={(event, editor) => {
                             const data = editor.getData();
-                            setNationalLandPlanningUseLaws(data);
+                            statusChange('national_land_planning_use_laws',data)
                         }}
                         config={{
                             toolbar: [
@@ -1158,7 +1148,6 @@ const OnBidRegst = () => {
                         data={state.other_laws}
                         onChange={(event, editor) => {
                             const data = editor.getData();
-                            // setOtherLaws(data);
                             statusChange('other_laws',data)
                         }}
                         config={{
