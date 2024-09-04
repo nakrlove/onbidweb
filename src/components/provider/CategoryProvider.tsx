@@ -1,13 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
+import {States} from '../model/regst'
 
-// State 인터페이스 정의
-interface States {
-    idx: number;
-    content: string;
-    user: string;
-    regdate: string;
-    bididx: number;
-}
 
 // CategoryContext의 타입 정의
 interface CategoryContextType {

@@ -1,100 +1,47 @@
-import React, { useState, useEffect,useCallback,useRef ,useMemo} from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import '../css/OnBidDetailPage.css'; // 스타일을 위한 CSS 파일
-import axios from 'axios';
+
+// import axios from 'axios';
 import { RequestApi } from '../fetchapi/FetchApi';
-import { useLocation } from 'react-router-dom';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import useFetchData   from '../hooks/useFetchData';
+import { OnbidItem,OnbidDays,OnBidMemo,OnBidCategroy,UseFetchData }  from '../../components/model/regst';
+import { useLocation,useNavigate } from 'react-router-dom';
+import { CKEditor }   from '@ckeditor/ckeditor5-react';
+import ClassicEditor  from '@ckeditor/ckeditor5-build-classic';
 
-import styled from 'styled-components';
+import styled    from 'styled-components';
 
-import plus from '../../assets/plus.png'; // 추가
-import minus from '../../assets/minus.png'; // 삭제
-import modify from '../../assets/modify.png'; //메모수정
-import edit from '../../assets/edit.png'; // 수정
-import check from '../../assets/check.png'; // 저장
-import newfile from '../../assets/new-file.png'; // 추가
-import save from '../../assets/save.png'; // 저장
+//import plus      from '../../assets/plus.png'; // 추가
+import minus     from '../../assets/minus.png'; // 삭제
+import modify    from '../../assets/modify.png'; //메모수정
+import edit      from '../../assets/edit.png'; // 수정
+import check     from '../../assets/check.png'; // 저장
+import newfile   from '../../assets/new-file.png'; // 추가
+import save      from '../../assets/save.png'; // 저장
 import deletebtn from '../../assets/delete-minus.png'; // 저장
 
 const Image = styled.img`
   width: 20px;
   height: 20px;
 `;
-// 데이터 타입 정의
-interface OnbidItem {
-    idx: number;
-    addr1: string;
-    addr2: string;
-    regdate: string;
-    items: string;
-    ld_area: string;
-    ld_area_pyeong: number;
-    build_area: string;
-    build_area_pyeong: number;
-    rd_addr: string;
-    streeaddr2: string;
-    bruptcy_admin_name: string;
-    bruptcy_admin_phone: string;
-    renter: string;
-    estateType: string;
-    disposal_type: string;
-    note: string;
-    land_classification: string;
-    progress_status: string;
-    // memo: string;
-    land_classification_name: string;
-    name: string;
-}
-
-// 데이터 타입 정의
-interface OnbidDays {
-    //sdate: string;
-    edate: string;
-    deposit: string;
-    evalue: string;
-    bididx: number;
-    daysidx: number;
-    onbid_status: string;
-    name: string;
-    bblig: number;
-}
-
-interface OnBidCategroy {
-    idx     : number;
-    bididx  : number;
-    code    : string,
-    filename: string,
-    filetype: string,    
-    filesize: number,
-    filepath: string,
-    file    : any,
-    codename: string,
-}
-interface OnBidMemo{
-    idx    : number,
-    memo_contents: string,
-    regdate: string,
-    bididx : number,
-}
 
 const OnBidDetailPage = () => {
-    const [data, setData] = useState<OnbidItem>(); // 초기 데이터는 빈 배열
-    const [days, setDays] = useState<OnbidDays[]>([]); // 초기 데이터는 빈 배열
-    const [category, setCategory] = useState<OnBidCategroy[]>([]); //등록된카테고리목록
-    const [memo, setMemo] = useState<OnBidMemo[]>([]); //메모
+    // const [data, setData] = useState<OnbidItem>(); // 초기 데이터는 빈 배열
+    // const [days, setDays] = useState<OnbidDays[]>([]); // 초기 데이터는 빈 배열
+    //const [attchfile, setAttchFile] = useState<OnBidCategroy[]>([]); //등록된카테고리목록
+    // const [memo, setMemo] = useState<OnBidMemo[]>([]); //메모
      /* 입찰진행상태*/
-    const [onBidStatusArray,setOnbidstatusarray] = useState<{ idx: number, code: string, name: string }[]>([]); /* 진행상태 */
+    // const [onBidStatusArray,setOnbidstatusarray] = useState<{ idx: number, code: string, name: string }[]>([]); /* 진행상태 */
 
-    const [memoDumy, setMemoDumy] = useState<OnBidMemo|null>(); //메모
+    const [memoDumy  , setMemoDumy]   = useState<OnBidMemo|null>(); //메모
     const [showEditor, setShowEditor] = useState<boolean>(false); // CKEditor 표시 상태
     const [editorData, setEditorData] = useState<string>(''); // CKEditor 데이터
-    const [error,setError]  = useState<string>('');
+    // const [error,setError]  = useState<string>('');
 
-    const [mbididx, setMbididx] = useState<number>();
-    const [onbid, setOnbid] = useState<boolean>();
+    // const [mbididx  , setMbididx] = useState<number>();
+    const [onbid    , setOnbid]      = useState<boolean>();
     const [salenotice,setSalenotice] = useState<OnBidCategroy>();
-
+    const navigate = useNavigate(); // useNavigate 훅 사용
     /* 입찰상태값 참조 */
     const selectRefs = useRef<(HTMLSelectElement | null)[]>([]);
     /** 메모수정 index 선택상태 */
@@ -108,56 +55,17 @@ const OnBidDetailPage = () => {
 
     // onbidarray: 체크할 상태 코드를 배열로 정의합니다.
     const onbidarray = ['039', '040', '041','-01'];
-
-
-
-    const expensiveValue = useMemo(() => {
-      // 가상의 복잡한 계산
-      return mbididx;
-    }, [mbididx]);
-
-
-    
+    const {  data ,days,setDays, replaceDays, appendDays
+           , memos ,setMemos
+           , status
+           , bididx
+           , attchfile
+           , loading
+           , error } = useFetchData<OnbidItem,OnbidDays,OnBidMemo,OnBidCategroy>();
+   
     useEffect(() => {
-        const fetchData = async () => {
-            if (paramData) {
-                try {
-                    const parsedData = JSON.parse(paramData);
-                    console.log(parsedData)
-                    if (parsedData) {
 
-                        /* 상세정보 조회 */
-                        const abortController = new AbortController();
-                        const signal = abortController.signal;
-                        const data = await RequestApi("/api/onbid/onBidDetil", "POST", parsedData, signal);
-                        console.log(JSON.stringify(data))
-                        if (data) {
-                            setData(data?.bidMap);
-                            setDays(data?.bidDay);
-                            setMemo(data?.memos)
-                            setMbididx(parsedData.bididx)
-                        }
-
-                        /* 파일첨부용도 카테고리조회 */
-                        const Icategory = await RequestApi("/api/onbid/category", "POST", parsedData, signal);
-                        if(Icategory){
-                            setCategory(Icategory)
-                            // console.log(JSON.stringify(Icategory))
-                          
-                        }
-                        return () => abortController.abort(); // Cleanup function to abort the request
-                    }
-
-                } catch (error) {
-                    console.error('Failed to parse JSON data from query string:', error);
-                }
-            }
-        };
-        fetchData();
-        fetchSelectOptions();
-    }, [paramData]);
-
-    useEffect(() => {
+console.log(` #### ${JSON.stringify(memos)}`)
 
         if(days){
         //    // days.some(): days 배열에 있는 각 item의 onbid_status가 onbidarray 포함되어 있는지 확인합니다. 하나라도 포함되어 있으면 true를 반환합니다.
@@ -167,25 +75,12 @@ const OnBidDetailPage = () => {
            }
         }
 
-        if(category) { /* 매각공고 */
-            let sale = category.find((item) =>  item.code === '041' )
+        if(attchfile) { /* 매각공고 */
+            let sale = (attchfile.find((item) =>  item.code === '041' ))
             setSalenotice(sale)
         }
      
-    },[days,category]);
-
-
-
-    const fetchSelectOptions = useCallback(async () => {
-
-        /* 입찰진행상태 */
-        try {
-            const response = await axios.post('/api/onbid/file-code?codes=037');
-            setOnbidstatusarray(response.data);
-        } catch (error) {
-            console.error('Error fetching select options:', error);
-        }
-    }, []);
+    },[days,attchfile]);
 
 
     const handleAddMemo = () => {
@@ -200,12 +95,11 @@ const OnBidDetailPage = () => {
     /* 메모추가 */
     const handleSaveMemo = () => {
         const fetchData = async () => {
-            const abortController = new AbortController();
-            const signal = abortController.signal;
-            const mData = {'bididx':mbididx,'memo_contents':editorData}
-            const memoData = await RequestApi("/api/onbid/momeSave", "POST", (mData), signal);
+
+            const mData = {'bididx':bididx,'memo_contents':editorData}
+            const memoData = await RequestApi("/api/onbid/momeSave", "POST", (mData));
             if (memoData) {
-                setMemo(prevMemo => [...prevMemo,memoData]);
+                setMemos((prevMemo => [...prevMemo,memoData]));
                 setEditorData("")
             }
         }
@@ -216,10 +110,8 @@ const OnBidDetailPage = () => {
     /* 메모수정 */
     const handleUpdateMemo = (item:OnBidMemo) => {
         const fetchData = async () => {
-            const abortController = new AbortController();
-            const signal = abortController.signal;
             const mData = {'idx':item.idx,'memo_contents':item.memo_contents}
-            const memoData = await RequestApi("/api/onbid/memoUpdate", "POST", (mData), signal);
+            const memoData = await RequestApi("/api/onbid/memoUpdate", "POST", (mData));
             if (memoData) {
                 setEditorData("")
                 setEditingIndex(null); 
@@ -239,12 +131,10 @@ const OnBidDetailPage = () => {
             return;
         }
         const fetchData = async (obj:OnBidMemo) => {
-            const abortController = new AbortController();
-            const signal = abortController.signal;
             const mData = {'idx':obj.idx}
-            const memoData = await RequestApi("/api/onbid/memoDelete", "POST", (mData), signal);
+            const memoData = await RequestApi("/api/onbid/memoDelete", "POST", (mData));
             if (!memoData) {
-                setMemo(prevMemo => prevMemo.filter(item => item.idx !== obj.idx));
+                setMemos(prevMemo => prevMemo.filter((item: OnBidMemo)  => item.idx !== obj.idx));
             }
         }
         fetchData(obj);
@@ -266,8 +156,8 @@ const OnBidDetailPage = () => {
     
         // 편집 모드에서 나와서 변경 내용을 적용
         setEditingIndex(null); 
-        setMemo(prevMemo =>
-            prevMemo.map((m, i) => 
+        setMemos(prevMemo =>
+            prevMemo.map((m: OnBidMemo) => 
                 m.idx === memoDumy?.idx 
                 ? { ...m, memo_contents: memoDumy?.memo_contents|| '' } 
                 : m
@@ -283,24 +173,13 @@ const OnBidDetailPage = () => {
      * @param dyasidx 
      * @param index
      */
-    const handleOnBidStatusConfirm  = async (bididx:number|undefined,dyasidx:number,index:number) => {
+    const handleOnBidStatusConfirm  = async (dyasidx:number,index:number) => {
 
         if (!selectRefs.current[index]) {
             return;
         }
 
         const formData = new FormData();
-
-        // // 이전 요청을 취소합니다.
-        // if (abortControllerRef.current) {
-        //     abortControllerRef.current.abort();
-        // }
-
-        // const abortController = new AbortController();
-        // const signal = abortController.signal;
-        // abortControllerRef.current = abortController;
-
-        console.log('Selected Value:', selectRefs.current[index]?.value);
         let newQuery = {
             'bididx': bididx,
             'daysidx':dyasidx ,
@@ -311,27 +190,20 @@ const OnBidDetailPage = () => {
         };
         //'039'
 
-        console.log("================<<< newQuery >>>==================")
-        console.log(JSON.stringify(newQuery))
         let url = "/api/onbid/statusUpdate" ;
         try {
-            console.log("================<<< days >>>==================")
-            console.log(JSON.stringify(days))
             const resultData = await RequestApi(url,"PUT",newQuery);
-            console.log("================<<< resultData >>>==================")
-            console.log(JSON.stringify(resultData))
-            console.log("================<<< resultData >>>==================")
             // 응답 데이터가 배열인지 확인
             if (resultData) {
-                setDays(resultData);
+                replaceDays(resultData);
                 /* 페이징 계산 */
             } else {
                 // setData([]);
-                setError('데이터가 존재하지 않습니다.'); // 응답 데이터가 배열이 아닌 경우 빈 배열로 설정
+                //setError('데이터가 존재하지 않습니다.'); // 응답 데이터가 배열이 아닌 경우 빈 배열로 설정
                 console.log('Received data is not an array.');
             }
         } catch (err) {
-            setError(`An error occurred while fetching data:${err}`); // 오류 발생 시 빈 배열로 설정
+            //setError(`An error occurred while fetching data:${err}`); // 오류 발생 시 빈 배열로 설정
             console.error('An error occurred while fetching data:', err);
         }
     };
@@ -344,6 +216,14 @@ const OnBidDetailPage = () => {
         window.open(url, '_blank','width=1024,height=900');
     };
 
+   
+    const handleDetailClick = (data: object) => {
+        const jsonData = JSON.stringify(data);
+        const encodedData = encodeURIComponent(jsonData);
+        navigate(`/onbid-regst?data=${encodedData}`,{ replace: true }); // 등록 화면으로 이동
+    };
+
+
     const openMap = (type: 'daum' | 'naver') => {
         const url = type === 'daum'
             ? `https://map.kakao.com/?q=${data?.addr1} ${data?.addr2}`
@@ -355,11 +235,15 @@ const OnBidDetailPage = () => {
         <div className="detail-page">
             {/* 1. 왼쪽으로 정렬 버튼형식 지목 */}
             <div className="button-section">
-                <button className="detail-button">
+                <button className="detail-button" onClick={() => handleDetailClick({ 'bididx':bididx, 'modify':true })}>
                     <Image src={edit} alt="modify"/> 수정
                 </button>
             </div>
-
+            {/* 3. 주소 (도로명 주소) */}
+            <div className="address-section">
+                <h3>주소</h3>
+                <p> {data?.addr1} {data?.addr2} <span>({data?.rd_addr})</span></p>
+            </div>
             {/* 2. Box형 메모 */}
            
             <div className="box memo-box">
@@ -376,13 +260,10 @@ const OnBidDetailPage = () => {
                     </button>
                 </div>
                
-                {memo && Array.isArray(memo) && memo.length > 0
+                {memos && Array.isArray(memos) && memos.length > 0
                  
-                   ? memo?.map((item, index) => (
-                        <div 
-                        key={index} 
-                        style={{ padding: '5px', marginTop: '2px', textAlign: 'left', border: '1px solid #ddd' }}
-                         >
+                   ? memos?.map((item, index) => (
+                        <div key={index} style={{ padding: '5px', marginTop: '2px', textAlign: 'left', border: '1px solid #ddd' }} >
                         {editingIndex === index ? (
                             <div>
                                 <CKEditor
@@ -391,8 +272,8 @@ const OnBidDetailPage = () => {
                                     onChange={(event:any,editor:any) => {
                                   
                                         const data = editor.getData();
-                                        setMemo(prevMemo =>
-                                            prevMemo.map((m, i) => 
+                                        setMemos(prevMemo =>
+                                            (prevMemo as OnBidMemo[]).map((m: OnBidMemo , i)  => 
                                                 i === index 
                                                 ? { ...m, memo_contents: data } 
                                                 : m
@@ -415,11 +296,11 @@ const OnBidDetailPage = () => {
                                     }}
                                  />
                                  <button type="button" onClick={() => handleModifyMemo(index,'cancel',null)} style={{ marginTop: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
-                                 <Image src={deletebtn} alt="delete"/>취소
+                                   <Image src={deletebtn} alt="delete"/>취소
                                  </button> &nbsp;
-                                <button type="button" onClick={() => handleUpdateMemo(item)} style={{ marginTop: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
-                                <Image src={save} alt="add"/>저장
-                                </button>
+                                 <button type="button" onClick={() => handleUpdateMemo(item)} style={{ marginTop: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
+                                   <Image src={save} alt="add"/>저장
+                                 </button>
                             </div>
                         ) : (
                             <div>
@@ -501,23 +382,23 @@ const OnBidDetailPage = () => {
                                 ( 
                                     // (item.bblig > 0) ? ("") :
                                     (
-                                    <div> 
-                                        <select
-                                            ref={(el) => (selectRefs.current[index] = el)}
-                                            style={{ marginBottom: '0px',marginRight: '2px', height: '30px', width: '25%' }}>
-                                            <option value="">=선택=</option>
-                                            {onBidStatusArray?.map(item => (
-                                                <option key={item.idx} value={item.code}>{item.name}</option>
-                                            ))}
-                                        </select>
-                                        <button
-                                                type="button"
-                                                className="add-memo-button"
-                                                onClick={() => handleOnBidStatusConfirm(expensiveValue,item.daysidx,index)}>
-                                            <Image src={check} alt="check" style={{width:'25px',height:'25px'}}/>
-                                        </button>
-                                    </div>  
-                                        )         
+                                        <div> 
+                                            <select
+                                                ref={(el) => (selectRefs.current[index] = el)}
+                                                style={{ marginBottom: '0px',marginRight: '2px', height: '30px', width: '25%' }}>
+                                                <option value="">=선택=</option>
+                                                {status?.map(item => (
+                                                    <option key={item.idx} value={item.code}>{item.name}</option>
+                                                ))}
+                                            </select>
+                                            <button type="button"
+                                                    className="add-memo-button"
+                                                    onClick={() => handleOnBidStatusConfirm(item.daysidx,index)}>
+                                                    {/* onClick={() => handleOnBidStatusConfirm(expensiveValue,item.daysidx,index)}> */}
+                                                <Image src={check} alt="check" style={{width:'25px',height:'25px'}}/>
+                                            </button>
+                                        </div>  
+                                    )         
                                 )
                                 }                   
                             </div>
@@ -531,11 +412,7 @@ const OnBidDetailPage = () => {
                 <div dangerouslySetInnerHTML={{ __html: data?.note || '' }} />
             </div>
 
-            {/* 3. 주소 (도로명 주소) */}
-            <div className="address-section">
-                <h3>주소</h3>
-                <p> {data?.addr1} {data?.addr2} <span>({data?.rd_addr})</span></p>
-            </div>
+       
 
             {/* 4. Box형 항목 */}
             <div className="item-box1 address-section">
@@ -565,11 +442,36 @@ const OnBidDetailPage = () => {
                 {/* 파일 내용은 여기에 표시됩니다 */}
             </div>
 
+
+            <div className="box memo-box">
+                <div className="memo-header">
+                    <h3>토지이용계획확인원</h3>
+                </div>
+               
+                <div style={{ padding: '5px', marginTop: '2px', textAlign: 'left', border: '1px solid #ddd' }}>
+                        <div>
+                            <div className='wrapper' dangerouslySetInnerHTML={{ __html: data?.land_classification_name || '' }} />
+                             
+                        </div>
+                        <div>
+                            <div className='wrapper' dangerouslySetInnerHTML={{ __html: data?.other_laws || ' sss' }} />
+                            
+                        </div>
+                        <div>
+                            <div className='wrapper' dangerouslySetInnerHTML={{ __html: data?.enforcement_decree || 'sssdd' }} />
+                        </div>
+            
+                </div>
+            </div>
+
+
+
+
             {/* 7. 첨부된 파일 버튼들 */}
             <div className="button-group">
 
-                {category 
-                  ? category.map( item => (<button className="detail-button" key={item.idx} onClick={()=>handleViewFile(item)}>{item.codename}</button>)) 
+                {attchfile 
+                  ? attchfile.map( item => (<button className="detail-button" key={item.idx} onClick={()=>handleViewFile(item)}>{item.codename}</button>)) 
                   : ("")
                 }
 

@@ -93,3 +93,99 @@ export interface IItem {
   onClose: () => void;
   onSelect: () => void;
 }
+
+// 데이터 타입 정의
+export interface OnbidItem {
+  idx: number;
+  addr1: string;
+  addr2: string;
+  regdate: string;
+  items: string;
+  ld_area: string;
+  ld_area_memo: string; //토지면적 메모
+  ld_area_pyeong: number;
+  build_area: string;
+  build_area_memo: string; //건물면적메모;
+  build_area_pyeong: number;
+  rd_addr: string;
+  streeaddr2: string;
+  bruptcy_admin_name: string;
+  bruptcy_admin_phone: string;
+  renter: string; //임차여부
+  estateType: string; //부동산종류
+  disposal_type: string; //처분방식
+  note: string; //유의사항
+  debtor: string; //채무자
+  land_classification: string;
+  progress_status: string; //진행상태
+  // memo: string;
+  land_classification_name: string; //토지이용계획확인원  - 「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등
+  other_laws: string; //토지이용계획확인원  - 다른 법령 등에 따른 지역ㆍ지구등
+  enforcement_decree: string; //토지이용계획확인원 - 시행령
+  name: string;
+}
+
+// 데이터 타입 정의
+export interface OnbidDays {
+  //sdate: string;
+  edate: string;
+  // evalue: string;
+  // deposit: string;
+  evalue: number;
+  deposit: number;
+
+  bididx: number;
+  daysidx: number;
+  onbid_status: string;
+  name: string;
+  bblig: number;
+}
+
+//첨부파일 정보
+export interface Attchfile {
+  idx: number;
+  bididx: number;
+  code: string;
+  file: File | null; // 초기값을 null로 설정할 수 있도록 타입 정의
+  filename: string;
+  filetype: string;
+  filesize: number;
+  filepath: string;
+}
+
+export interface OnBidCategroy {
+  idx: number;
+  bididx: number;
+  code: string;
+  filename: string;
+  filetype: string;
+  filesize: number;
+  filepath: string;
+  file: any;
+  codename: string;
+}
+export interface OnBidMemo {
+  idx: number;
+  memo_contents: string;
+  regdate: string;
+  bididx: number;
+}
+
+export interface UseFetchData {
+  data: OnbidItem | null;
+  days: OnbidDays | null;
+  memo: OnBidMemo | null;
+  attchfile: OnBidCategroy | null;
+  bididx: number | null;
+  loading: boolean;
+  error: string | null;
+}
+
+// State 인터페이스 정의
+export interface States {
+  idx: number;
+  content: string;
+  user: string;
+  regdate: string;
+  bididx: number;
+}

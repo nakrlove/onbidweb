@@ -133,7 +133,22 @@
     font-size: 13px;
   }
 
-  /* 주소검색 모달창 CSS 시작 */
+  .onbid-item-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .onbid-item {
+      padding: 10px 15px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer; /* 커서를 손 모양으로 변경 */
+      transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+  }
+
+  .onbid-item:hover {
+      background-color: #fdfff7; /* 마우스 오버 시 배경색 */
+  }
 
 
   /* 주소검색 모달창 CSS 끝 */

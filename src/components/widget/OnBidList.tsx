@@ -24,15 +24,17 @@ interface OnbidItem {
      regdate : string ,
      items : string,
      ld_area :  string ,
+     ld_area_memo :  string ,
      ld_area_pyeong:number,
      build_area :  string ,
+     build_area_memo :  string ,
      build_area_pyeong:number,
      rd_addr :  string ,
      streeaddr2 : string,
      bruptcy_admin_name :  string ,
      bruptcy_admin_phone :  string ,
      renter :  string ,
-     estateType :  string ,
+     estatetype :  string ,
      disposal_type :  string ,
      note :  string ,
      land_classification :  string ,
@@ -154,7 +156,7 @@ const OnBidList: React.FC = () => {
         let url = method === 'POST' ? "/api/onbid/onbid-alls" : "/api/onbid/deletecode";
         try {
             const resultData = await RequestApi(url,method,newQuery);
-
+            console.log(JSON.stringify(resultData))
             if( method === 'DELETE') {
                 
                 fetchData(null,"POST"); // 컴포넌트가 처음 마운트될 때 데이터 조회
@@ -231,13 +233,11 @@ const OnBidList: React.FC = () => {
                         <tr ><td colSpan={4} className='table-td-text-align-center' >{error}</td></tr>
                     ) : (data.map(item => (
                         
-                        <tr key={item.bididx} onClick={() => handleDetailClick({ 'bididx':item.bididx })}>
+                        <tr key={item.bididx} onClick={() => handleDetailClick({ 'bididx':item.bididx })} className='onbid-item-list onbid-item'>
                             <td className='table-td'>
-                                {/* <div style={{paddingRight:'20px'}} >다세대주택 (지목:{item.land_classification_name})
-                                <div >(지목:낙찰)</div>
-                                </div> */}
+                             
                                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingRight: '20px' }}>
-                                    <span>다세대주택 (지목: {item.land_classification_name})</span>
+                                    <span className="fontSize13">{item.estatetype} (지목: {item.land_classification_name})</span>
                                     { item.status ? (<span className="onbid-color">{item.status}</span>) :("") }
                                 </div>
                                 <div style={{ 
@@ -248,7 +248,7 @@ const OnBidList: React.FC = () => {
                                             fontSize: '14px' // 텍스트 크기 조정
                                         }}>{item.addr1} {item.addr2}</div>
                                 <div className="fontSize13">처분방식 : {item.disposal_type} <span className="orange f12">{item.renter}</span></div>
-                                <div className="fontSize13 colorBlue" >토지 {item.ld_area}㎡({ item.ld_area_pyeong}평) 건물 {item.build_area}㎡({item.build_area_pyeong}평)</div>
+                                <div className="fontSize13 colorBlue" >토지 {item.ld_area}㎡({ item.ld_area_pyeong}평) {item.ld_area_memo} / 건물 {item.build_area}㎡({item.build_area_pyeong}평) {item.build_area_memo}</div>
                             </td>
                             <td className='table-td table-td-text-align-center'>
                                 <span className="fontSize13">{item.evalue}</span>
