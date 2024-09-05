@@ -89,8 +89,6 @@ const useFetchData = <
                                 }
                             }));
 
-
-
                             setAttchFile(updatedFiles);
                             // console.log(`Files ${JSON.stringify(attchfileResponse)}`)
                         }
