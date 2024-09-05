@@ -134,11 +134,12 @@ const CodeList: React.FC = () => {
             }
 
             // 응답 데이터가 배열인지 확인
-            if (Array.isArray(resultData.codes.content) && resultData.codes.content.length !== 0) {
-                setData(resultData.codes.content);
+            if (Array.isArray(resultData.content) && resultData.content.length !== 0) {
+                setData(resultData.content);
 
                 /* 페이징 계산 */
-                setTotalPages(Math.ceil(resultData.count / itemsPerPage));
+                // setTotalPages(Math.ceil(resultData.count / itemsPerPage));
+                setTotalPages(resultData.totalPages);
             } else {
                 setTotalPages(1);
                 setData([]);
