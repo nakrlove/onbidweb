@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { RequestApi } from '../../components/fetchapi/FetchApi';
-import { Address, IInput } from '../../components/model/regst';
+import { Address, IInput } from '../interface/regst';
 import '../../components/css/FindAddr.css'; // CSS 파일
 
 const SEARCH_TYPE = 0;

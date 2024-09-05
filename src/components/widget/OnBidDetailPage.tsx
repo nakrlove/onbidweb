@@ -4,7 +4,7 @@ import '../css/OnBidDetailPage.css'; // 스타일을 위한 CSS 파일
 // import axios from 'axios';
 import { RequestApi } from '../fetchapi/FetchApi';
 import useFetchData   from '../hooks/useFetchData';
-import { OnbidItem,OnbidDays,OnBidMemo,OnBidCategroy,UseFetchData }  from '../../components/model/regst';
+import { OnbidItem,OnbidDays,OnBidMemo,OnBidCategroy }  from '../interface/regst';
 import { useLocation,useNavigate } from 'react-router-dom';
 import { CKEditor }   from '@ckeditor/ckeditor5-react';
 import ClassicEditor  from '@ckeditor/ckeditor5-build-classic';
@@ -26,12 +26,7 @@ const Image = styled.img`
 `;
 
 const OnBidDetailPage = () => {
-    // const [data, setData] = useState<OnbidItem>(); // 초기 데이터는 빈 배열
-    // const [days, setDays] = useState<OnbidDays[]>([]); // 초기 데이터는 빈 배열
-    //const [attchfile, setAttchFile] = useState<OnBidCategroy[]>([]); //등록된카테고리목록
-    // const [memo, setMemo] = useState<OnBidMemo[]>([]); //메모
-     /* 입찰진행상태*/
-    // const [onBidStatusArray,setOnbidstatusarray] = useState<{ idx: number, code: string, name: string }[]>([]); /* 진행상태 */
+   
 
     const [memoDumy  , setMemoDumy]   = useState<OnBidMemo|null>(); //메모
     const [showEditor, setShowEditor] = useState<boolean>(false); // CKEditor 표시 상태

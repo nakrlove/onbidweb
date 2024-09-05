@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useCategory } from '../../components/provider/CategoryProvider'; // Context 사용
 import { RequestApi }  from '../../components/fetchapi/FetchApi';
 
-import ListItem from '../common/ListItem';
+import UIListItem from '../ui/UIListItem';
 import UIInput  from '../ui/UIInput';
 import UIButton from '../ui/UIButton';
 import '../css/Category.css';
@@ -95,7 +95,7 @@ const Category: React.FC<CategoryProps> = ({ show, onClose, onSelect }) => {
                 <UIButton onClick={handleAdd}><span>추가</span></UIButton>
 
                 {categories && categories.map((item) => (
-                    <ListItem
+                    <UIListItem
                         key={item.idx}
                         item={item}
                         onDelete={(e) => handleDelete(e,item.idx)}

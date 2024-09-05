@@ -4,7 +4,7 @@ import { useCategory } from './../provider/CategoryProvider'; // Context 사용
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import { RequestApi } from '../fetchapi/FetchApi';
 
-import { Query } from '../../components/model/regst';
+import { Query } from '../interface/regst';
 
 import '../css/common.css';
 import styled from 'styled-components';

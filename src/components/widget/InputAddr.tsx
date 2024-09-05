@@ -1,6 +1,6 @@
 import React from "react";
 
-import { IAddressRegst } from '../model/regst'
+import { IAddressRegst } from '../interface/regst'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Button from 'react-bootstrap/Button';

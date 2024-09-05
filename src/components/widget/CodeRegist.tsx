@@ -7,7 +7,7 @@ import {CommonBody} from '../common/CommonBody';
 
 import {RequestApi} from '../fetchapi/FetchApi';
 import { useNavigate,useLocation } from 'react-router-dom';
-import { CodeItem } from '../../components/model/regst';
+import { CodeItem } from '../interface/regst';
 // FormData 객체를 URL 쿼리 문자열로 변환
 const formDataToQueryString = (formData: FormData): string => {
   const queryString: string[] = [];

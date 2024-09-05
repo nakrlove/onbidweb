@@ -6,7 +6,7 @@ import InputAddr from './widget/InputAddr';
 import ItemRegst from './widget/ItemRegst';
 import FileInput from './widget/FileInput';
 import { CommonBody } from './common/CommonBody';
-import { CodeItem } from './model/regst';
+import { CodeItem } from './interface/regst';
 import { RequestApi } from './fetchapi/FetchApi';
 
 const OnBidRegst = () => {

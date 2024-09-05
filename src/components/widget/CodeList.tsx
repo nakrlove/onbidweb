@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import { RequestApi } from '../fetchapi/FetchApi';
 import '../css/common.css';
-import { CodeItem,Query } from '../../components/model/regst';
+import { CodeItem,Query } from '../interface/regst';
 
 import styled from 'styled-components';
 import plus from '../../assets/plus.png'; // 경로는 파일의 위치에 따라 조정

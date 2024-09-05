@@ -1,110 +1,70 @@
-import React, { useState,  useEffect ,useRef} from 'react';
+import React, { useState,  useEffect} from 'react';
 import axios from 'axios';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
+import { handleSubmit } from './utils/Utils';
+import { useInput } from './hooks/useInput';
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import './css/OnBidRegst.css'; // CSS 파일 import
 
 import { useCategory } from './provider/CategoryProvider'; // Context 사용
 import useFetchData    from './hooks/useFetchData';
-import useCustomStateManagement  from './hooks/useCustomStateManagement';
-// import SingletonStateManager  from './hooks/SingletonStateManager';
+import { DataSet,Code, FetchSelectOptionsResult }  from './interface/regst';
 
-import FindAddr from './modals/FindAddr';
-import Category from './modals/Categroy';
+
+import UIButton      from './ui/UIButton';
+import UINumberInput from './ui/UINumberInput';
+import FindAddr      from './modals/FindAddr';
+import Category      from './modals/Categroy';
 import { handlePhoneNumberChange, handleNumberInputChange, handleKeyPress } from './utils/validationUtils';
-import { OnbidItem,OnbidDays,OnBidMemo,OnBidCategroy,UseFetchData,States ,Attchfile}  from '../components/model/regst';
+import { OnbidItem,OnbidDays,OnBidMemo,OnBidCategroy,UseFetchData,States ,Attchfile}  from './interface/regst';
 
 
 import styled from 'styled-components';
 
-import plus from '../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
-import plus1 from '../assets/plus-1.png'; // 경로는 파일의 위치에 따라 조정
-import minus from '../assets/minus.png'; // 경로는 파일의 위치에 따라 조정
-import edit from '../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
+import './css/OnBidRegst.css'; // CSS 파일 import
+import plus   from '../assets/plus.png'; // 경로는 파일의 위치에 따라 조정
+import plus1  from '../assets/plus-1.png'; // 경로는 파일의 위치에 따라 조정
+import minus  from '../assets/minus.png'; // 경로는 파일의 위치에 따라 조정
+import edit   from '../assets/edit.png'; // 경로는 파일의 위치에 따라 조정
 import search from '../assets/search.png'; // 경로는 파일의 위치에 따라 조정
-import UIButton from './ui/UIButton';
-import { initial } from 'lodash';
-
-import { format } from 'date-fns';
-import { selectOptions } from '@testing-library/user-event/dist/types/utility';
 
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 10MB
 
-interface Code {
-    idx: number;
-    code: string;
-    name: string;
-}
 
 const Image = styled.img`
 width: 20px;
 height: 20px;
 `;
 
-interface DataSet
-{
-    bididx: number,
-    addr1: string,
-    addr2: string,
-    it_type: string,
-    ld_area: string,
-    ld_area_memo: string,
-    ld_area_pyeong: string,
-    build_area: string,
-    build_area_memo: string,
-    build_area_pyeong: string,
-    rd_addr: string,
-    streeaddr2: string,
-    bruptcy_admin_name: string,
-    bruptcy_admin_phone: string,
-    renter: string,
-    estatetype: string,
-    disposal_type: string,
-    note:string,
-    land_classification: string,
-    progress_status: string,
-    edate: string,
-    evalue: string,
-    deposit: string,
-    onbid_status: string,
-    status: string,
-    land_classification_name: string,
-    national_land_planning_use_laws: string,
-    other_laws: string,
-    enforcement_decree: string,
-    idx: 0,
-    debtor: string,
-}// 데이터 타입 정의
-
 const initialState: DataSet = 
 {
-    bididx: 0,
-    addr1: "",
-    addr2: "",
+    bididx : 0,
+    addr1  : "",
+    addr2  : "",
     it_type: "",
     ld_area: "",
-    ld_area_memo: "",
+    ld_area_memo  : "",
     ld_area_pyeong: "",
-    build_area: "",
-    build_area_memo: "",
+    build_area    : "",
+    build_area_memo  : "",
     build_area_pyeong: "",
-    rd_addr: "",
+    rd_addr   : "",
     streeaddr2: "",
-    bruptcy_admin_name: "홍따",
-    bruptcy_admin_phone: "02-3223-2322",
-    renter: "",
+    bruptcy_admin_name: "",
+    bruptcy_admin_phone: "",
+    renter    : "",
     estatetype: "",
     disposal_type: "",
     note:"",
     land_classification: "",
     progress_status: "",
-    edate: "",
-    evalue: "",
+    edate  : "",
+    evalue : "",
     deposit: "",
     onbid_status: "",
-    status: "",
+    status : "",
     land_classification_name: "",
     national_land_planning_use_laws: "",
     other_laws: "",
@@ -117,8 +77,8 @@ const initialState: DataSet =
 const bidDate:OnbidDays = { 
     //   edate: format(new Date(), 'yyyy-MM-dd HH:mm:ss')
       edate: ''
-    , evalue: 0
-    , deposit: 0 
+    , evalue: ''
+    , deposit: '' 
     , bididx:-1
     , daysidx:-1
     , onbid_status:''
@@ -137,24 +97,14 @@ const files: Attchfile = {
     filepath: ""
 };
 
-interface Category{ idx: number; content: string; user: string; regdate: string }
-
-
-
-// 반환 타입 정의
-interface FetchSelectOptionsResult {
-    selectsOptions: Code[];
-    land_classification_array: Code[];
-    estateTypes: Code[];
-    categories: States[];
-}
 
 const initfetchSelectOptions = async (action:Boolean): Promise<FetchSelectOptionsResult>  => {
 
-    let selectsOptions:Code[] = [];
-    let land_classification_array:Code[] = [];
-    let estateTypes:Code[] = [];
-    let categories : States[] = []; 
+    let land_classification_array: Code[] = [];
+    let selectsOptions: Code  [] = [];
+    let estateTypes   : Code  [] = [];
+    let categories    : States[] = []; 
+
     /* 파일첨부 코드조회 */
     try {
         const response = await axios.post('/api/onbid/file-code');
@@ -204,28 +154,7 @@ const initfetchSelectOptions = async (action:Boolean): Promise<FetchSelectOption
 };
 
 
-/**
- * Base64 인코딩된 파일을 File 객체로 변환하기
- * @param base64  Base64 인코딩된 파일을 File 객체로 변환하기
- * @param filename 
- * @returns 
- */
-const fileFromBase64 = (base64:string, filename: string,filetype: string) => {
-    const byteCharacters = atob(base64);
-    const byteArrays = [];
-    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-        const slice = byteCharacters.slice(offset, offset + 512);
-        const byteNumbers = new Array(slice.length);
-        for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
-    }
-    const blob = new Blob(byteArrays, { type: filetype });
-    return new File([blob], filename);
 
-}
 
 const OnBidRegst = () => {
     
@@ -242,7 +171,7 @@ const OnBidRegst = () => {
     const [memoOrigin       , setMemoOrigin ]      = useState<OnBidMemo[]>([{ idx: 0, memo_contents: '', regdate: '', bididx: 0 }]);
     
     //입찰일자
-    const [bankruptcyAuctionBidDate       , setBankruptcyAuctionBidDate]        = useState<OnbidDays[]>([bidDate]);
+    const [bankruptcyAuctionBidDate       , setBankruptcyAuctionBidDate]       = useState<OnbidDays[]>([bidDate]);
     const [bankruptcyAuctionBidDateOrigin , setBankruptcyAuctionBidDateOrigin] = useState<OnbidDays[]>([bidDate]);
    
     const [selectsOptions, setSelectsOptions] = useState<Code[]>([]);
@@ -253,11 +182,8 @@ const OnBidRegst = () => {
     const [land_classification, setLandclassification] = useState(''); /* 지목 */
     const [land_classification_array, setLandclassificationarray] = useState<Code[]>([]); /* 지목 */
 
-
-
     const [onbid_status, setOnbidStatus]      = useState(''); /* 지목 */
     const [categorystatus, setCategoryStatus] = useState<number>(); /* 관심종목 */
-
 
     /* 입찰진행상태*/
     const [onbidStatusArray,setOnbidStatusArray] = useState<Code[]>([]); /* 진행상태 */
@@ -325,8 +251,6 @@ const OnBidRegst = () => {
 
         fetchData();
     }, []); // 컴포넌트가 처음 렌더링될 때 한 번만 호출
-
-
 
     const { data
           , days
@@ -490,15 +414,16 @@ const OnBidRegst = () => {
                 isValid = false;
             }
 
-            if (!item.evalue && item.evalue === 0) {
+            // if (!item.evalue && item.evalue === 0) {
+            if (!item.evalue) {
                 // newErrors[`evalue`] = '감정가 입력이 필요합니다.';
                 newErrors[`deposit`] = '감정가 입력이 필요합니다.';
                 msg =   newErrors.deposit ;
                 isValid = false;
             }
 
-            if (!item.deposit && item.deposit === 0) {
-                newErrors[`deposit`] = '보증금 입력이 필요합니다.';
+            if (!item.deposit) {
+                newErrors.deposit = '보증금 입력이 필요합니다.';
                 msg =   newErrors.deposit ;
                 isValid = false;
             }
@@ -519,42 +444,6 @@ const OnBidRegst = () => {
     };
 
   
-    /**
-     * 첨부파일이 변경됐는지 체크함
-     * 변경된게 없다면 파일첨부하지 않음
-     * @returns 
-     */
-    const isFilsChanged = () => {
-
-        if(additionalFiles.length !== filesOrigin.length){
-            return true;
-        }
-
-        let isFils:Boolean = false;
-        for (const key in additionalFiles) {
-            if( additionalFiles[key] !== filesOrigin[key] )
-            {
-                isFils = true;
-            }
-        }
-        return isFils;
-    };
-
-    const isFileChanged = (index:number) => {
-
-        if(index > (filesOrigin.length-1)){
-            return true;
-        }
-        let isFils:Boolean = false;
-      
-        if( additionalFiles[index] !== filesOrigin[index] )
-        {
-            isFils = true;
-       
-        }
-        return isFils;
-    };
-
     /**
      * 데이터값 변경여부 체크함
      * 변경되지 않았을경우 수정요청시 데이터를 던지지 않음
@@ -631,21 +520,70 @@ const OnBidRegst = () => {
         /** 입찰일자 */
         let isCheck = isDataChange(bankruptcyAuctionBidDate,bankruptcyAuctionBidDateOrigin)
         if(isCheck){
-            formData.append('onbidDays', new Blob([JSON.stringify(bankruptcyAuctionBidDate)], { type: 'application/json' }));
+
+
+            // setBankruptcyAuctionBidDate(prevState => {
+            //     const updatedState = prevState.map(item => ({
+            //         ...item,
+            //         evalue: handleSubmit(item.evalue),
+            //         deposit: handleSubmit(item.deposit),
+            //     }));
+
+            //     return updatedState;
+            // });
+
+       
+            // 상태 업데이트 후 서버 요청을 위해 프로미스를 사용
+            // const updateAndSubmit = () => {
+            //     return new Promise<OnbidDays[]>((resolve) => {
+            //         setBankruptcyAuctionBidDate(prevState => {
+            //             const updatedState = prevState.map(item => ({
+            //                 ...item,
+            //                 evalue: handleSubmit(item.evalue),
+            //                 deposit: handleSubmit(item.deposit),
+            //             }));
+            //             resolve(updatedState); // 업데이트 완료 후 프로미스를 해결
+            //             updateTemp = updatedState
+            //             return updatedState;
+            //         });
+            //     });
+            // };
+
+    
+          
+           // 상태 업데이트 후 서버 요청을 보내기 위해 비동기 함수 사용
+        // await new Promise<void>((resolve) => {
+        //     const checkUpdatedState = setInterval(() => {
+        //         if (JSON.stringify(bankruptcyAuctionBidDate) !== JSON.stringify(updateTemp)) {
+        //             console.log(`test [${JSON.stringify(updateTemp)}]`)
+        //             clearInterval(checkUpdatedState);
+        //             resolve();
+        //         }
+        //     }, 50); // 상태가 업데이트될 때까지 대기
+        //     console.log(` check ${checkUpdatedState}`)
+        //  });
+        // formData.append('onbidDays', new Blob([JSON.stringify(bankruptcyAuctionBidDate)], { type: 'application/json' }));
+        //   const updatedBidDate = await updateAndSubmit();
+        
+        formData.append('onbidDays', new Blob([JSON.stringify(bankruptcyAuctionBidDate)], { type: 'application/json' }));
+        // formData.append('onbidDays', new Blob([JSON.stringify(bidData)], { type: 'application/json' }));
+          console.log(` TE ${JSON.stringify(bankruptcyAuctionBidDate)}`)
         }
+        
         // FormData 내용 확인
         formData.forEach((value, key) => {
             // if(value instanceof File){
             //    console.log(`key name[${key}]: ${JSON.stringify(value.name)}`);
             // }else {
-               console.log(`key name[${key}]: ${JSON.stringify(value)}`);
+               let val = JSON.stringify(value);
+               console.log(`key name[${key}]: ${val}`);
             // }
         });
-
-     
+       
+        
         additionalFiles.forEach((fileWrapper, index) => {
             if (fileWrapper.file) { 
-   
+                console.log(` filewrapper.code [${fileWrapper.code}]`)
                 formData.append(`additionalFiles`      , fileWrapper.file);
                 formData.append(`additionalFileOptions`, fileWrapper.code);
     
@@ -660,10 +598,10 @@ const OnBidRegst = () => {
             //FormData일때는 Content-Type을 주지 않아도 된다
             //자동으로 FormData가 Content-Type을 잡아준다
             const response = await axios.post(URL, formData, {
-                // headers: {
-                //     'Content-Type': 'multipart/form-data',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
            
-                // },
+                },
             });
             console.log('Form submitted successfully:', response.data);
             navigate('/onbid-list', { replace: true }); // 목록화면으로 이동 
@@ -672,17 +610,33 @@ const OnBidRegst = () => {
         }
     };
 
+  
     // 입력값 변경 핸들러
-    const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>,removeCommasData:string|null) => {
         const { name, value } = event.target;
-        const newbankruptcyAuctionBidDate = [...bankruptcyAuctionBidDate];
-        newbankruptcyAuctionBidDate[index] = {
-            ...newbankruptcyAuctionBidDate[index],
-            [name]: value,
-        };
-        setBankruptcyAuctionBidDate(newbankruptcyAuctionBidDate);
+       // console.log(`name ${name},value ${value}`)
+        let inputData = removeCommasData !== null ? removeCommasData : value;
+        // const newbankruptcyAuctionBidDate = [...bankruptcyAuctionBidDate];
+     
+        // newbankruptcyAuctionBidDate[index] = {
+        //     ...newbankruptcyAuctionBidDate[index],
+            
+        //     [name]: inputData,
+        // };
+        // console.log(` set= ${JSON.stringify(newbankruptcyAuctionBidDate[index])}`)
+        // setBankruptcyAuctionBidDate(newbankruptcyAuctionBidDate);
+        setBankruptcyAuctionBidDate(prevState => {
+            const newbankruptcyAuctionBidDate = [...prevState];
+            newbankruptcyAuctionBidDate[index] = {
+                ...newbankruptcyAuctionBidDate[index],
+                [name]: inputData,
+            };
+            console.log(`Updated bankruptcyAuctionBidDate at index ${index}: ${JSON.stringify(newbankruptcyAuctionBidDate[index])}`);
+            return newbankruptcyAuctionBidDate;
+        });
     };
 
+  
     // const handleAdditionalFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     //     const newFiles = additionalFiles.map((fileWrapper, idx) => {
     //         if (index === idx) {
@@ -820,7 +774,13 @@ const OnBidRegst = () => {
     
     ///////////////////// files End///////////////////////////
 
-
+    // const {
+    //     value            : eValue,
+    //     removeValue           : mvalue,
+    //     handleInputChange: handleEvalueChange,
+    //     hasError: emailHasError,
+    //   } = useInput("", ()=>true);
+    
     /** 입찰일자/감정가/보증금 추가 */
     const addBankruptcyAuctionBidDate = () => {
         setBankruptcyAuctionBidDate([...bankruptcyAuctionBidDate,bidDate]);
@@ -867,7 +827,6 @@ const OnBidRegst = () => {
                     <input
                         type="text"
                         value={state.debtor}
-                        // onChange={(e) => setDebtor(e.target.value)}
                         onChange={(e) => statusChange("debtor",e.target.value)}
                         placeholder="채무자명"
                         style={{ flex: 1, height: '30px' }}
@@ -930,27 +889,36 @@ const OnBidRegst = () => {
                                     value={item.edate|| ''}
                                     name={`edate`}
                                     placeholder="입찰 종료일"
-                                    onChange={(e) => handleInputChange(index, e)}
+                                    onChange={(e) => handleInputChange(index, e,null)}
                                     onKeyDown={(e) => e.preventDefault()} // Prevent direct typing
-                                    style={{ width: '30%',marginRight: '5%', height: '30px' }}
+                                    style={{ width: '35%',marginRight: '5%', height: '30px' }}
                                 />
-                                
-                                <input
+                                <UINumberInput
+                                    initialValue={item.evalue}
+                                    name={`evalue`}
+                                    onChange={(e,removeCommasData) =>handleInputChange(index, e,removeCommasData)}
+                                    placeholder="감정가"/>
+                                {/* <input
                                     type="text"
-                                    value={item.evalue || ''}
+                                    value={value = item.evalue}
                                     name={`evalue`}
                                     placeholder="감정가"
-                                    onChange={(e) => handleInputChange(index, e)}
-                                    style={{ width: '30%', marginRight: '0.5%', height: '30px' }}
-                                />
-                                <input
+                                    onChange={handleEvalueChange}
+                                    style={{ width: '30%', textAlign: 'right',marginRight: '0.5%', height: '30px' }}
+                                /> */}
+                                <UINumberInput
+                                    name={`deposit`}
+                                    initialValue={item.deposit}
+                                    onChange={(e,removeCommasData,) =>handleInputChange(index, e,removeCommasData)}
+                                    placeholder="보증금"/>
+                                {/* <input
                                     type="text"
                                     value={item.deposit || ''}
                                     name={`deposit`}
                                     placeholder="보증금"
                                     onChange={(e) => handleInputChange(index, e)}
-                                    style={{ width: '30%',  marginRight: '1%',height: '30px' }}
-                                />
+                                    style={{ width: '30%', textAlign: 'right', marginRight: '1%',height: '30px' }}
+                                /> */}
                                 <button type="button" className="btn-css register-button" onClick={() => delBankruptcyAuctionBidDate(index)}>
                                     <Image src={minus} alt="Minus"/>    
                                 </button>
@@ -979,7 +947,6 @@ const OnBidRegst = () => {
                     <input
                         type="text"
                         value={state.bruptcy_admin_phone}
-                        // onChange={(e) => handlePhoneNumberChange(e, setBruptcyAdminPhone)}
                         onChange={(e) => statusChange('bruptcy_admin_phone',e.target.value)}
                         placeholder="전화번호"
                         style={{ width: '100%', marginBottom: '20px', height: '30px' }}

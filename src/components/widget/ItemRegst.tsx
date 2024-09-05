@@ -1,6 +1,6 @@
 import React from "react";
 
-import { IItemRegst } from '../../components/model/regst'
+import { IItemRegst } from '../interface/regst'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';

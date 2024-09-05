@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { RequestApi } from '../fetchapi/FetchApi';
-import { Attchfile } from '../model/regst';
+import { Attchfile } from '../interface/regst';
 import { useLocation } from 'react-router-dom';
+import {fileFromBase64} from '../utils/Utils'
 import axios from 'axios';
 // import useCustomStateManagement  from '../hooks/useCustomStateManagement';
 

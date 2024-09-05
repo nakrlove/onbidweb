@@ -129,10 +129,10 @@ export interface OnbidItem {
 export interface OnbidDays {
   //sdate: string;
   edate: string;
-  // evalue: string;
-  // deposit: string;
-  evalue: number;
-  deposit: number;
+  evalue: string;
+  deposit: string;
+  // evalue: number;
+  // deposit: number;
 
   bididx: number;
   daysidx: number;
@@ -188,4 +188,57 @@ export interface States {
   user: string;
   regdate: string;
   bididx: number;
+}
+
+/**
+ * OnBidRegst.tsx
+ */
+export interface Code {
+  idx: number;
+  code: string;
+  name: string;
+}
+
+/**
+ * OnBidRegst.tsx
+ */
+export interface DataSet {
+  bididx: number;
+  addr1: string;
+  addr2: string;
+  it_type: string;
+  ld_area: string;
+  ld_area_memo: string;
+  ld_area_pyeong: string;
+  build_area: string;
+  build_area_memo: string;
+  build_area_pyeong: string;
+  rd_addr: string;
+  streeaddr2: string;
+  bruptcy_admin_name: string;
+  bruptcy_admin_phone: string;
+  renter: string;
+  estatetype: string;
+  disposal_type: string;
+  note: string;
+  land_classification: string;
+  progress_status: string;
+  edate: string;
+  evalue: string;
+  deposit: string;
+  onbid_status: string;
+  status: string;
+  land_classification_name: string;
+  national_land_planning_use_laws: string;
+  other_laws: string;
+  enforcement_decree: string;
+  idx: 0;
+  debtor: string;
+} // 데이터 타입 정의
+// 반환 타입 정의
+export interface FetchSelectOptionsResult {
+  selectsOptions: Code[];
+  land_classification_array: Code[];
+  estateTypes: Code[];
+  categories: States[];
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import Form from 'react-bootstrap/Form';
-import { IFileInput } from "../../components/model/regst";
+import { IFileInput } from "../interface/regst";
 
 const FileInput : React.FC<IFileInput> =(props) =>{
 

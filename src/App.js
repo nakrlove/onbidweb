@@ -5,6 +5,7 @@ import OnBidList from '../src/components/widget/OnBidList';
 // import Header from '../src/components/widget/Header.tsx';
 import CodeList from '../src/components/widget/CodeList';
 import CodeRegist from '../src/components/widget/CodeRegist';
+import Login from '../src/components/widget/Login';
 import OnBidDetailPage from './components/widget/OnBidDetailPage';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CustomNavBar from '../src/components/CustomNavBar';
@@ -34,6 +35,7 @@ function App() {
           <Route path="/file-code" element={<CodeList />}/>
           <Route path="/code-regist" element={<CodeRegist />} />
           <Route path="/code-file" element={<FileViewer />} />
+          <Route path="/login" element={<Login />} />
           {/* <Route path="/day/:day" element={<Day />} />
           <Route path="/create_word" element={<CreateWord />} />
           <Route path="/create_day" element={<CreateDay />} />

@@ -14,7 +14,7 @@ const Image = styled.img`
   height: 20px;
 `;
 
-const ListItem = (obj:Item) => {
+const UIListItem = (obj:Item) => {
 
   return (
     <div className="list-item">
@@ -28,4 +28,4 @@ const ListItem = (obj:Item) => {
   );
 };
 
-export default ListItem
+export default UIListItem

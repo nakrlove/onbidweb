@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
-import {States} from '../model/regst'
+import {States} from '../interface/regst'
 
 
 // CategoryContext의 타입 정의

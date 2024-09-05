@@ -12,6 +12,7 @@ export default function CustomNavBar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
+            <Nav.Link href="/login">로그인</Nav.Link>
             <Nav.Link href="/onbid-regst">등록</Nav.Link>
             <Nav.Link href="/file-code">코드관리</Nav.Link>
             {/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
