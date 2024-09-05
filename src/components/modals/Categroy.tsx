@@ -14,6 +14,11 @@ interface CategoryProps {
   onSelect: (item: { id: number; content: string }) => void;
 }
 
+/**
+ * 관심종목 
+ * @param param0 
+ * @returns 
+ */
 const Category: React.FC<CategoryProps> = ({ show, onClose, onSelect }) => {
 
     const [inputCategory,setInputCategory] = useState('');

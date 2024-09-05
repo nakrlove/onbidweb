@@ -1220,36 +1220,7 @@ const OnBidRegst = () => {
                     )) : (
 
                         <p>No memos available</p>
-                        // <CKEditor
-                        //     editor={ClassicEditor}
-                        //     data={}
-                        //     onChange={(event, editor) => {
-                        //         const data = editor.getData();
-
-
-                        //         // const newFiles = memo.map((mdata, idx) => {
-                        //         //     if (index === idx) {
-                        //         //         return { ...fileWrapper, file: e.target.files ? e.target.files[0] : null };
-                        //         //     }
-                        //         //     return fileWrapper;
-                        //         // });
-                        //         // setAdditionalFiles(newFiles);
-
-                        //         // setMemo(prevMemo => (prevMemo ? [...prevMemo,memo_content: data] : [data]));
-                        //     }}
-                        //     config={{
-                        //         toolbar: [
-                        //             'undo', 'redo', '|',
-                        //             'bold', 'italic', 'underline', 'strikethrough', '|',
-                        //             'fontColor', 'fontBackgroundColor', '|',
-                        //             'link', '|',
-                        //             'numberedList', 'bulletedList', '|',
-                        //             'alignment', '|',
-                        //             'insertTable', 'blockQuote', 'codeBlock', '|',
-                        //             'mediaEmbed', 'imageUpload', 'removeFormat'
-                        //         ],
-                        //     }}
-                        // />)
+                  
                     )
                 }
                     
