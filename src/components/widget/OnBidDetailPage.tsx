@@ -219,13 +219,19 @@ const OnBidDetailPage = () => {
     };
 
 
-    const openMap = (type: 'daum' | 'naver') => {
-        const url = type === 'daum'
-            ? `https://map.kakao.com/?q=${data?.addr1} ${data?.addr2}`
-            : `https://map.naver.com/v5/search/${data?.addr1} ${data?.addr2}`;
-        window.open(url, '_blank', 'width=800,height=600');
-    };
+    // const openMap = (type: 'daum' | 'naver' | 'onbid') => {
+    //     const url = type === 'daum'
+    //         ? `https://map.kakao.com/?q=${data?.addr1} ${data?.addr2}`
+    //         : `https://map.naver.com/v5/search/${data?.addr1} ${data?.addr2}`;
+    //         //: `https://www.eum.go.kr/web/ar/lu/luLandDet.jsp?mode=search&selGbn=umd&isNoScr=script&pnu=${data?.addr1}' ,'eum','scrollbars=yes, resizable=yes, top=0, left='+(window.screenX+1350)+', width=1280, height=1200')`
+    //     window.open(url, '_blank','scrollbars=yes, resizable=yes, top=0, left='+(window.screenX+1350)+',width=1280,height=1200');
+    // };    
 
+    const openMap = (URL: string) => {
+        const url = URL
+        window.open(url, 'map-info','scrollbars=yes, resizable=yes, top=0, left='+(window.screenX+1350)+',width=1280,height=1200');
+    };    
+    
     return (
         <div className="detail-page">
             {/* 1. 왼쪽으로 정렬 버튼형식 지목 */}
@@ -431,27 +437,26 @@ const OnBidDetailPage = () => {
 
             
             {/* 6. 공고문 */}
-            <div className="box memo-box">
+            {/* <div className="box memo-box">
                 <h3>공고문</h3>
                 <p onClick={() => handleViewFile(salenotice)}>파일내용</p>
-                {/* 파일 내용은 여기에 표시됩니다 */}
-            </div>
+            
+            </div> */}
 
 
             <div className="box memo-box">
                 <div className="memo-header">
                     <h3>토지이용계획확인원</h3>
+                    <button type="button" onClick={() => openMap(`https://www.eum.go.kr/web/ar/lu/luLandDet.jsp?mode=search&selGbn=umd&isNoScr=script&pnu=${data?.pnu}`)}>토지이용계획확인원</button>
                 </div>
                
                 <div style={{ padding: '5px', marginTop: '2px', textAlign: 'left', border: '1px solid #ddd' }}>
                         <div>
-                            <div className='wrapper' dangerouslySetInnerHTML={{ __html: data?.land_classification_name || '' }} />
-                             
-                        </div>
+                            <div className='wrapper' dangerouslySetInnerHTML={{ __html: data?.national_land_planning_use_laws || '' }} />
+                        </div><hr style={{ margin: '2px 0' }} />
                         <div>
                             <div className='wrapper' dangerouslySetInnerHTML={{ __html: data?.other_laws || ' sss' }} />
-                            
-                        </div>
+                        </div><hr style={{ margin: '2px 0' }} />
                         <div>
                             <div className='wrapper' dangerouslySetInnerHTML={{ __html: data?.enforcement_decree || 'sssdd' }} />
                         </div>
@@ -475,13 +480,15 @@ const OnBidDetailPage = () => {
             {/* 8. 지도 */}
             <div className="map-section">
                 <div className="map">
-                    <h3>다음지도</h3>
-                    <button type="button" onClick={() => openMap('daum')}>지도 보기</button>
+                    <h3>지도</h3>
+                    <button type="button" onClick={() => openMap(`https://map.kakao.com/?q=${data?.addr1} ${data?.addr2}`)}>다음 보기</button>&nbsp;
+                    <button type="button" onClick={() => openMap(`https://map.naver.com/v5/search/${data?.addr1} ${data?.addr2}`)}>네이버 보기</button>&nbsp;
+                    <button type="button" onClick={() => openMap(`https://disco.re`)}>disco</button>&nbsp;
                 </div>
-                <div className="map">
+                {/* <div className="map">
                     <h3>네이버지도</h3>
-                    <button type="button" onClick={() => openMap('naver')}>지도 보기</button>
-                </div>
+                   
+                </div> */}
             </div>
 
             {/* 9. 위치/현황/기타 */}

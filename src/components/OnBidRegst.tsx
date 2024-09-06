@@ -71,6 +71,7 @@ const initialState: DataSet =
     enforcement_decree: "",
     idx: 0,
     debtor: "",
+    pnu: ""   ,//필지번호
 }// 데이터 타입 정의
 
 
@@ -217,6 +218,7 @@ const OnBidRegst = () => {
         enforcement_decree: '', //시행령
         idx: 0 , //관심종목 '0' 전체
         msg: '',
+        pnu: '', //필지번호
     });
     
     
@@ -511,6 +513,7 @@ const OnBidRegst = () => {
             other_laws: state.other_laws                   ,
             enforcement_decree: state.enforcement_decree   ,
             idx: categorystatus                            , //관심종목 
+            pnu: state.pnu                                 , //필지정보
         }
         const formData = new FormData();
         // FormData 생성
@@ -813,15 +816,21 @@ const OnBidRegst = () => {
             <form onSubmit={doSubmit}>
                
                 <div style={{ display: 'flex', alignItems: 'left', marginBottom: '0px' }}>
-                    <label style={{ marginBottom: '10px',marginRight: '1px', height: '30px', width: '10%' }}>진행상태</label>
-                    <select onChange={(e) => setOnbidStatus(e.target.value)}
-                                style={{ marginBottom: '10px',marginRight: '10px', height: '30px', width: '25%' }}>
+                    <label style={{ marginBottom: '10px',marginRight: '1px', height: '30px', width: '10%' }}>필지번호</label>
+                    {/* <select onChange={(e) => setOnbidStatus(e.target.value)}
+                            style={{ marginBottom: '10px',marginRight: '10px', height: '30px', width: '25%' }}>
                                     <option value="">=선택=</option>
                                     {onbidStatusArray?.map(item => (
                                         <option key={`info-${item.idx}`} value={item.code}>{item.name}</option>
                                     ))}
-                    </select>
-                
+                    </select> */}
+                    <input
+                        type="text"
+                        value={state.pnu}
+                        onChange={(e) => statusChange("pnu",e.target.value)}
+                        placeholder="필지번호"
+                        style={{ flex: 1, height: '30px' }}
+                    />
 
                     <label style={{ marginBottom: '10px',marginLeft: '10px', height: '30px', width: '10%' }}>채무자명</label>
                     <input
@@ -862,8 +871,9 @@ const OnBidRegst = () => {
                     <input
                         type="text"
                         value={state.rd_addr}
-                        readOnly={true}
+                        // readOnly={false}
                         placeholder="도로명 주소"
+                        onChange={(e) => statusChange('rd_addr',e.target.value)}
                         style={{ width: '100%', marginBottom: '10px', height: '30px' }}
                     />
                     <hr style={{ margin: '20px 0' }} />

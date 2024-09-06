@@ -119,10 +119,11 @@ export interface OnbidItem {
   land_classification: string;
   progress_status: string; //진행상태
   // memo: string;
-  land_classification_name: string; //토지이용계획확인원  - 「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등
+  national_land_planning_use_laws: string; //토지이용계획확인원  - 「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등
   other_laws: string; //토지이용계획확인원  - 다른 법령 등에 따른 지역ㆍ지구등
   enforcement_decree: string; //토지이용계획확인원 - 시행령
   name: string;
+  pnu: string; //필지정보
 }
 
 // 데이터 타입 정의
@@ -234,6 +235,7 @@ export interface DataSet {
   enforcement_decree: string;
   idx: 0;
   debtor: string;
+  pnu: string; //필지번호
 } // 데이터 타입 정의
 // 반환 타입 정의
 export interface FetchSelectOptionsResult {
