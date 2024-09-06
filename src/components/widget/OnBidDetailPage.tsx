@@ -455,10 +455,10 @@ const OnBidDetailPage = () => {
                             <div className='wrapper' dangerouslySetInnerHTML={{ __html: data?.national_land_planning_use_laws || '' }} />
                         </div><hr style={{ margin: '2px 0' }} />
                         <div>
-                            <div className='wrapper' dangerouslySetInnerHTML={{ __html: data?.other_laws || ' sss' }} />
+                            <div className='wrapper' dangerouslySetInnerHTML={{ __html: data?.other_laws || '' }} />
                         </div><hr style={{ margin: '2px 0' }} />
                         <div>
-                            <div className='wrapper' dangerouslySetInnerHTML={{ __html: data?.enforcement_decree || 'sssdd' }} />
+                            <div className='wrapper' dangerouslySetInnerHTML={{ __html: data?.enforcement_decree || '' }} />
                         </div>
             
                 </div>

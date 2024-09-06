@@ -71,12 +71,17 @@ const OnBidList: React.FC = () => {
     };
 
 
-    const handleDetailClick = (data: object) => {
+    // const handleDetailClick = (data: object) => {
+    //     const jsonData = JSON.stringify(data);
+    //     const encodedData = encodeURIComponent(jsonData);
+    //     navigate(`/onbid-detail?data=${encodedData}`,{ replace: true }); // 등록 화면으로 이동
+    // };
+    const openMap = (data: object) => {
         const jsonData = JSON.stringify(data);
         const encodedData = encodeURIComponent(jsonData);
-        navigate(`/onbid-detail?data=${encodedData}`,{ replace: true }); // 등록 화면으로 이동
-    };
-
+        const url = `/onbid-detail?data=${encodedData}`
+        window.open(url, 'onbid-detail','scrollbars=yes, resizable=yes, top=0, left='+(window.screenX+1350)+',width=1280,height=1200');
+    }; 
     /** JSON형식 파라메터값 넘기기 (수정요청)*/
     // const handleEditClick = (data: object) => {
     //     const jsonData = JSON.stringify(data);
@@ -232,8 +237,8 @@ const OnBidList: React.FC = () => {
                     {!data || (Array.isArray(data) && data.length === 0) ? ( 
                         <tr ><td colSpan={4} className='table-td-text-align-center' >{error}</td></tr>
                     ) : (data.map(item => (
-                        
-                        <tr key={item.bididx} onClick={() => handleDetailClick({ 'bididx':item.bididx })} className='onbid-item-list onbid-item'>
+                       
+                        <tr key={item.bididx}  onClick={() => openMap({ 'bididx':item.bididx })} className='onbid-item-list onbid-item'>
                             <td className='table-td'>
                              
                                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingRight: '20px' }}>
@@ -247,7 +252,7 @@ const OnBidList: React.FC = () => {
                                             color: '#555', // 텍스트 색상 조정
                                             fontSize: '14px' // 텍스트 크기 조정
                                         }}>{item.addr1} {item.addr2}</div>
-                                <div className="fontSize13">처분방식 : {item.disposal_type} <span className="orange f12">{item.renter}</span></div>
+                                <div className="fontSize13">처분방식 : {item.disposal_type} { item.renter ?<>/ <span className="orange f12 onbid-color">{item.renter}</span> </> : ("")}</div>
                                 <div className="fontSize13 colorBlue" >토지 {item.ld_area}㎡({ item.ld_area_pyeong}평) {item.ld_area_memo} / 건물 {item.build_area}㎡({item.build_area_pyeong}평) {item.build_area_memo}</div>
                             </td>
                             <td className='table-td table-td-text-align-center'>
