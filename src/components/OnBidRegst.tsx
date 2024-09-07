@@ -390,11 +390,11 @@ const OnBidRegst = () => {
             isValid = false;
         }
 
-        if (!state.build_area) {
-            newErrors.buildarea = '건축물 입력이 필요합니다.';
-            msg =   newErrors.buildarea ;
-            isValid = false;
-        }
+        // if (!state.build_area) {
+        //     newErrors.buildarea = '건축물 입력이 필요합니다.';
+        //     msg =   newErrors.buildarea ;
+        //     isValid = false;
+        // }
 
         if (!state.debtor) {
             newErrors.debtor = '채무자명 입력이 필요합니다.';
@@ -402,11 +402,11 @@ const OnBidRegst = () => {
             isValid = false;
         }
         
-        if (!selectedEstateType) {
-            newErrors.estateType = '부동산 종류 선택이 필요합니다.';
-            msg =   newErrors.estateType ;
-            isValid = false;
-        }
+        // if (!selectedEstateType) {
+        //     newErrors.estateType = '부동산 종류 선택이 필요합니다.';
+        //     msg =   newErrors.estateType ;
+        //     isValid = false;
+        // }
 
         bankruptcyAuctionBidDate.forEach((item, index) => {
             

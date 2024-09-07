@@ -253,7 +253,7 @@ const OnBidList: React.FC = () => {
                                             fontSize: '14px' // 텍스트 크기 조정
                                         }}>{item.addr1} {item.addr2}</div>
                                 <div className="fontSize13">처분방식 : {item.disposal_type} { item.renter ?<>/ <span className="orange f12 onbid-color">{item.renter}</span> </> : ("")}</div>
-                                <div className="fontSize13 colorBlue" >토지 {item.ld_area}㎡({ item.ld_area_pyeong}평) {item.ld_area_memo} / 건물 {item.build_area}㎡({item.build_area_pyeong}평) {item.build_area_memo}</div>
+                                <div className="fontSize13 colorBlue" >토지 {item.ld_area}㎡({ item.ld_area_pyeong}평) {item.ld_area_memo} {item.build_area ? <>/ 건물 {item.build_area}㎡({item.build_area_pyeong}평) {item.build_area_memo}</> :("")}</div>
                             </td>
                             <td className='table-td table-td-text-align-center'>
                                 <span className="fontSize13">{item.evalue}</span>
