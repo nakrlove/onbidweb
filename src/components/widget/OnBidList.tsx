@@ -79,7 +79,7 @@ const OnBidList: React.FC = () => {
     const openMap = (data: object) => {
         const jsonData = JSON.stringify(data);
         const encodedData = encodeURIComponent(jsonData);
-        const url = `/onbid-detail?data=${encodedData}`
+        const url = `/onbid-detail?data=${encodedData}&popup=true`
         window.open(url, 'onbid-detail','scrollbars=yes, resizable=yes, top=0, left='+(window.screenX+1350)+',width=1280,height=1200');
     }; 
     /** JSON형식 파라메터값 넘기기 (수정요청)*/
@@ -195,7 +195,7 @@ const OnBidList: React.FC = () => {
 
     /* 관심종목 선택 */
     const categorySelectChange = (value: string) => {
-        console.log(" categorySelectChange >>>>    ", value)
+       console.log(" categorySelectChange >>>>    ", value)
        setCategoryStatus(value)
     };
 
@@ -224,7 +224,7 @@ const OnBidList: React.FC = () => {
                 <thead>
                     <tr>
                         <th style={ { width: '50%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>소재지</th>
-                        <th style={{ width: '15%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>감정가</th>
+                        <th style={{ width: '15%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>감정가<br/>(보증금)</th>
                         <th style={{ width: '10%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>입찰일자<br/>마감일자</th>
                         <th style={{ width: '15%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>파산관제인정보</th>
                         {/* <th style={{ width: '30%' }}>감정가\n최저가</th> */}
@@ -256,7 +256,7 @@ const OnBidList: React.FC = () => {
                                 <div className="fontSize13 colorBlue" >토지 {item.ld_area}㎡({ item.ld_area_pyeong}평) {item.ld_area_memo} {item.build_area ? <>/ 건물 {item.build_area}㎡({item.build_area_pyeong}평) {item.build_area_memo}</> :("")}</div>
                             </td>
                             <td className='table-td table-td-text-align-center'>
-                                <span className="fontSize13">{item.evalue}</span>
+                                <span className="fontSize13">{item.evalue}<br/>({item.deposit})</span>
                             </td>
                             <td className='table-td table-td-text-align-center'>
                                 {/* <span className="fontSize13">{item.sdate}</span><br/> */}

@@ -86,8 +86,8 @@
   }
   
   .pagination button {
-    padding: 8px 16px; /* 버튼 사이즈 */
-    margin: 0 5px;
+    padding: 0.5px 7.5px; /* 버튼 사이즈 */
+    margin: 0.3px;
   }
   
   .pagination .active {

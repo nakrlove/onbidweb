@@ -524,53 +524,9 @@ const OnBidRegst = () => {
         let isCheck = isDataChange(bankruptcyAuctionBidDate,bankruptcyAuctionBidDateOrigin)
         if(isCheck){
 
-
-            // setBankruptcyAuctionBidDate(prevState => {
-            //     const updatedState = prevState.map(item => ({
-            //         ...item,
-            //         evalue: handleSubmit(item.evalue),
-            //         deposit: handleSubmit(item.deposit),
-            //     }));
-
-            //     return updatedState;
-            // });
-
-       
-            // 상태 업데이트 후 서버 요청을 위해 프로미스를 사용
-            // const updateAndSubmit = () => {
-            //     return new Promise<OnbidDays[]>((resolve) => {
-            //         setBankruptcyAuctionBidDate(prevState => {
-            //             const updatedState = prevState.map(item => ({
-            //                 ...item,
-            //                 evalue: handleSubmit(item.evalue),
-            //                 deposit: handleSubmit(item.deposit),
-            //             }));
-            //             resolve(updatedState); // 업데이트 완료 후 프로미스를 해결
-            //             updateTemp = updatedState
-            //             return updatedState;
-            //         });
-            //     });
-            // };
-
-    
-          
-           // 상태 업데이트 후 서버 요청을 보내기 위해 비동기 함수 사용
-        // await new Promise<void>((resolve) => {
-        //     const checkUpdatedState = setInterval(() => {
-        //         if (JSON.stringify(bankruptcyAuctionBidDate) !== JSON.stringify(updateTemp)) {
-        //             console.log(`test [${JSON.stringify(updateTemp)}]`)
-        //             clearInterval(checkUpdatedState);
-        //             resolve();
-        //         }
-        //     }, 50); // 상태가 업데이트될 때까지 대기
-        //     console.log(` check ${checkUpdatedState}`)
-        //  });
-        // formData.append('onbidDays', new Blob([JSON.stringify(bankruptcyAuctionBidDate)], { type: 'application/json' }));
-        //   const updatedBidDate = await updateAndSubmit();
-        
-        formData.append('onbidDays', new Blob([JSON.stringify(bankruptcyAuctionBidDate)], { type: 'application/json' }));
+          formData.append('onbidDays', new Blob([JSON.stringify(bankruptcyAuctionBidDate)], { type: 'application/json' }));
         // formData.append('onbidDays', new Blob([JSON.stringify(bidData)], { type: 'application/json' }));
-          console.log(` TE ${JSON.stringify(bankruptcyAuctionBidDate)}`)
+          
         }
         
         // FormData 내용 확인
@@ -607,7 +563,10 @@ const OnBidRegst = () => {
                 },
             });
             console.log('Form submitted successfully:', response.data);
-            navigate('/onbid-list', { replace: true }); // 목록화면으로 이동 
+        
+            window.alert('작업을 완료되었습니다.');
+            window.close(); // 팝업 창을 닫습니다
+            // navigate('/onbid-list', { replace: true }); // 목록화면으로 이동 
         } catch (error) {
             console.error('Error submitting the form:', error);
         }

@@ -215,7 +215,7 @@ const OnBidDetailPage = () => {
     const handleDetailClick = (data: object) => {
         const jsonData = JSON.stringify(data);
         const encodedData = encodeURIComponent(jsonData);
-        navigate(`/onbid-regst?data=${encodedData}`,{ replace: true }); // 등록 화면으로 이동
+        navigate(`/onbid-regst?data=${encodedData}&popup=true`,{ replace: true }); // 등록 화면으로 이동
     };
 
 
@@ -229,6 +229,7 @@ const OnBidDetailPage = () => {
 
     const openMap = (URL: string) => {
         const url = URL
+        //   const url = `/onbid-detail?data=${encodedData}&popup=true`
         window.open(url, 'map-info','scrollbars=yes, resizable=yes, top=0, left='+(window.screenX+1350)+',width=1280,height=1200');
     };    
     
