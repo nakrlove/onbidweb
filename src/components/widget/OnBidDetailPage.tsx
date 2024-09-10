@@ -244,7 +244,7 @@ const OnBidDetailPage = () => {
             {/* 3. 주소 (도로명 주소) */}
             <div className="address-section">
                 <h3>주소</h3>
-                <p> {data?.addr1} {data?.addr2} <span>({data?.rd_addr})</span></p>
+                <p> {data?.addr1} {data?.addr2} {data?.rd_addr ? <span>({data?.rd_addr})</span> :("")}</p>
             </div>
             {/* 2. Box형 메모 */}
            
