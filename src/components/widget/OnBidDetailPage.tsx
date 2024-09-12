@@ -1,14 +1,16 @@
 import React, { useState, useEffect,useRef } from 'react';
 import '../css/OnBidDetailPage.css'; // 스타일을 위한 CSS 파일
 
+import { useLoading } from './../provider/CategoryProvider'; // Context 사용
 // import axios from 'axios';
-import { RequestApi } from '../fetchapi/FetchApi';
+import useRequestApi from '../fetchapi/useFetchApi'; // Import the custom hook
 import useFetchData   from '../hooks/useFetchData';
 import { OnbidItem,OnbidDays,OnBidMemo,OnBidCategroy }  from '../interface/regst';
 import { useLocation,useNavigate } from 'react-router-dom';
 import { CKEditor }   from '@ckeditor/ckeditor5-react';
 import ClassicEditor  from '@ckeditor/ckeditor5-build-classic';
 
+import Spinner from '../common/Spinner'; // 위에서 만든 Spinner 컴포넌트
 import styled    from 'styled-components';
 
 //import plus      from '../../assets/plus.png'; // 추가
@@ -28,6 +30,8 @@ const Image = styled.img`
 const OnBidDetailPage = () => {
    
 
+    const RequestApi = useRequestApi(); // useRequestApi 훅을 호출하여 함수 반환
+    const { isLoading, setIsLoading } = useLoading(); //provier 적용
     const [memoDumy  , setMemoDumy]   = useState<OnBidMemo|null>(); //메모
     const [showEditor, setShowEditor] = useState<boolean>(false); // CKEditor 표시 상태
     const [editorData, setEditorData] = useState<string>(''); // CKEditor 데이터
@@ -60,8 +64,6 @@ const OnBidDetailPage = () => {
    
     useEffect(() => {
 
-    console.log(` #### ${JSON.stringify(memos)}`)
-
         if(days){
         //    // days.some(): days 배열에 있는 각 item의 onbid_status가 onbidarray 포함되어 있는지 확인합니다. 하나라도 포함되어 있으면 true를 반환합니다.
            const hasOnBidStatus = days.some(item => onbidarray.includes(item.onbid_status))
@@ -74,7 +76,6 @@ const OnBidDetailPage = () => {
             let sale = (attchfile.find((item) =>  item.code === '041' ))
             setSalenotice(sale)
         }
-     
     },[days,attchfile]);
 
 
@@ -92,7 +93,7 @@ const OnBidDetailPage = () => {
         const fetchData = async () => {
 
             const mData = {'bididx':bididx,'memo_contents':editorData}
-            const memoData = await RequestApi("/api/onbid/momeSave", "POST", (mData));
+            const memoData = await RequestApi({url:"/api/onbid/momeSave", method:"POST", params:(mData)});
             if (memoData) {
                 setMemos((prevMemo => [...prevMemo,memoData]));
                 setEditorData("")
@@ -106,7 +107,7 @@ const OnBidDetailPage = () => {
     const handleUpdateMemo = (item:OnBidMemo) => {
         const fetchData = async () => {
             const mData = {'idx':item.idx,'memo_contents':item.memo_contents}
-            const memoData = await RequestApi("/api/onbid/memoUpdate", "POST", (mData));
+            const memoData = await RequestApi({url:"/api/onbid/memoUpdate", method:"POST", params:(mData)});
             if (memoData) {
                 setEditorData("")
                 setEditingIndex(null); 
@@ -127,7 +128,7 @@ const OnBidDetailPage = () => {
         }
         const fetchData = async (obj:OnBidMemo) => {
             const mData = {'idx':obj.idx}
-            const memoData = await RequestApi("/api/onbid/memoDelete", "POST", (mData));
+            const memoData = await RequestApi({url:"/api/onbid/memoDelete", method:"POST", params:(mData)});
             if (!memoData) {
                 setMemos(prevMemo => prevMemo.filter((item: OnBidMemo)  => item.idx !== obj.idx));
             }
@@ -187,7 +188,7 @@ const OnBidDetailPage = () => {
 
         let url = "/api/onbid/statusUpdate" ;
         try {
-            const resultData = await RequestApi(url,"PUT",newQuery);
+            const resultData = await RequestApi({url:url,method:"PUT",params:newQuery});
             // 응답 데이터가 배열인지 확인
             if (resultData) {
                 replaceDays(resultData);
@@ -233,6 +234,9 @@ const OnBidDetailPage = () => {
         window.open(url, 'map-info','scrollbars=yes, resizable=yes, top=0, left='+(window.screenX+1350)+',width=1280,height=1200');
     };    
     
+    if (isLoading) {
+        return <Spinner /> ;
+    }
     return (
         <div className="detail-page">
             {/* 1. 왼쪽으로 정렬 버튼형식 지목 */}
@@ -428,7 +432,7 @@ const OnBidDetailPage = () => {
                 </div>
                 <div className="row">
                     <div className="item1">
-                        <span>파산관제인명:</span> {data?.bruptcy_admin_name}
+                        <span>파산관제인명:</span>{data?.debtor}의 파산관제인 {data?.bruptcy_admin_name}
                     </div>
                     <div className="item1">
                         <span>파산관제인전화번호:</span> {data?.bruptcy_admin_phone}

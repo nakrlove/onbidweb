@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
-import { RequestApi } from '../fetchapi/FetchApi';
+import useRequestApi from '../fetchapi/useFetchApi'; // Import the custom hook
 import '../css/common.css';
 import { CodeItem,Query } from '../interface/regst';
 
@@ -29,6 +29,8 @@ const Image = styled.img`
 `;
 
 const CodeList: React.FC = () => {
+
+    const RequestApi = useRequestApi(); // useRequestApi 훅을 호출하여 함수 반환
     const [data, setData] = useState<CodeItem[]>([]); // 초기 데이터는 빈 배열
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages,setTotalPages] = useState<number>(1);
@@ -126,7 +128,7 @@ const CodeList: React.FC = () => {
      
         let url = method === 'POST' ? "/api/onbid/codelist" : "/api/onbid/deletecode";
         try {
-            const resultData = await RequestApi(url,method,newQuery);
+            const resultData = await RequestApi({url:url,method:method,params:newQuery});
 
             if( method === 'DELETE') {             
                 fetchData(null,"POST"); // 컴포넌트가 처음 마운트될 때 데이터 조회

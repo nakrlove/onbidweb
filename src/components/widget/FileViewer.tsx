@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-
-import { RequestApi } from '../fetchapi/FetchApi';
+import useRequestApi from '../fetchapi/useFetchApi'; // Import the custom hook
 
 // 데이터 타입 정의
 interface OnbidDays {
@@ -35,6 +34,7 @@ interface OnBidMemo {
 }
 
 const FileViewer = () => {
+    const RequestApi = useRequestApi(); // useRequestApi 훅을 호출하여 함수 반환
     const [onBidStatusArray, setOnbidstatusarray] = useState<{ idx: number, code: string, name: string }[]>([]); /* 진행상태 */
     const [onbid, setOnbid] = useState<boolean>();
     const [days, setDays] = useState<OnbidDays[]>([]); // 초기 데이터는 빈 배열
@@ -79,14 +79,14 @@ const FileViewer = () => {
                     console.log(parsedData);
                     if (parsedData) {
                         /* 상세정보 조회 */
-                        const abortController = new AbortController();
-                        const signal = abortController.signal;
-                        const data = await RequestApi("/api/onbid/onBidDetil", "POST", parsedData, signal);
+                        //const abortController = new AbortController();
+                        //const signal = abortController.signal;
+                        const data = await RequestApi({url:"/api/onbid/onBidDetil", method:"POST", params:parsedData});
                         console.log(JSON.stringify(data));
                         if (data) {
                             setDays(data?.bidDay);
                         }
-                        return () => abortController.abort(); // Cleanup function to abort the request
+                        //return () => abortController.abort(); // Cleanup function to abort the request
                     }
                 } catch (error) {
                     console.error('Failed to parse JSON data from query string:', error);

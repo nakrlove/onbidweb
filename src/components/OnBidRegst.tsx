@@ -2,16 +2,17 @@ import React, { useState,  useEffect} from 'react';
 import axios from 'axios';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
-import { handleSubmit } from './utils/Utils';
-import { useInput } from './hooks/useInput';
+// import { handleSubmit } from './utils/Utils';
+// import { useInput } from './hooks/useInput';
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 
-import { useCategory } from './provider/CategoryProvider'; // Context 사용
-import useFetchData    from './hooks/useFetchData';
+import { useCategory,useLoading } from './provider/CategoryProvider'; // Context 사용
+import useRequestApi from './fetchapi/useFetchApi'; // Import the custom hook
+import useFetchData from './hooks/useFetchData'
 import { DataSet,Code, FetchSelectOptionsResult }  from './interface/regst';
 
-
+import Spinner from './common/Spinner'; // 위에서 만든 Spinner 컴포넌트
 import UIButton      from './ui/UIButton';
 import UINumberInput from './ui/UINumberInput';
 import FindAddr      from './modals/FindAddr';
@@ -159,7 +160,9 @@ const initfetchSelectOptions = async (action:Boolean): Promise<FetchSelectOption
 
 const OnBidRegst = () => {
     
+    const RequestApi = useRequestApi(); // useRequestApi 훅을 호출하여 함수 반환
     const { categories, setCategories } = useCategory(); //provier 적용
+    const { isLoading , setIsLoading  } = useLoading(); //provier 적용
     
     ///////////////////////////////////////////////////////////
     const [filesOrigin      , setFilesOrigin]      = useState<Attchfile[]>([files]);
@@ -248,7 +251,7 @@ const OnBidRegst = () => {
                 if(categories.length !== 0 ){
                     setCategories(categories);
                 }
-               
+                setDataLoaded(true)
             };
 
         fetchData();
@@ -329,6 +332,7 @@ const OnBidRegst = () => {
         });
     }; 
     
+    const isPopup = !!window.opener;
 
     /* 주소검색 요청 팝업 */
     const toggleAddrModal = (e: React.MouseEvent<HTMLElement,MouseEvent>) => {
@@ -542,10 +546,8 @@ const OnBidRegst = () => {
         
         additionalFiles.forEach((fileWrapper, index) => {
             if (fileWrapper.file) { 
-                console.log(` filewrapper.code [${fileWrapper.code}]`)
                 formData.append(`additionalFiles`      , fileWrapper.file);
                 formData.append(`additionalFileOptions`, fileWrapper.code);
-    
             }
         });
         // }
@@ -564,9 +566,13 @@ const OnBidRegst = () => {
             });
             console.log('Form submitted successfully:', response.data);
         
-            window.alert('작업을 완료되었습니다.');
-            window.close(); // 팝업 창을 닫습니다
-            // navigate('/onbid-list', { replace: true }); // 목록화면으로 이동 
+            if(isPopup){
+                window.alert('작업을 완료되었습니다.');
+                window.close(); // 팝업 창을 닫습니다
+                return;
+            }
+            
+            navigate('/onbid-list', { replace: true }); // 목록화면으로 이동 
         } catch (error) {
             console.error('Error submitting the form:', error);
         }
@@ -599,16 +605,6 @@ const OnBidRegst = () => {
     };
 
   
-    // const handleAdditionalFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const newFiles = additionalFiles.map((fileWrapper, idx) => {
-    //         if (index === idx) {
-    //             return { ...fileWrapper, file: e.target.files ? e.target.files[0] : null };
-    //         }
-    //         return fileWrapper;
-    //     });
-    //     setAdditionalFiles(newFiles);
-    // };
-
     /* 파일첨부 종류선택 */
     const handleSelectChange = (index: number) => (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newFiles = additionalFiles.map((fileWrapper, idx) => {
@@ -766,14 +762,14 @@ const OnBidRegst = () => {
         }
     }
 
-    if (!dataLoaded) {
-        return <div>데이터를 불러오는 중입니다...</div>;
+    if (isLoading) {
+        return <Spinner /> ;
     }
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', textAlign: 'left' }}>
             <h2>정보 등록 </h2>
             <form onSubmit={doSubmit}>
-               
+            
                 <div style={{ display: 'flex', alignItems: 'left', marginBottom: '0px' }}>
                     <label style={{ marginBottom: '10px',marginRight: '1px', height: '30px', width: '10%' }}>필지번호</label>
                     {/* <select onChange={(e) => setOnbidStatus(e.target.value)}
@@ -851,7 +847,7 @@ const OnBidRegst = () => {
 
                     {bankruptcyAuctionBidDate && bankruptcyAuctionBidDate.map((item, index) => (
                         <div key={`onbid-days-${index}`}>
-                           
+                        
                             <div style={{ display: 'flex' }}>
                                 <input
                                     type="date"
@@ -970,7 +966,7 @@ const OnBidRegst = () => {
                                         <option key={`file-attach-${item.idx}`} value={item.code}>{item.name}</option>
                                     ))}
                                 </select>
-                              
+                            
                                 <input
                                     type="file"
                                     onChange={(e) =>handleFileChange(index,e)}
@@ -1135,7 +1131,7 @@ const OnBidRegst = () => {
                                     onChange={handleEstateTypeChange}
                                     className="estateTypeCheckbox"
                                 />
-                               {type.name}
+                            {type.name}
                             </label>
                         ))}
                     </div>
@@ -1157,7 +1153,7 @@ const OnBidRegst = () => {
                     </select>
                     <UIButton onClick={toggleCategoryModal} >관심목록추가</UIButton>
                     {memo && memo.length > 0 ? memo.map((mdata,index) => (
-                     
+                    
                         <CKEditor
                             editor={ClassicEditor}
                             key={mdata.idx}  // 고유한 키 부여
@@ -1189,7 +1185,7 @@ const OnBidRegst = () => {
                     )) : (
 
                         <p>No memos available</p>
-                  
+                
                     )
                 }
                     
@@ -1201,10 +1197,11 @@ const OnBidRegst = () => {
 
                 { isAddrModalOpen ? (<FindAddr show={isAddrModalOpen} onHide={ (e) => toggleAddrModal(e)} onSelect={selectAddress} />) : "" }   
                 { isCategoryModalOpen ? ( <Category show={isCategoryModalOpen} onClose={(e) =>toggleCategoryModal(e)}  onSelect={()=>{}} />) : "" }
-             
+            
 
             </form>
         </div>
+     
     );
 };
 

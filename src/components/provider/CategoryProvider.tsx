@@ -6,6 +6,8 @@ import {States} from '../interface/regst'
 interface CategoryContextType {
     categories: States[];
     setCategories: React.Dispatch<React.SetStateAction<States[]>>;
+    isLoading : Boolean;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Context 생성 (초기값 설정 필요)
@@ -13,9 +15,9 @@ const CategoryContext = createContext<CategoryContextType | undefined>(undefined
 
 export const CategoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [categories, setCategories] = useState<States[]>([]);
-
+    const [isLoading , setIsLoading ] = useState<boolean>(false);
     return (
-        <CategoryContext.Provider value={{ categories, setCategories }}>
+        <CategoryContext.Provider value={{ categories, setCategories,isLoading, setIsLoading }}>
             {children}
         </CategoryContext.Provider>
     );
@@ -29,3 +31,11 @@ export const useCategory = () => {
     }
     return context;
 };
+
+export const useLoading = () : CategoryContextType => {
+    const context = useContext(CategoryContext)
+    if(!context) {
+        throw new Error('useLoading must be used within a LoadingProvider');
+    }
+    return context;
+}

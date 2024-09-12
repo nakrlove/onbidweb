@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Stack from 'react-bootstrap/Stack';
 import {CommonBody} from '../common/CommonBody';
 
-import {RequestApi} from '../fetchapi/FetchApi';
+import useRequestApi from '../fetchapi/useFetchApi'; // Import the custom hook
 import { useNavigate,useLocation } from 'react-router-dom';
 import { CodeItem } from '../interface/regst';
 // FormData 객체를 URL 쿼리 문자열로 변환
@@ -28,6 +28,8 @@ const formDataToQueryString = (formData: FormData): string => {
  * 첨부파일 코드관리
  */
 const CodeRegist = () => {
+
+    const RequestApi = useRequestApi(); // useRequestApi 훅을 호출하여 함수 반환
     const [checked, setChecked] = useState<boolean>(false); // 체크박스 상태
     const [optionSelect, setOptionSelect] = useState<string>(''); // select 기본값
     const [selectsOptions, setSelectsOptions] = useState<CodeItem[]>([]); // 
@@ -72,7 +74,7 @@ const CodeRegist = () => {
     const mastFn = useCallback(async() =>  {
       // const abortController = new AbortController();
       // const signal = abortController.signal;
-      const data = await RequestApi("/api/onbid/groupcode","POST",{'subcode':'000'});
+      const data = await RequestApi({url:"/api/onbid/groupcode",method:"POST",params:{'subcode':'000'}});
       if (data) {
         setSelectsOptions(data)
         return;
@@ -114,7 +116,7 @@ const CodeRegist = () => {
 
 
           //등록/수정 요청
-          const data = await RequestApi(newUrl,method,newQuery);
+          const data = await RequestApi({url:newUrl,method:method,params:newQuery});
 
           if (data) {
               const userConfirmed = window.confirm('정상처리 되었습니다. 목록으로 이동하시겠습니까?');

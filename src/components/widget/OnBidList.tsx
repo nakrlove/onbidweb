@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { useCategory } from './../provider/CategoryProvider'; // Context 사용
+import { useCategory,useLoading } from './../provider/CategoryProvider'; // Context 사용
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
-import { RequestApi } from '../fetchapi/FetchApi';
-
+import useRequestApi from '../fetchapi/useFetchApi'; // Import the custom hook
+import Spinner from '../common/Spinner'; // 위에서 만든 Spinner 컴포넌트
 import { Query } from '../interface/regst';
 
 import '../css/common.css';
@@ -44,10 +44,13 @@ interface OnbidItem {
      edate: string,
      deposit: string,
      status: string,
+     debtor: string,
      land_classification_name: string
 }
   
 const OnBidList: React.FC = () => {
+
+    const RequestApi = useRequestApi(); // useRequestApi 훅을 호출하여 함수 반환
     const [data, setData] = useState<OnbidItem[]>([]); // 초기 데이터는 빈 배열
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [itemsPerPage] = useState<number>(10);
@@ -55,8 +58,10 @@ const OnBidList: React.FC = () => {
     const searchCode = useRef<HTMLInputElement>(null);
     // const abortControllerRef = useRef<AbortController | null>(null);
 
-
+    // const [loading, setLoading] = useState(true);
     const { categories, setCategories } = useCategory(); //provier 적용
+    const { isLoading, setIsLoading } = useLoading(); //provier 적용
+    
     const navigate = useNavigate(); // useNavigate 훅 사용
     const [categorystatus, setCategoryStatus] = useState(''); /* 관심종목 */
     const [error,setError]  = useState<string>('');
@@ -140,8 +145,7 @@ const OnBidList: React.FC = () => {
             // 'idx':  categorystatus ,
             'page': ((currentPage - 1) *10),
         };
-
-        console.log(` ${JSON.stringify(newQuery)}`)
+        
         //삭제처리  구분자 
         if( method === 'DELETE') {
             try {
@@ -160,8 +164,7 @@ const OnBidList: React.FC = () => {
     
         let url = method === 'POST' ? "/api/onbid/onbid-alls" : "/api/onbid/deletecode";
         try {
-            const resultData = await RequestApi(url,method,newQuery);
-            console.log(JSON.stringify(resultData))
+            const resultData = await RequestApi({url:url,method:method,params:newQuery});
             if( method === 'DELETE') {
                 
                 fetchData(null,"POST"); // 컴포넌트가 처음 마운트될 때 데이터 조회
@@ -199,6 +202,10 @@ const OnBidList: React.FC = () => {
        setCategoryStatus(value)
     };
 
+    if (isLoading) {
+        return <Spinner /> ;
+    }
+
     return (
         <div className="code-list">
             <div className="header">
@@ -226,7 +233,7 @@ const OnBidList: React.FC = () => {
                         <th style={ { width: '50%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>소재지</th>
                         <th style={{ width: '15%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>감정가<br/>(보증금)</th>
                         <th style={{ width: '10%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>입찰일자<br/>마감일자</th>
-                        <th style={{ width: '15%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>파산관제인정보</th>
+                        <th style={{ width: '15%', textAlign: 'center',borderLeft: '1px solid #ddd' }}>채무자<br/>파산관제인정보</th>
                         {/* <th style={{ width: '30%' }}>감정가\n최저가</th> */}
                         {/* <th style={{ width: '10%' }}>작업</th> */}
                     </tr>
@@ -263,6 +270,7 @@ const OnBidList: React.FC = () => {
                                 <span className="fontSize13">{item.edate}</span>
                             </td>
                             <td className='table-td table-td-text-align-center'>
+                                <span className="fontSize13">{item.debtor}</span><br/>
                                 <span className="fontSize13">{item.bruptcy_admin_name}</span><br/>
                                 <span className="fontSize13">{item.bruptcy_admin_phone}</span>
                             </td>

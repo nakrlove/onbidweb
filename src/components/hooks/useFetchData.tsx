@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { RequestApi } from '../fetchapi/FetchApi';
+//import { RequestApi } from '../fetchapi/useFetchApi';
+import useRequestApi from '../fetchapi/useFetchApi'; // Import the custom hook
 import { Attchfile } from '../interface/regst';
 import { useLocation } from 'react-router-dom';
+import { useLoading } from '../provider/CategoryProvider'; // LoadingContext import
 import {fileFromBase64} from '../utils/Utils'
 import axios from 'axios';
 // import useCustomStateManagement  from '../hooks/useCustomStateManagement';
@@ -34,6 +36,9 @@ const useFetchData = <
     ,TStatus = any
 >(): UseFetchData<TDate, TDays, TMemo, TAttachFile,TStatus>  => {
    
+    const { setIsLoading } = useLoading(); // Use the context to get setIsLoading function
+    const RequestApi = useRequestApi(); // useRequestApi 훅을 호출하여 함수 반환
+
     const [data     , setData]      = useState<TDate|null>(null);//파산공매 기본사항
     const [status   , setStatus]    = useState<TStatus[]>([]); // 진행상태
     const [days     , setDays]      = useState<TDays[]>([]);   // days는 배열로 설정
@@ -55,10 +60,10 @@ const useFetchData = <
                 try {
                     // URLSearchParams로 추출된 데이터를 JSON으로 파싱
                     const parsedData = JSON.parse(paramData);
-
+                    setIsLoading(true)
                     if (parsedData) {
                         // API 요청을 통해 데이터 조회
-                        const dataResponse = await RequestApi("/api/onbid/onbid-detail", "POST", parsedData);
+                        const dataResponse = await RequestApi({url:"/api/onbid/onbid-detail", method:"POST", params:parsedData});
                         if (dataResponse) {
                             setData(dataResponse.bidMap);
                             setDays(dataResponse.bidDay);
@@ -69,7 +74,7 @@ const useFetchData = <
                         }
 
                         // 파일 첨부용 카테고리 조회
-                        const attchfileResponse = await RequestApi("/api/onbid/category", "POST", parsedData);
+                        const attchfileResponse = await RequestApi({url:"/api/onbid/category", method:"POST", params:parsedData});
                         if (attchfileResponse) {
                             // 파일 데이터가 포함된 response를 처리
                             const updatedFiles = await Promise.all(attchfileResponse.map(async (fileWrapper: Attchfile) => {
@@ -105,7 +110,7 @@ const useFetchData = <
                 } catch (err) {
                     setError('데이터를 가져오는데 문제가 발생했습니다.');
                 } finally {
-                    setLoading(false);
+                    setIsLoading(false)
                 }
             }
         };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { useCategory } from '../../components/provider/CategoryProvider'; // Context 사용
-import { RequestApi }  from '../../components/fetchapi/FetchApi';
+import useRequestApi from '../fetchapi/useFetchApi'; // Import the custom hook
 
 import UIListItem from '../ui/UIListItem';
 import UIInput  from '../ui/UIInput';
@@ -20,13 +20,13 @@ interface CategoryProps {
  * @returns 
  */
 const Category: React.FC<CategoryProps> = ({ show, onClose, onSelect }) => {
-
+    const RequestApi = useRequestApi(); // useRequestApi 훅을 호출하여 함수 반환
     const [inputCategory,setInputCategory] = useState('');
     const { categories, setCategories } = useCategory(); //provier 적용
     
     const updateDelete = async (url: string, params: any,type:string) => {
      
-            const data = await RequestApi(url, 'POST', params);
+            const data = await RequestApi({url:url, method:'POST', params:params});
             if(type ==='DELETE'){
                 initSearch('/api/onbid/categroyList', {});
                 return;
@@ -44,7 +44,7 @@ const Category: React.FC<CategoryProps> = ({ show, onClose, onSelect }) => {
      
         try {
                
-            const data = await RequestApi(url, 'POST', params);
+            const data = await RequestApi({url:url, method:'POST', params:params});
             if(data) {
                setCategories(data)
                return;

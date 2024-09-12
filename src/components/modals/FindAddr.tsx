@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { RequestApi } from '../../components/fetchapi/FetchApi';
+import useRequestApi from '../fetchapi/useFetchApi'; // Import the custom hook
 import { Address, IInput } from '../interface/regst';
 import '../../components/css/FindAddr.css'; // CSS 파일
 
 const SEARCH_TYPE = 0;
 
 const FindAddr: React.FC<IInput> = (props) => {
+
+    const RequestApi = useRequestApi(); // useRequestApi 훅을 호출하여 함수 반환
     const [address, setAddress] = useState<Address[]>([]);
     const [query, setQuery] = useState<{ [key: string]: any }>({});
     const [totalPage, setTotalPage] = useState<number>(1);
@@ -74,7 +76,7 @@ const FindAddr: React.FC<IInput> = (props) => {
         setQuery(newQuery);
 
         try {
-            const data = await RequestApi("/api/post/findZipCode", "POST", newQuery);
+            const data = await RequestApi({url:"/api/post/findZipCode", method:"POST", params:newQuery});
             if (data) {
                 if (page === 0) {
                     setTotalCount(data.count);
