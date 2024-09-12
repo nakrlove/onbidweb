@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 type MappedType<T, U> = {
   [K in keyof T]: K extends keyof U ? U[K] : never;
 };
@@ -54,4 +56,8 @@ export const handleSubmit = (value: string) => {
   console.log("전송할 값:", cleanValue);
   // 여기서 서버로 전송하는 로직을 추가합니다.
   return cleanValue;
+};
+
+export const isToday = (date: dayjs.Dayjs): boolean => {
+  return date.isSame(dayjs(), "day");
 };

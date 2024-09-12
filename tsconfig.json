@@ -4,13 +4,14 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "jsx": "preserve",
-    "target": "es6",
-
-    "baseUrl": ".",
+    "target": "esnext",
+    "baseUrl": "src",  // baseUrl을 src로 설정
     "paths": {
-      "*": ["node_modules/*", "@types/*"]
+      "*": ["node_modules/*"],
+      "@components/*": ["components/*"], // 예시 경로 별칭
+      "@utils/*": ["utils/*"] // 예시 경로 별칭
     },
-    "typeRoots": ["./node_modules/@types", "./@types"],
+    "typeRoots": ["./node_modules/@types", "./src/@types"],
     "lib": [
       "dom",
       "dom.iterable",

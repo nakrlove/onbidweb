@@ -134,7 +134,7 @@ const initfetchSelectOptions = async (action:Boolean): Promise<FetchSelectOption
 
     /* 부동산종류 */
     try {
-        const response = await axios.post('/api/onbid/file-code?codes=044');
+        const response = await axios.post('/api/onbid/file-code?codes=044&codes=089&codes=065');
         estateTypes = response.data
     } catch (error) {
         console.error('Error fetching select options:', error);
@@ -230,7 +230,8 @@ const OnBidRegst = () => {
     const [isAddrModalOpen    , setIsAddrModalOpen    ] = useState(false); // 모달 열림 상태
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false); // 모달 열림 상태
     const [dataLoaded, setDataLoaded] = useState(false);
-
+    // 목록 숨기기/펼치기 상태 관리
+    const [isListOpen, setIsListOpen] = useState(false);
    
     // useFetchData 훅 호출하여 데이터 상태 가져오기
     let action: Boolean  = false;
@@ -341,6 +342,12 @@ const OnBidRegst = () => {
         setIsAddrModalOpen(prev => !prev);
     };
    
+    // 목록 펼치기/숨기기 토글 함수
+    const toggleList = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        e.preventDefault(); // 기본 폼 제출 방지
+        setIsListOpen(!isListOpen);
+    };
+
     const toggleCategoryModal = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
         e.preventDefault(); // 기본 폼 제출 방지
         e.stopPropagation();
@@ -1119,8 +1126,8 @@ const OnBidRegst = () => {
                     />
 
                     <hr style={{ margin: '15px 0' }} />
-                    <label>부동산종류</label>
-
+                    <button onClick={(e) => toggleList(e)}><label>부동산종류</label></button>
+                    {isListOpen && (
                     <div className="estateTypeContainer">
                         {estateTypes.map((type, index) => (
                             <label key={`estate-type-${index}`} className="estateTypeLabel">
@@ -1134,7 +1141,8 @@ const OnBidRegst = () => {
                             {type.name}
                             </label>
                         ))}
-                    </div>
+                    </div>)}
+
                     {errors.estateType && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.estateType}</div>}
                 </div>
 

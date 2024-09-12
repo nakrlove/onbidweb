@@ -1,0 +1,71 @@
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 90vh; /* 상하 5% 여백을 위해 90% 사용 */
+  width: 90vw;  /* 좌우 5% 여백을 위해 90% 사용 */
+  margin: auto;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.calendar-header {
+  margin-bottom: 10px;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.nav-button {
+  margin: 5px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  width: 100%;
+  height: 100%;
+}
+
+.calendar-cell {
+  border: 1px solid #ddd;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.calendar-date {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.calendar-events {
+  margin-top: 5px;
+  font-size: 0.8em;
+}
+
+.today {
+  background-color: #f0f8ff;
+}
+
+
+/* App.css */
+
+/* 토요일, 일요일 색상 정의 */
+.saturday {
+  color: blue;
+}
+
+.sunday {
+  color: red;
+}
+
+/* 공휴일 색상 정의 */
+.day-holiday {
+  color: red;
+}
+
+/* 오늘 날짜 색상 정의 */
+.day-today {
+  background-color: lightgray;
+}

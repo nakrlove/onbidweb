@@ -10,6 +10,9 @@ import { useLocation,useNavigate } from 'react-router-dom';
 import { CKEditor }   from '@ckeditor/ckeditor5-react';
 import ClassicEditor  from '@ckeditor/ckeditor5-build-classic';
 
+// Font 플러그인 추가
+import Font from '@ckeditor/ckeditor5-font/src/font';
+
 import Spinner from '../common/Spinner'; // 위에서 만든 Spinner 컴포넌트
 import styled    from 'styled-components';
 
@@ -343,21 +346,107 @@ const OnBidDetailPage = () => {
                             data={editorData}
                             onChange={handleEditorChange}
                             config={{
+                              //  plugins: [Font],  // 플러그인 추가
                                 toolbar: [
-                                    'undo', 'redo', '|',
-                                    'bold', 'italic', 'underline', 'strikethrough', '|',
-                                    'fontColor', 'fontBackgroundColor', '|',
-                                    'link', '|',
-                                    'numberedList', 'bulletedList', '|',
-                                    'alignment', '|',
-                                    'insertTable', 'blockQuote', 'codeBlock', '|',
-                                    'mediaEmbed', 'imageUpload', 'removeFormat'
+                                    'heading', '|', 
+                                    'bold', 'italic', 'underline', '|', 
+                                    'fontSize', 'fontFamily', '|', 
+                                    'fontColor', 'fontBackgroundColor', '|',  // 툴바에 추가
+                                    'link', 'bulletedList', 'numberedList', '|', 
+                                    'blockQuote', 'insertTable', 'mediaEmbed', '|', 
+                                    'undo', 'redo'
                                 ],
+                                fontSize: {
+                                    options: [9, 11, 13, 'default', 17, 19, 21],
+                                    supportAllValues: true,
+                                },
+                                fontFamily: {
+                                    options: [
+                                        'default',
+                                        'Arial, Helvetica, sans-serif',
+                                        'Courier New, Courier, monospace',
+                                        'Georgia, serif',
+                                        'Lucida Sans Unicode, Lucida Grande, sans-serif',
+                                        'Tahoma, Geneva, sans-serif',
+                                        'Times New Roman, Times, serif',
+                                        'Trebuchet MS, Helvetica, sans-serif',
+                                        'Verdana, Geneva, sans-serif'
+                                    ],
+                                    supportAllValues: true,
+                                },
+                                fontColor: {
+                                    colors: [
+                                        {
+                                            color: 'hsl(0, 0%, 0%)',
+                                            label: 'Black'
+                                        },
+                                        {
+                                            color: 'hsl(0, 0%, 30%)',
+                                            label: 'Dim grey'
+                                        },
+                                        {
+                                            color: 'hsl(0, 0%, 60%)',
+                                            label: 'Grey'
+                                        },
+                                        {
+                                            color: 'hsl(0, 0%, 90%)',
+                                            label: 'Light grey'
+                                        },
+                                        {
+                                            color: 'hsl(0, 0%, 100%)',
+                                            label: 'White',
+                                            hasBorder: true
+                                        },
+                                        {
+                                            color: 'hsl(0, 75%, 60%)',
+                                            label: 'Red'
+                                        },
+                                        {
+                                            color: 'hsl(30, 75%, 60%)',
+                                            label: 'Orange'
+                                        },
+                                        {
+                                            color: 'hsl(60, 75%, 60%)',
+                                            label: 'Yellow'
+                                        },
+                                        {
+                                            color: 'hsl(90, 75%, 60%)',
+                                            label: 'Light green'
+                                        },
+                                        {
+                                            color: 'hsl(120, 75%, 60%)',
+                                            label: 'Green'
+                                        },
+                                        {
+                                            color: 'hsl(150, 75%, 60%)',
+                                            label: 'Aquamarine'
+                                        },
+                                        {
+                                            color: 'hsl(180, 75%, 60%)',
+                                            label: 'Turquoise'
+                                        },
+                                        {
+                                            color: 'hsl(210, 75%, 60%)',
+                                            label: 'Light blue'
+                                        },
+                                        {
+                                            color: 'hsl(240, 75%, 60%)',
+                                            label: 'Blue'
+                                        },
+                                        {
+                                            color: 'hsl(270, 75%, 60%)',
+                                            label: 'Purple'
+                                        }
+                                    ]
+                                }
                             }}
                         />
 
                         <button type="button" onClick={handleSaveMemo} style={{ marginTop: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
                         <Image src={save} alt="add"/>저장
+                        </button>
+                        <button type="button" onClick={()=>setShowEditor(false)} style={{ marginTop: '5px',marginLeft: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
+                        <Image src={deletebtn} alt="add"/>취소
                         </button>
                     
                     </div>

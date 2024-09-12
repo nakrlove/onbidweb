@@ -7,6 +7,7 @@ import CodeList from '../src/components/widget/CodeList';
 import CodeRegist from '../src/components/widget/CodeRegist';
 import Login from '../src/components/widget/Login';
 import OnBidDetailPage from './components/widget/OnBidDetailPage';
+import Calendar from './components/widget/Calendar';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import CustomNavBar from '../src/components/CustomNavBar';
 import ThemeProvider from 'react-bootstrap/ThemeProvider';
@@ -44,6 +45,8 @@ function Main() {
           <Route path="/code-regist" element={<CodeRegist />} />
           <Route path="/code-file" element={<FileViewer />} />
           <Route path="/login" element={<Login />} />
+
+          <Route path="/Calendar" element={<Calendar />} />
           {/* <Route path="/day/:day" element={<Day />} />
           <Route path="/create_word" element={<CreateWord />} />
           <Route path="/create_day" element={<CreateDay />} />
