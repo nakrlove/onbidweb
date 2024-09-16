@@ -91,8 +91,9 @@ dt {
     /* 부동산 종류 컨테이너 스타일 */
 .estateTypeContainer {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 한 줄에 5개 */
+  grid-template-columns: repeat(4, 1fr); /* 한 줄에 5개 */
   gap:1px; /* 항목 사이의 간격 */
+  margin-top: 10px; /* 아래 여백 */
   margin-bottom: 20px; /* 아래 여백 */
 }
 

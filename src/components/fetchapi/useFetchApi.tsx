@@ -37,14 +37,14 @@ const useRequestApi = () => {
       try {
             setIsLoading(true); // Set loading to true
             //const abortController = getAbortController();
-            const abortController = getAbortSignal();
+            // const abortController = getAbortSignal();
             const host = process.env.REACT_APP_API_URL;
             const response = await fetch(`${host}${url}`, {
                                                             method: method,
                                                             headers: {
                                                               "Content-Type": "application/json",
                                                             },
-                                                            signal: abortController,
+                                                            // signal: abortController,
                                                             body: JSON.stringify(params),
                                                             // body:
                                                             //   method === "POST" || method === "DELETE" || method === "PUT"
@@ -60,7 +60,7 @@ const useRequestApi = () => {
               throw new Error(errorData.message);
             }
 
-            if (abortController?.aborted) return null;
+            // if (abortController?.aborted) return null;
 
             const data = await response.json();
             return data;

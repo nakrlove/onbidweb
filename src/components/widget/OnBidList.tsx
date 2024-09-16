@@ -114,9 +114,10 @@ const OnBidList: React.FC = () => {
     const initDataSet = async() => {
         /* 관심목록 */
         try {
-            const response = await axios.post('/api/onbid/categroyList');
+            // const response = await axios.post('/api/onbid/categroyList');
+            const response = await RequestApi({url:'/api/onbid/categroyList',method:'POST'});
             //setCategory(response.data);
-            setCategories(response.data)
+            setCategories(response)
         } catch (error) {
             console.error('Error fetching select options:', error);
         }

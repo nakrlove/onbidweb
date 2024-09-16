@@ -100,65 +100,6 @@ const files: Attchfile = {
     filepath: ""
 };
 
-
-const initfetchSelectOptions = async (action:Boolean): Promise<FetchSelectOptionsResult>  => {
-
-    let land_classification_array: Code[] = [];
-    let selectsOptions: Code  [] = [];
-    let estateTypes   : Code  [] = [];
-    let categories    : States[] = []; 
-
-    /* 파일첨부 코드조회 */
-    try {
-        const response = await axios.post('/api/onbid/file-code');
-        selectsOptions = response.data
-    } catch (error) {
-        console.error('Error fetching select options:', error);
-    }
-
-    /* 지목 */
-    try {
-        const response = await axios.post('/api/onbid/file-code?codes=003');
-        // setLandclassificationarray(response.data);
-        land_classification_array = response.data;
-    } catch (error) {
-        console.error('Error fetching select options:', error);
-    }
-
-    /* 입찰진행상태 */
-    // try {
-    //     const response = await axios.post('/api/onbid/file-code?codes=037');
-    //     setOnbidStatusArray(response.data);
-    // } catch (error) {
-    //     console.error('Error fetching select options:', error);
-    // }
-
-    /* 부동산종류 */
-    try {
-        const response = await axios.post('/api/onbid/file-code?codes=044&codes=089&codes=065');
-        estateTypes = response.data
-    } catch (error) {
-        console.error('Error fetching select options:', error);
-    }
-
-
-    /* 관심목록 */
-    console.log(` action value=${action}`)
-    if(action){
-        try {
-            const response = await axios.post('/api/onbid/categroyList');
-            categories = response.data;
-        } catch (error) {
-            console.error('Error fetching select options:', error);
-        }
-    }
- 
-    return {selectsOptions,land_classification_array,estateTypes,categories}    
-};
-
-
-
-
 const OnBidRegst = () => {
     
     const RequestApi = useRequestApi(); // useRequestApi 훅을 호출하여 함수 반환
@@ -179,7 +120,7 @@ const OnBidRegst = () => {
     const [bankruptcyAuctionBidDate       , setBankruptcyAuctionBidDate]       = useState<OnbidDays[]>([bidDate]);
     const [bankruptcyAuctionBidDateOrigin , setBankruptcyAuctionBidDateOrigin] = useState<OnbidDays[]>([bidDate]);
    
-    const [selectsOptions, setSelectsOptions] = useState<Code[]>([]);
+    const [selectsOptions  , setSelectsOptions] = useState<Code[]>([]);
     const [estateTypes     , setEstateTypes]    = useState<Code[]>([]);
 
      // 하나의 선택된 부동산 종류를 관리하는 상태 변수
@@ -240,43 +181,33 @@ const OnBidRegst = () => {
         action = true;
     }
 
-    const {rselectsOptions,rland_classification_array,restateTypes,rcategories}  =  useInitData(action)
-  // 데이터를 한 번만 상태에 설정
+    const {rselectsOptions,rland_classification_array,restateTypes}  =  useInitData(action)
+    
+    // const data  =  useInitData(action)
+    // 데이터를 한 번만 상태에 설정
     useEffect(() => {
-        if (rselectsOptions && rland_classification_array && restateTypes && rcategories) {
-            setSelectsOptions(rselectsOptions);
-            setLandclassificationarray(rland_classification_array);
-            setEstateTypes(restateTypes);
-            if (categories.length === 0) {
-                setCategories(rcategories);
+        // 비동기 함수를 정의하여 상태를 업데이트
+        const updateData = async () => {
+           
+            if (rselectsOptions ) {
+                // 상태 업데이트
+                setSelectsOptions(rselectsOptions);
             }
-        }
-    }, [rselectsOptions,rland_classification_array,restateTypes,rcategories]);
 
-    /*
-    useEffect(() => {
-      
-       // setCategories(rcategories); // 상태 업데이트
-        if(categories.length === 0) {
-            action = true;
-        }
+            if (rland_classification_array ) {
+                setLandclassificationarray(rland_classification_array);
+            }
 
-        const fetchData = async () => {
-        
-            const {selectsOptions,land_classification_array,estateTypes,categories}  = await initfetchSelectOptions(action)
-                setSelectsOptions(selectsOptions);
-                setEstateTypes(estateTypes);
-                
-                setLandclassificationarray(land_classification_array);
-                if(categories.length !== 0 ){
-                    setCategories(categories);
-                }
-                setDataLoaded(true)
-            };
+            if (restateTypes ) {
+                setEstateTypes(restateTypes);
+                setIsListOpen(true);
+            }
+          
+        };
 
-        fetchData();
-    }, []); // 컴포넌트가 처음 렌더링될 때 한 번만 호출
-*/
+        updateData();
+    }, [rselectsOptions, rland_classification_array, restateTypes]);
+
     const { data
           , days
           , memos
@@ -608,17 +539,8 @@ const OnBidRegst = () => {
     // 입력값 변경 핸들러
     const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>,removeCommasData:string|null) => {
         const { name, value } = event.target;
-       // console.log(`name ${name},value ${value}`)
         let inputData = removeCommasData !== null ? removeCommasData : value;
-        // const newbankruptcyAuctionBidDate = [...bankruptcyAuctionBidDate];
-     
-        // newbankruptcyAuctionBidDate[index] = {
-        //     ...newbankruptcyAuctionBidDate[index],
-            
-        //     [name]: inputData,
-        // };
-        // console.log(` set= ${JSON.stringify(newbankruptcyAuctionBidDate[index])}`)
-        // setBankruptcyAuctionBidDate(newbankruptcyAuctionBidDate);
+        
         setBankruptcyAuctionBidDate(prevState => {
             const newbankruptcyAuctionBidDate = [...prevState];
             newbankruptcyAuctionBidDate[index] = {
@@ -729,7 +651,6 @@ const OnBidRegst = () => {
                 handleUpdateFile(index, newFile, fileWrapper.code); // 기존의 code 값을 유지합니다.
             } else {
                 // 신규 파일을 추가
-    
                 const selectedOption = selectsOptions.find(option => option.code === e.target.value); // 현재 선택된 code를 가져옵니다
                 const selectedCode = selectedOption?.code || ""; 
                 handleAddNewFile(newFile, selectedCode); // 신규 파일 추가 시 code 값을 설정합니다.
@@ -863,7 +784,7 @@ const OnBidRegst = () => {
 
                 <div style={{ marginBottom: '3px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '-4px' }}>
-                        <span style={{ width: '30%',marginRight: '5%'}}>입찰일자</span>
+                        <span style={{ width: '35%',marginRight: '5%'}}>입찰일자</span>
                         <span >감정가/보증금</span>
                         <button type="button" className="btn-css register-button" onClick={addBankruptcyAuctionBidDate}> 
                             <Image src={plus1} alt="Add"/>
@@ -1144,7 +1065,7 @@ const OnBidRegst = () => {
                         }}
                     />
 
-                    <hr style={{ margin: '15px 0' }} />
+                    <hr style={{ margin: '10px 0' }} />
                     <button onClick={(e) => toggleList(e)}><label>부동산종류</label></button>
                     {isListOpen && (
                     <div className="estateTypeContainer">
@@ -1165,7 +1086,7 @@ const OnBidRegst = () => {
                     {errors.estateType && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.estateType}</div>}
                 </div>
 
-                <hr style={{ margin: '20px 0' }} />
+                <hr style={{ margin: '10px 0' }} />
 
                 <div style={{ marginBottom: '20px' }}>
                     <label>메모</label> 
