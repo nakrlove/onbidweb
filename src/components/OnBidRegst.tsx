@@ -9,7 +9,8 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 
 import { useCategory,useLoading } from './provider/CategoryProvider'; // Context 사용
 import useRequestApi from './fetchapi/useFetchApi'; // Import the custom hook
-import useFetchData from './hooks/useFetchData'
+import useFetchData  from './hooks/useFetchData'
+import useInitData   from './hooks/useInitData'
 import { DataSet,Code, FetchSelectOptionsResult }  from './interface/regst';
 
 import Spinner from './common/Spinner'; // 위에서 만든 Spinner 컴포넌트
@@ -235,6 +236,24 @@ const OnBidRegst = () => {
    
     // useFetchData 훅 호출하여 데이터 상태 가져오기
     let action: Boolean  = false;
+    if(categories.length === 0) {
+        action = true;
+    }
+
+    const {rselectsOptions,rland_classification_array,restateTypes,rcategories}  =  useInitData(action)
+  // 데이터를 한 번만 상태에 설정
+    useEffect(() => {
+        if (rselectsOptions && rland_classification_array && restateTypes && rcategories) {
+            setSelectsOptions(rselectsOptions);
+            setLandclassificationarray(rland_classification_array);
+            setEstateTypes(restateTypes);
+            if (categories.length === 0) {
+                setCategories(rcategories);
+            }
+        }
+    }, [rselectsOptions,rland_classification_array,restateTypes,rcategories]);
+
+    /*
     useEffect(() => {
       
        // setCategories(rcategories); // 상태 업데이트
@@ -257,7 +276,7 @@ const OnBidRegst = () => {
 
         fetchData();
     }, []); // 컴포넌트가 처음 렌더링될 때 한 번만 호출
-
+*/
     const { data
           , days
           , memos
