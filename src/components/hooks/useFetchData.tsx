@@ -100,9 +100,9 @@ const useFetchData = <
                         /* 입찰진행상태 */
                         try {
 
-                            const response = await RequestApi({url:"/api/onbid/file-code?codes=037", method:"POST", params:{}});
+                            const response = await RequestApi({url:"/api/onbid/file-code?codes=037", method:"POST"});
                             // const response = await axios.post('/api/onbid/file-code?codes=037');
-                            setStatus(response.data);
+                            setStatus(response);
                         } catch (error) {
                             console.error('Error fetching select options:', error);
                         }

@@ -304,12 +304,14 @@ const OnBidDetailPage = () => {
                                         ],
                                     }}
                                  />
-                                 <button type="button" onClick={() => handleModifyMemo(index,'cancel',null)} style={{ marginTop: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
-                                   <Image src={deletebtn} alt="delete"/>취소
-                                 </button> &nbsp;
-                                 <button type="button" onClick={() => handleUpdateMemo(item)} style={{ marginTop: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
+                               
+                                <button type="button" onClick={() => handleUpdateMemo(item)} style={{ marginTop: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
                                    <Image src={save} alt="add"/>저장
-                                 </button>
+                                </button>&nbsp;
+                                <button type="button" onClick={() => handleModifyMemo(index,'cancel',null)} style={{ marginTop: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
+                                   <Image src={deletebtn} alt="delete"/>취소
+                                </button> 
+
                             </div>
                         ) : (
                             <div>
@@ -445,7 +447,7 @@ const OnBidDetailPage = () => {
                         <button type="button" onClick={handleSaveMemo} style={{ marginTop: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
                         <Image src={save} alt="add"/>저장
                         </button>
-                        <button type="button" onClick={()=>setShowEditor(false)} style={{ marginTop: '5px',marginLeft: '5px',textAlign: 'center',border: '0px solid #ddd' }}>
+                        <button type="button" onClick={()=>setShowEditor(false)} style={{ marginTop: '5px',marginLeft: '4px',textAlign: 'center',border: '0px solid #ddd' }}>
                         <Image src={deletebtn} alt="add"/>취소
                         </button>
                     

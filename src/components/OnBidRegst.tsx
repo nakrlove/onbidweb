@@ -903,7 +903,7 @@ const OnBidRegst = () => {
                     <hr style={{ margin: '10px 0' }} />
                     {additionalFiles.map((fileWrapper, index) => (
                         <div key={`file-info-${index}`} style={{ marginBottom: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2px' }}>
                                 <select
                                     value={fileWrapper.code}
                                     onChange={handleSelectChange(index)}
@@ -924,7 +924,8 @@ const OnBidRegst = () => {
                                         <Image  src={minus} alt="Minus" />
                                 </button>
                                                                 
-                    </div>
+                            </div>
+                            <label>{fileWrapper.filename}</label>
                         </div>
                     ))}
                     {/* {errors.file && <div style={{ color: 'red', marginBottom: '10px' }}>{errors.file}</div>} */}
