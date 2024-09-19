@@ -27,7 +27,6 @@ interface UseFetchData<TDate, TDays, TMemo, TAttachFile,TStatus>  {
     // setMemo: React.Dispatch<React.SetStateAction<T | null>>; // 상태 업데이트 함수 추가
 }
 
-
 const useFetchData = <
      TDate = any
     ,TDays = any

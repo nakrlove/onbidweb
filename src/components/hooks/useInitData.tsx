@@ -4,11 +4,11 @@ import useRequestApi from '../fetchapi/useFetchApi'; // Import the custom hook
 import { useCategory,useLoading } from '../provider/CategoryProvider'; // Context 사용
 import { Code, States }  from '../interface/regst';
 
-interface CommonSet<TLandClassifiArray,TSelectOptions,TEstateTypes,TStates> {
-    rland_classification_array:TLandClassifiArray[];
-    rselectsOptions: TSelectOptions  [];
-    restateTypes   : TEstateTypes  [];
-}
+// interface CommonSet<TLandClassifiArray,TSelectOptions,TEstateTypes,TStates> {
+//     rland_classification_array:TLandClassifiArray[];
+//     rselectsOptions: TSelectOptions  [];
+//     restateTypes   : TEstateTypes  [];
+// }
 // const useInitData = (action:Boolean):CommonSet<Code, Code, Code, States> => {
 const useInitData = (action:Boolean) => {
 
