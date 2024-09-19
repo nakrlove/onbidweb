@@ -1,0 +1,35 @@
+/* 모달 오버레이 스타일 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: block;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* 모달 스타일 */
+  .modal {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: 70%;
+    display: block !important;
+    max-height: 90vh; /* 화면 높이의 90%를 넘지 않도록 설정 */
+    overflow: auto; /* 내용이 넘치면 스크롤이 생기도록 설정 */
+    position: absolute; /* 위치를 절대적으로 설정 */
+    top: 50%; /* 상단에서 50% 위치 */
+    left: 50%; /* 왼쪽에서 50% 위치 */
+    transform: translate(20%, 5%) !important; /* 좌우 및 상하 중앙으로 이동 */
+    padding: 20px; /* 내부 여백 추가 */
+    box-sizing: border-box; /* 패딩과 테두리가 전체 너비에 포함되도록 설정 */
+  }
+  
+  /* 숨김 클래스 */
+  .hidden {
+    display: none;
+  }
+  

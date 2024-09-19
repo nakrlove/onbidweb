@@ -1,52 +1,197 @@
-import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Modal from 'react-bootstrap/Modal';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import findaddr from '../../components/fetchapi/FetchApi'
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import useRequestApi from '../fetchapi/useFetchApi'; // Import the custom hook
+import { Address, IInput } from '../interface/regst';
+import '../../components/css/FindAddr.css'; // CSS 파일
 
-export default function FindAddr(props) {
+const SEARCH_TYPE = 0;
 
-    const [address,setAddress] = useState([])
-    const [query, setQuery] = useState('');
-    const [error, setError] = useState(null);
-    const handleSearch = async (e: React.FormEvent, query: String) => {
+const FindAddr: React.FC<IInput> = (props) => {
+
+    const RequestApi = useRequestApi(); // useRequestApi 훅을 호출하여 함수 반환
+    const [address, setAddress] = useState<Address[]>([]);
+    const [query, setQuery] = useState<{ [key: string]: any }>({});
+    const [totalPage, setTotalPage] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [pageGroup, setPageGroup] = useState<number>(1);
+    const [totalCount, setTotalCount] = useState<number>(1);
+    const [error, setError] = useState<string | null>(null);
+    const searchInputRef = useRef<HTMLInputElement>(null);
+    // const abortControllerRef = useRef<AbortController | null>(null);
+
+    const init = () => {
+        // if (abortControllerRef.current) {
+        //     abortControllerRef.current.abort();
+        // }
+        setAddress([]);
+        setQuery({});
+        setTotalPage(1);
+        setTotalCount(1);
+        setPageGroup(1);
+        setCurrentPage(1);
+        setError(null);
+    };
+
+    useEffect(() => {
+        if (props.show) {
+            init();
+            if (searchInputRef.current) {
+                searchInputRef.current.value = '';
+            }
+            document.body.classList.add('modal-open'); // 배경 스크롤 방지
+        } else {
+            document.body.classList.remove('modal-open'); // 배경 스크롤 복구
+        }
+
+        return () => {
+            document.body.classList.remove('modal-open');
+        };
+    }, [props.show]);
+
+    useEffect(() => {
+        setTotalPage(pageCalculate(totalCount, 10));
+    }, [totalCount]);
+
+    const pageCalculate = (totalCount: number, itemsPerPage: number): number => {
+        return Math.ceil(totalCount / itemsPerPage);
+    };
+
+    const getCurrentPageRange = (currentPage: number, totalPages: number): [number, number] => {
+        const startPage = Math.floor((currentPage - 1) / 10) * 10 + 1;
+        const endPage = Math.min(startPage + 9, totalPages);
+        return [startPage, endPage];
+    };
+
+    const handleSearch = useCallback(async (e: React.FormEvent, param: { [key: string]: any }, initPage: number) => {
         e.preventDefault();
+
+        if (Object.keys(param).length === 0) {
+            return;
+        }
+
+        const page = initPage === -100 ? 0 : currentPage;
+
+        let newQuery = { ...param };
+        newQuery[`totalPage`] = (10 * (currentPage - 1));
+        newQuery[`reload`] = page;
+        setQuery(newQuery);
+
         try {
-
-            console.log(query);
-
-            // if(true) return;
-            const data = await findaddr(query);
+            const data = await RequestApi({url:"/api/post/findZipCode", method:"POST", params:newQuery});
             if (data) {
-                setAddress(data);
-                return;
-            } 
-             setError('No addresses found or an error occurred.');
-            
+                if (page === 0) {
+                    setTotalCount(data.count);
+                    setTotalPage(pageCalculate(totalCount, 10));
+                }
+                setAddress(data.post);
+            } else {
+                setAddress([]);
+                setError('No addresses found or an error occurred.');
+            }
         } catch (err) {
-             setError('An error occurred while fetching addresses.');
+            setError('An error occurred while fetching addresses.');
+        }
+    }, [currentPage]);
+
+    useEffect(() => {
+        if (currentPage === 1) {
+            handleSearch(new Event('submit') as unknown as React.FormEvent, query, -100);
+        } else {
+            handleSearch(new Event('submit') as unknown as React.FormEvent, query, SEARCH_TYPE);
+        }
+    }, [currentPage]);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPage) {
+            setCurrentPage(currentPage + 1);
         }
     };
-    return (
-        <Modal {...props}
-                size="lg"
-                aria-labelledby="contained-modal-title-vcenter"
-                centered>
-                <Modal.Header closeButton>
-                    <Modal.Title id="contained-modal-title-vcenter">
-                    주소검색
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
 
-                        <Container>
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(prevPage => prevPage - 1);
+        }
+    };
+
+    const pageGroupChange = (pageGroup: number) => {
+        setPageGroup(pageGroup);
+        setCurrentPage(((pageGroup - 1) * 10) + 1); // 첫 페이지로 이동
+    };
+
+    const handlePrevPageGroup = () => {
+        if (pageGroup > 1) {
+            pageGroupChange(pageGroup - 1);
+        }
+    };
+
+    const handleNextPageGroup = () => {
+        if (pageGroup * 10 < totalPage) {
+            setPageGroup(pageGroup + 1);
+            setCurrentPage((pageGroup * 10) + 1); // 첫 페이지로 이동
+        }
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+    };
+
+    const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        setTotalPage(1);
+        setPageGroup(1);
+        let newQuery: Record<string, any> = {};
+        newQuery[`addr1`] = searchInputRef.current?.value || "";
+        setCurrentPage(1);
+        handleSearch(e, newQuery, -100); // 현재 searchValue를 검색
+    };
+
+    const select = (e:React.MouseEvent<HTMLElement,MouseEvent>, addr1: string, addr2: string) => {
+        props.onSelect(addr2, addr1);
+        handleCloseModal(e);
+    };
+
+    const pageing = (): JSX.Element[] => {
+        const [startPage, endPage] = getCurrentPageRange(currentPage, totalPage);
+        let items = [];
+        for (let number = startPage; number <= endPage; number++) {
+            items.push(
+                <div
+                    key={number}
+                    className={`pagination-item ${number === currentPage ? 'active' : ''}`}
+                    onClick={() => setCurrentPage(number)}
+                >
+                    {number}
+                </div>,
+            );
+        }
+        return items;
+    };
+
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleButtonClick(e as unknown as React.MouseEvent<HTMLButtonElement>);
+        }
+    };
+
+    const handleCloseModal = (e:React.MouseEvent<HTMLElement,MouseEvent>) => {
+        init();
+        if (props.onHide) {
+            props.onHide(e); // props.onHide 호출
+        }
+    };
+
+    return (
+        <>
+            {props.show && (
+                <div className="modal-overlay" >
+                    <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2>주소검색</h2>
+                            <button className="close-button" onClick={(e) => handleCloseModal(e)}>X</button>
+                        </div>
+                        <div className="modal-body">
                             <div>
                                 <li>정확한 주소를 모르시는 경우
-                                    <ul className="v2">
-                                        <li className="w_230">시/군/구 + 도로명, 동명 또는 건물명<br/>
+                                    <ul>
+                                        <li>시/군/구 + 도로명, 동명 또는 건물명<br />
                                         예) 동해시 중앙로, 여수 중앙동, 대전 현대아파트
                                         </li>
                                     </ul>
@@ -54,56 +199,64 @@ export default function FindAddr(props) {
                             </div>
                             <div>
                                 <li>정확한 주소를 아시는 경우
-                                    <ul className="v2">
-                                        <li className="w_230">도로명 + 건물번호 예) 종로 6</li>
-                                        <li className="w_230">읍/면/동/리 + 지번 예) 서린동 154-1</li>
+                                    <ul>
+                                        <li>도로명 + 건물번호 예) 종로 6</li>
+                                        <li>읍/면/동/리 + 지번 예) 서린동 154-1</li>
                                     </ul>
                                 </li>
                             </div>
-                        </Container>
-
-
-                        <InputGroup className="mb-1">
-                            <Form.Control
-                                        placeholder="주소검색"
-                                        // value={props.query}
-                                        onChange={(e) => setQuery(e.target.value)}
-                                        aria-label="Recipient's username"
-                                        aria-describedby="basic-addon2"  />
-                            <Button variant="outline-secondary" id="button-addon2" onClick={ (e) => handleSearch(e,query) } >조회</Button>
-                        </InputGroup>
-
-                        {error && <p>{error}</p>}
-
-
-                        {/* <ul>
-                            {address.map((addr, index) => (
-                                <li key={index}>{addr}</li>
-                            ))}
-                        </ul> */}
-
-                        <ListGroup as="ol" numbered>
-
-                
-                            <ListGroup.Item
-                                as="li"
-                                className="d-flex justify-content-between align-items-start"
-                            >
-                                  {address.map((addr, index) => (
-                                    <div key={index}>
-                                            {addr}
-                                            <div > Cras justo onbidDTO</div>
-                                    </div>
-                                     
+                            <div className="search-input-group">
+                                <input
+                                    type="text"
+                                    placeholder="주소검색"
+                                    ref={searchInputRef}
+                                    onChange={handleChange}
+                                    onKeyDown={handleKeyPress}
+                                />
+                                <button onClick={handleButtonClick}>조회</button>
+                            </div>
+                            {error && <p>{error}</p>}
+                            {address.length > 0 ? (
+                                <ul className="address-list">
+                                    {address.map((addr, index) => (
+                                        <li
+                                            key={index}
+                                            onClick={(e) => select(e,addr.addr1, addr.addr2)}
+                                        >
+                                            <div><strong>지 번:</strong> {addr.addr2 || '정보 없음'}</div>
+                                            <div><strong>도로명:</strong> {addr.addr1 || '정보 없음'}</div>
+                                        </li>
                                     ))}
-            
-                            </ListGroup.Item>
-                          
-                        </ListGroup>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button onClick={props.onHide}>Close</Button>
-                </Modal.Footer>
-        </Modal>
+                                </ul>
+                            ) : (
+                                !error && <p>No addresses found.</p>
+                            )}
+                            {totalPage > 1 && (
+                                <div className="pagination-container">
+                                    <button onClick={handlePrevPageGroup} disabled={pageGroup <= 1}>
+                                        {"<<"}
+                                    </button>
+                                    <button onClick={handlePrevPage} disabled={currentPage <= 1}>
+                                        {"<"}
+                                    </button>
+                                    {pageing()}
+                                    <button onClick={handleNextPage} disabled={currentPage >= totalPage}>
+                                        {">"}
+                                    </button>
+                                    <button onClick={handleNextPageGroup} disabled={pageGroup * 10 >= totalPage}>
+                                        {">>"}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                        <div className="modal-footer">
+                            <button onClick={handleCloseModal}>Close</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 }
+
+export default FindAddr;

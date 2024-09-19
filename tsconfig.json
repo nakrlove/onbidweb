@@ -1,16 +1,31 @@
 {
   "compilerOptions": {
-    // 기존 옵션들
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "jsx": "react", // 또는 "preserve" 등의 옵션을 선택
-    "target": "es5", // 원하는 타겟 버전
-    // 추가 옵션들
-    "baseUrl": "./src",
+    "jsx": "preserve",
+    "target": "es6",
+
+    "baseUrl": ".",
     "paths": {
-      "*": ["types/*"]
-    }
+      "*": ["node_modules/*", "@types/*"]
+    },
+    "typeRoots": ["./node_modules/@types", "./@types"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "isolatedModules": true,
+    "noEmit": true
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

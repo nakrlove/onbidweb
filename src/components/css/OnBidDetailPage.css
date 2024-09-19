@@ -1,0 +1,153 @@
+
+.item-box1 .row {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px; /* 각 행 간격 조정 */
+}
+
+.item1 {
+    flex: 1;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-right: 10px; /* 오른쪽 여백 */
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.item1:last-child {
+    margin-right: 0; /* 마지막 항목의 오른쪽 여백 제거 */
+}
+
+.item1 span {
+    font-weight: bold;
+}
+
+
+
+/* DetailPage.css */
+.button-section {
+  padding: 10px 0px;
+  font-size: 16px;
+}
+
+.file-box {
+  padding: 20px 0px;
+}
+
+/* 전체 페이지 스타일 */
+.detail-page {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+/* 메모 박스 스타일 */
+.memo-box {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.memo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-memo-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.editor-container {
+  margin-top: 10px;
+}
+
+.item-box1 {
+  margin-bottom: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.item1 {
+  flex: 1;
+}
+
+
+.bidding-history {
+  padding: 20px 10px;
+  border-collapse: collapse;
+}
+
+
+/* 입찰 이력 테이블 스타일 */
+.bidding-history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bidding-history-header, .bidding-history-row {
+  display: grid;
+  /* grid-template-columns: repeat(4, 1fr); */
+   grid-template-columns: 0.2fr 1.2fr 0.6fr 1fr; /* 회차 셀 넓이 조정 */
+  border-bottom: 1px solid #ddd;
+}
+
+.cell {
+  padding: 10px;
+  border-right: 1px  #ddd;
+  text-align: center;
+}
+
+.bidding-history-row .cell:last-child {
+  border-right: none;
+}
+
+/* 버튼 그룹 스타일 */
+.button-group {
+  margin-bottom: 20px;
+}
+
+.detail-button {
+  margin-right: 10px;
+  border: 1px solid #ddd;
+}
+
+/* 지도 섹션 스타일 */
+.map-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.map {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.map h3 {
+  margin-bottom: 10px;
+}
+
+/* 추가 정보 스타일 */
+.additional-info {
+  margin-top: 20px;
+}
+
+.info-item {
+  margin-bottom: 10px;
+}
+
+.info-item span {
+  font-weight: bold;
+}
+
+.onbid-color { 
+  padding: 0px 0px; 
+  color: #ff0000; 
+  border: none; 
+  border-radius: 1px ;
+}

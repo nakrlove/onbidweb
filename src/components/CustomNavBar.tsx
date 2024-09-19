@@ -8,13 +8,14 @@ export default function CustomNavBar() {
     return (
         <Navbar expand="lg" className="bg-body-tertiary">
         <Container>
-        <Navbar.Brand href="/index.html">Home</Navbar.Brand>
+        <Navbar.Brand href="/onbid-list">Home</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-            <Nav.Link href="#home">물건등록</Nav.Link>
-            <Nav.Link href="#link">목록</Nav.Link>
-            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+            <Nav.Link href="/login">로그인</Nav.Link>
+            <Nav.Link href="/onbid-regst">등록</Nav.Link>
+            <Nav.Link href="/file-code">코드관리</Nav.Link>
+            {/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.2">
                 Another action
@@ -24,7 +25,7 @@ export default function CustomNavBar() {
                 <NavDropdown.Item href="#action/3.4">
                 Separated link
                 </NavDropdown.Item>
-            </NavDropdown>
+            </NavDropdown> */}
             </Nav>
         </Navbar.Collapse>
         </Container>
