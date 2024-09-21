@@ -719,8 +719,8 @@ const OnBidRegst = () => {
             <center><h3>{data?.sale_notice_id ? `${data?.sale_notice_id} 기본정보 수정`: "기본정보 등록"} </h3></center>
             <form onSubmit={doSubmit}>
             
-                <div style={{ display: 'flex', alignItems: 'left', marginBottom: '0px' }}>
-                    <label style={{ marginBottom: '10px',marginRight: '1px',textAlign:'right', height: '30px', width: '10%' }}>공고번호</label>
+                <div className="box memo-box">
+                    <label style={{  textAlign: 'right',border: '0px solid #eee' }}>공고번호</label>
                     <input
                         type="text"
                         value={state.sale_notice_id}
@@ -728,14 +728,7 @@ const OnBidRegst = () => {
                         placeholder="공고번호"
                         style={{ flex: 1, height: '30px' }}
                     />
-                    <label style={{ marginBottom: '10px',marginLeft: '10px',textAlign:'right',marginRight: '1px', height: '30px', width: '10%' }}>필지번호</label>
-                    {/* <select onChange={(e) => setOnbidStatus(e.target.value)}
-                            style={{ marginBottom: '10px',marginRight: '10px', height: '30px', width: '25%' }}>
-                                    <option value="">=선택=</option>
-                                    {onbidStatusArray?.map(item => (
-                                        <option key={`info-${item.idx}`} value={item.code}>{item.name}</option>
-                                    ))}
-                    </select> */}
+                    <label style={{ marginLeft:'22px', textAlign: 'right',border: '0px solid #eee' }}>필지번호</label>
                     <input
                         type="text"
                         value={state.pnu}
@@ -743,49 +736,47 @@ const OnBidRegst = () => {
                         placeholder="필지번호"
                         style={{ flex: 1, height: '30px' }}
                     />
-
-              
                 </div>
                 {errors.debtor && <div style={{ color: 'red', marginTop: '-15px',marginBottom: '10px' }}>{errors.debtor}</div>}
-                <hr style={{ margin: '2px 0' }} />
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                    <input
-                        type="text"
-                        value={state.addr1}
-                        // onChange={(e) => setAddr1(e.target.value)}
-                        onChange={(e) => statusChange("addr1",e.target.value)}
-                        placeholder="주소 입력"
-                        style={{ flex: 1, marginRight: '10px', height: '30px' }}
-                    />
-                    <button type="button" onClick={toggleAddrModal} style={{ width: '22%', textAlign: 'center',border: '1px solid #ddd' }}>
-                        <Image src={search} alt="search"/> 주소 검색
-                    </button>
-                    
+               
+                <div className="box memo-box">
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <input
+                            type="text"
+                            value={state.addr1}
+                            // onChange={(e) => setAddr1(e.target.value)}
+                            onChange={(e) => statusChange("addr1",e.target.value)}
+                            placeholder="주소 입력"
+                            style={{ flex: 1, marginRight: '10px', height: '30px' }}
+                        />
+                        <button type="button" onClick={toggleAddrModal} style={{ width: '22%', textAlign: 'center',border: '1px solid #ddd' }}>
+                            <Image src={search} alt="search"/> 주소 검색
+                        </button>
+                        
+                    </div>
+                    {errors.addr1 && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.addr1}</div>}
+                    <div >
+                        <input
+                            type="text"
+                            value={state.addr2}
+                            // onChange={(e) => setAddr2(e.target.value)}
+                            onChange={(e) => statusChange('addr2',e.target.value)}
+                            placeholder="상세 주소 입력"
+                            style={{ width: '100%', marginBottom: '10px', height: '30px' }}
+                        />
+                        {errors.addr2 && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.addr2}</div>}
+                        <input
+                            type="text"
+                            value={state.rd_addr}
+                            // readOnly={false}
+                            placeholder="도로명 주소"
+                            onChange={(e) => statusChange('rd_addr',e.target.value)}
+                            style={{ width: '100%', marginBottom: '10px', height: '30px' }}
+                        />
+                        
+                    </div>
                 </div>
-                {errors.addr1 && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.addr1}</div>}
-                <div style={{ marginBottom: '20px' }}>
-                    <input
-                        type="text"
-                        value={state.addr2}
-                        // onChange={(e) => setAddr2(e.target.value)}
-                        onChange={(e) => statusChange('addr2',e.target.value)}
-                        placeholder="상세 주소 입력"
-                        style={{ width: '100%', marginBottom: '10px', height: '30px' }}
-                    />
-                    {errors.addr2 && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.addr2}</div>}
-                    <input
-                        type="text"
-                        value={state.rd_addr}
-                        // readOnly={false}
-                        placeholder="도로명 주소"
-                        onChange={(e) => statusChange('rd_addr',e.target.value)}
-                        style={{ width: '100%', marginBottom: '10px', height: '30px' }}
-                    />
-                    <hr style={{ margin: '20px 0' }} />
-                </div>
-
-
-                <div style={{ marginBottom: '3px' }}>
+                <div className="box memo-box">
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '-4px' }}>
                         <span style={{ width: '35%',marginRight: '5%'}}>입찰일자</span>
                         <span >감정가/보증금</span>
@@ -844,9 +835,7 @@ const OnBidRegst = () => {
                     ))}
                 </div>
 
-                <hr style={{ margin: '10px 0' }} />
-
-                <div style={{ marginBottom: '20px' }}>
+                <div className="box memo-box">
                    <label >채무자명</label>
                     <input
                         type="text"
@@ -942,7 +931,7 @@ const OnBidRegst = () => {
                     {/* {errors.file && <div style={{ color: 'red', marginBottom: '10px' }}>{errors.file}</div>} */}
                 </div>
                 <hr style={{ margin: '20px 0' }} />
-                <div style={{ marginBottom: '20px' }}>
+                <div className="box memo-box">
                     <input
                         type="text"
                         value={state.disposal_type}
@@ -1011,7 +1000,7 @@ const OnBidRegst = () => {
                         />
                     </div> 
                     {errors.build_area && <div style={{ color: 'red', marginTop: '-10px',marginBottom: '10px' }}>{errors.build_area}</div>}
-                    <hr style={{ margin: '15px 0' }} />
+                    
                     <label>「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등</label>
                     <CKEditor
                         editor={ClassicEditor}
@@ -1098,7 +1087,7 @@ const OnBidRegst = () => {
                     {errors.estateType && <div style={{ color: 'red', marginTop: '-20px',marginBottom: '10px' }}>{errors.estateType}</div>}
                 </div>
 
-                <hr style={{ margin: '10px 0' }} />
+             
 
                 <div style={{ marginBottom: '20px' }}>
                     <label>메모</label> 

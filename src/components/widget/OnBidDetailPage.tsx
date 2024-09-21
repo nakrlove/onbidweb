@@ -250,9 +250,9 @@ const OnBidDetailPage = () => {
                 </button>
             </div>
             {/* 3. 주소 (도로명 주소) */}
-            <div className="address-section">
-                <h3>주소</h3>
-                <p> {data?.addr1} {data?.addr2} {data?.rd_addr ? <span>({data?.rd_addr})</span> :("")}</p>
+            <div className="memo-box">
+                {/* <h3><div>주소 :{data?.addr1} {data?.addr2}<br/></div> {data?.rd_addr ? <span> ({data?.rd_addr})</span> : ("")}</h3> */}
+                <h3><div>주소 : {data?.addr1} {data?.addr2}<br/></div></h3>
             </div>
             {/* 2. Box형 메모 */}
            
