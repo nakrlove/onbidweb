@@ -45,7 +45,8 @@ interface OnbidItem {
      deposit: string,
      status: string,
      debtor: string,
-     land_classification_name: string
+     land_classification_name: string,
+     sale_notice_id: string, //매각공고번호
 }
   
 const OnBidList: React.FC = () => {
@@ -250,7 +251,7 @@ const OnBidList: React.FC = () => {
                             <td className='table-td'>
                              
                                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingRight: '20px' }}>
-                                    <span className="fontSize13">{item.estatetype} (지목: {item.land_classification_name})</span>
+                                    <span className="fontSize14">매각공고번호 : {item.sale_notice_id}</span>
                                     { item.status ? (<span className="onbid-color">{item.status}</span>) :("") }
                                 </div>
                                 <div style={{ 
@@ -260,7 +261,11 @@ const OnBidList: React.FC = () => {
                                             color: '#555', // 텍스트 색상 조정
                                             fontSize: '14px' // 텍스트 크기 조정
                                         }}>{item.addr1} {item.addr2}</div>
-                                <div className="fontSize13">처분방식 : {item.disposal_type} { item.renter ?<>/ <span className="orange f12 onbid-color">{item.renter}</span> </> : ("")}</div>
+                                <div className="fontSize13">
+                                    <span className="fontSize13">{item.estatetype} (지목: {item.land_classification_name})</span>
+                                   
+                                    <span className="fontSize13"> / </span>처분방식 : {item.disposal_type} { item.renter ?<>/ <span className="orange f12 onbid-color">{item.renter}</span> </> : ("")}
+                                </div>
                                 <div className="fontSize13 colorBlue" >토지 {item.ld_area}㎡({ item.ld_area_pyeong}평) {item.ld_area_memo} {item.build_area ? <>/ 건물 {item.build_area}㎡({item.build_area_pyeong}평) {item.build_area_memo}</> :("")}</div>
                             </td>
                             <td className='table-td table-td-text-align-center'>

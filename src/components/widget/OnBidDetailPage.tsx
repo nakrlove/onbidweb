@@ -244,6 +244,7 @@ const OnBidDetailPage = () => {
         <div className="detail-page">
             {/* 1. 왼쪽으로 정렬 버튼형식 지목 */}
             <div className="button-section">
+                <center><h3>{data?.sale_notice_id}</h3></center>
                 <button className="detail-button" onClick={() => handleDetailClick({ 'bididx':bididx, 'modify':true })}>
                     <Image src={edit} alt="modify"/> 수정
                 </button>

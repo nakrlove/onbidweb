@@ -23,6 +23,8 @@ export default function Login() {
             console.log(prevDays); // This will log '23'
             return '55';
           })
+
+          console.log(`${emailValue}, ${passwordValue}`);
         console.log(`days ${days}`);
     }
   

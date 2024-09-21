@@ -124,6 +124,7 @@ export interface OnbidItem {
   enforcement_decree: string; //토지이용계획확인원 - 시행령
   name: string;
   pnu: string; //필지정보
+  sale_notice_id: string; //매각공고번호
 }
 
 // 데이터 타입 정의
@@ -236,6 +237,7 @@ export interface DataSet {
   idx: 0;
   debtor: string;
   pnu: string; //필지번호
+  sale_notice_id: string; //매각공고번호
 } // 데이터 타입 정의
 // 반환 타입 정의
 export interface FetchSelectOptionsResult {

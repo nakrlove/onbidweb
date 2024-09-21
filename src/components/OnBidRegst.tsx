@@ -72,8 +72,9 @@ const initialState: DataSet =
     other_laws: "",
     enforcement_decree: "",
     idx: 0,
-    debtor: "",
-    pnu: ""   ,//필지번호
+    debtor   : "",
+    pnu      : "",//필지번호
+    sale_notice_id: "",//매각공고번호
 }// 데이터 타입 정의
 
 
@@ -475,6 +476,7 @@ const OnBidRegst = () => {
             enforcement_decree: state.enforcement_decree   ,
             idx: categorystatus                            , //관심종목 
             pnu: state.pnu                                 , //필지정보
+            sale_notice_id: state.sale_notice_id           , //매각공고번호
         }
         const formData = new FormData();
         // FormData 생성
@@ -714,11 +716,19 @@ const OnBidRegst = () => {
     }
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', textAlign: 'left' }}>
-            <h2>정보 등록 </h2>
+            <center><h3>{data?.sale_notice_id ? `${data?.sale_notice_id} 기본정보 수정`: "기본정보 등록"} </h3></center>
             <form onSubmit={doSubmit}>
             
                 <div style={{ display: 'flex', alignItems: 'left', marginBottom: '0px' }}>
-                    <label style={{ marginBottom: '10px',marginRight: '1px', height: '30px', width: '10%' }}>필지번호</label>
+                    <label style={{ marginBottom: '10px',marginRight: '1px',textAlign:'right', height: '30px', width: '10%' }}>공고번호</label>
+                    <input
+                        type="text"
+                        value={state.sale_notice_id}
+                        onChange={(e) => statusChange("sale_notice_id",e.target.value)}
+                        placeholder="공고번호"
+                        style={{ flex: 1, height: '30px' }}
+                    />
+                    <label style={{ marginBottom: '10px',marginLeft: '10px',textAlign:'right',marginRight: '1px', height: '30px', width: '10%' }}>필지번호</label>
                     {/* <select onChange={(e) => setOnbidStatus(e.target.value)}
                             style={{ marginBottom: '10px',marginRight: '10px', height: '30px', width: '25%' }}>
                                     <option value="">=선택=</option>
@@ -734,14 +744,7 @@ const OnBidRegst = () => {
                         style={{ flex: 1, height: '30px' }}
                     />
 
-                    <label style={{ marginBottom: '10px',marginLeft: '10px', height: '30px', width: '10%' }}>채무자명</label>
-                    <input
-                        type="text"
-                        value={state.debtor}
-                        onChange={(e) => statusChange("debtor",e.target.value)}
-                        placeholder="채무자명"
-                        style={{ flex: 1, height: '30px' }}
-                    />
+              
                 </div>
                 {errors.debtor && <div style={{ color: 'red', marginTop: '-15px',marginBottom: '10px' }}>{errors.debtor}</div>}
                 <hr style={{ margin: '2px 0' }} />
@@ -844,6 +847,14 @@ const OnBidRegst = () => {
                 <hr style={{ margin: '10px 0' }} />
 
                 <div style={{ marginBottom: '20px' }}>
+                   <label >채무자명</label>
+                    <input
+                        type="text"
+                        value={state.debtor}
+                        onChange={(e) => statusChange("debtor",e.target.value)}
+                        placeholder="채무자명"
+                        style={{ width: '100%', marginBottom: '10px', height: '30px' }}
+                    />
                     <label>파산관제인명</label>
                     <input
                         type="text"
